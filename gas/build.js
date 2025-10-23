@@ -125,12 +125,19 @@ const Build = {
   /** mv */
   getMvContents() {
     const template = this.getTemplateFile('components', 'mv');
-    const replacements = {
-      mv_catchphrase: Utils.getSheetValue('mv', 'catchphrase'),
-      mv_bg_image_url_pc: Utils.getSheetValue('mv', 'bg_image_url_pc'),
-      mv_bg_image_url_sp: Utils.getSheetValue('mv', 'bg_image_url_sp'),
-      mv_bg_image_alt: Utils.getSheetValue('mv', 'bg_image_alt'),
-    };
+    // まず MvInfo（グローバルmvを元に整形したマップ）を優先し、
+    // なければ従来の Utils.getSheetValue にフォールバック。
+    let replacements = {};
+    if (typeof MvInfo !== 'undefined' && typeof MvInfo.getTemplateReplacements === 'function') {
+      replacements = MvInfo.getTemplateReplacements();
+    } else {
+      replacements = {
+        mv_catchphrase: Utils.getSheetValue('mv', 'catchphrase'),
+        mv_bg_image_url_pc: Utils.getSheetValue('mv', 'bg_image_url_pc'),
+        mv_bg_image_url_sp: Utils.getSheetValue('mv', 'bg_image_url_sp'),
+        mv_bg_image_alt: Utils.getSheetValue('mv', 'bg_image_alt'),
+      };
+    }
 
     return this.applyTagReplacements(template, replacements);
   },

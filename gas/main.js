@@ -55,6 +55,12 @@ function buildAll () {
     Utils.logToSheet(`meta 追記: ${m.rows.length}件`, 'buildAll');
   }
 
+  // 追加: mv の取得と Parameters への追記（カテゴリ=mv）
+  if (typeof MvInfo !== 'undefined' && MvInfo.readAndRecordMv) {
+    const mvRes = MvInfo.readAndRecordMv();
+    Utils.logToSheet(`mv 追記: ${mvRes.rows.length}件`, 'buildAll');
+  }
+
   const order = Build.getContentOrder();
   Utils.logToSheet(`コンテンツ表示順取得完了（${order.length}）`, 'buildAll');
 
