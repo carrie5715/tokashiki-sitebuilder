@@ -61,35 +61,61 @@ const Build = {
 
     let indexLayout = this.getTemplateFile('layout', targetLayout || 'default');
 
-    let sectionString = ''
+    // デバッグ: 読み込んだ生レイアウトを保存
+    try {
+      const outRootId = PropertiesService.getScriptProperties().getProperty(PROP_KEYS.OUTPUT_ID);
+      if (outRootId) {
+        this.saveHtmlToFolder(outRootId, `debug__layout_${targetLayout || 'default'}_raw.html`, indexLayout);
+      }
+    } catch (e) {
+      // noop
+    }
 
-    if(order && order.length > 0) {
-      order.map((item) => {
+    // セクション生成
+    let sectionString = ''
+    if (order && order.length > 0) {
+      order.forEach((item) => {
         Utils.logToSheet(`セクションID:[${item.id}]`, 'loadTemplates');
-        if(item.id === 'mv') {
+        if (item.id === 'mv') {
           sectionString += this.getMvContents() + '\n';
         }
-        if(item.id === 'mission') {
+        if (item.id === 'mission') {
           sectionString += this.getMissionContents() + '\n';
         }
+        // 他のセクションもこの分岐に追加
       });
+    }
 
-      if(sectionString.length > 0) {
-        indexLayout = this.applyTagReplacements(indexLayout, {contents: sectionString});
+    // header/footer 読み込み（現状は静的テンプレートをそのまま埋め込み）
+    const headerHtml = this.getHeaderContents();
+    const footerHtml = this.getFooterContents();
+
+    // 置換の順序: contents -> header/footer -> meta
+    if (sectionString.length > 0) {
+      indexLayout = this.applyTagReplacements(indexLayout, { contents: sectionString });
+    }
+    indexLayout = this.applyTagReplacements(indexLayout, { header: headerHtml, footer: footerHtml });
+
+    // デバッグ: セクション・ヘッダー・フッター差し込み後も保存
+    try {
+      const outRootId = PropertiesService.getScriptProperties().getProperty(PROP_KEYS.OUTPUT_ID);
+      if (outRootId) {
+        this.saveHtmlToFolder(outRootId, `debug__layout_${targetLayout || 'default'}_before_meta.html`, indexLayout);
       }
+    } catch (e) {
+      // noop
     }
 
     Utils.logToSheet(`${targetLayout}テンプレート読み込み完了:[${typeof indexLayout}]`, 'loadTemplates');
 
-    const replacements = {
-      title: Utils.getSheetValue('meta', 'title'),
-      description: Utils.getSheetValue('meta', 'description'),
-      url: Utils.getSheetValue('meta', 'og:url'),
-      image: Utils.getSheetValue('meta', 'og:image'),
-    };
-
-    const output = this.applyTagReplacements(indexLayout, replacements); 
-    return output
+    // meta 情報の差し込み（MetaInfo に集約）
+    const metaRepl = (typeof MetaInfo !== 'undefined' && MetaInfo.getTemplateReplacements)
+      ? MetaInfo.getTemplateReplacements()
+      : ((typeof MetaInfo !== 'undefined' && MetaInfo.getLayoutReplacements)
+        ? MetaInfo.getLayoutReplacements()
+        : { title: '', description: '', url: '', image: '' });
+    const output = this.applyTagReplacements(indexLayout, metaRepl);
+    return output;
   },
 
   /** mv */
@@ -103,6 +129,20 @@ const Build = {
     };
 
     return this.applyTagReplacements(template, replacements);
+  },
+
+  /** header */
+  getHeaderContents() {
+    // 必要に応じて置換を追加
+    const template = this.getTemplateFile('components', 'header');
+    return template;
+  },
+
+  /** footer */
+  getFooterContents() {
+    // 必要に応じて置換を追加
+    const template = this.getTemplateFile('components', 'footer');
+    return template;
   },
 
   /** mission */
@@ -218,8 +258,9 @@ const Build = {
    * @return {string} 置換後のHTML文字列
    */
   applyTagReplacements(template, replacements) {
-    return template.replace(/<\?=\s*([a-zA-Z0-9_]+)\s*\?>/g, function(_, key) {
-      return (key in replacements) ? replacements[key] : "";
+    // 未指定のキーは消さずに残す（後段の置換パスで埋めるため）
+    return template.replace(/<\?=\s*([a-zA-Z0-9_]+)\s*\?>/g, function(match, key) {
+      return (key in replacements) ? String(replacements[key]) : match;
     });
   }
 

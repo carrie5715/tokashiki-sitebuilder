@@ -46,16 +46,20 @@ function buildAll () {
   const common = CommonInfo.readAndRecordBasicSettings();
   Utils.logToSheet(`Parameters 追記: ${common.rows.length}件`, 'buildAll');
 
-  /*
-    const order = Build.getContentOrder();
-    Utils.logToSheet(`コンテンツ表示順取得完了（${order.length}）`, 'buildAll');
+  // 追加: meta の取得と Parameters への追記（カテゴリ=meta）
+  if (typeof MetaInfo !== 'undefined' && MetaInfo.readAndRecordMeta) {
+    const m = MetaInfo.readAndRecordMeta();
+    Utils.logToSheet(`meta 追記: ${m.rows.length}件`, 'buildAll');
+  }
 
-    const main = Build.loadTemplates('index', order);
-    Utils.logToSheet(`テンプレート読み込み完了:[${typeof main}]`, 'buildAll');
+  const order = Build.getContentOrder();
+  Utils.logToSheet(`コンテンツ表示順取得完了（${order.length}）`, 'buildAll');
 
-    Build.saveHtmlToFolder(ids.output.rootId, 'index.html', main);
-    Utils.logToSheet(`HTML出力完了`, 'buildAll');
-  */
+  const mainHtml = Build.loadTemplates('top', order);
+  Utils.logToSheet(`テンプレート読み込み完了:[${typeof mainHtml}]`, 'buildAll');
+
+  Build.saveHtmlToFolder(ids.output.rootId, 'index.html', mainHtml);
+  Utils.logToSheet(`HTML出力完了: output/index.html`, 'buildAll');
 
   // 最後に colors.css を出力（他コンポーネントで追加された colors も含めて集計）
   if (typeof CommonInfo !== 'undefined' && CommonInfo.writeColorsCss) {
