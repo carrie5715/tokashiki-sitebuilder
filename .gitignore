@@ -1,0 +1,21 @@
+# macOS
+.DS_Store
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Dev outputs (Vite/Sass)
+public/css/
+public/**/*.map
+
+# Template outputs (commit CSS but ignore maps)
+templateBase/drive_resources/css/*.map
+
+# Generic build artifacts
+dist/
+.tmp/
+.cache/
+
+# Logs
+*.log

@@ -1,0 +1,14 @@
+@use '../common/mixins' as *;
+
+#works {
+  width: 100%;
+  background: #f7fffe; // 淡いシアン
+
+  .container {
+    max-width: 1000px;
+    margin-inline: auto;
+    padding: 56px 24px;
+  }
+
+  .works-swiper { margin-top: 24px; }
+}

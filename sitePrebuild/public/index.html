@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vite SCSS Test</title>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Noto+Sans+JP:wght@100..900&family=Noto+Serif+JP:wght@200..900&display=swap" rel="stylesheet">
+
+
+  
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+</head>
+<body>
+  <!-- ヘッダー -->
+  <header x-data="headerComponent" data-component-name="header">
+    <div class="header-wrap">
+      <div class="logo" data-target-name="header_logo">
+        <img src="/images/logo.png" alt="Logo">
+      </div>
+      <ul class="header-nav" data-target-name="header_nav">
+        <li><a @click.prevent="onItemClick" href="#mission">ミッション</a></li>
+        <li><a @click.prevent="onItemClick" href="#services">事業内容</a></li>
+        <li><a @click.prevent="onItemClick" href="#company">会社概要</a></li>
+        <li><a @click.prevent="onItemClick" href="#faq">よくある質問</a></li>
+        <li><a @click.prevent="onItemClick" href="#news">お知らせ</a></li>
+      </ul>
+      <div>
+        <button data-target-name="header_contact_btn">お問い合わせ</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- メインビジュアル -->
+  <section id="mv" data-component-name="mv" x-data="mvComponent">
+    <div class="mv-bg-image">
+      <picture>
+        <!-- 仮のパス。後で差し替え可 -->
+        <source srcset="/images/mv-bg_pc.jpg" media="(min-width: 768px)" />
+        <img src="/images/mv-bg_sp.jpg" alt="メインビジュアル背景" />
+      </picture>
+    </div>
+    <!-- .container のレイアウトを活かすため併用 -->
+    <div class="mv-base-contents container">
+      <p>あなたのビジネスを、<br><strong>信頼と実績</strong>で支えます。</p>
+    </div>
+  </section>
+
+  <!-- ミッション -->
+  <section id="mission" data-component-name="mission" x-data="missionComponent">
+    <div class="container">
+      <div class="upper-block">
+        <h2><span class="subtitle">MISSION</span>お客様一人ひとりに、<br>最適なサービスを</h2>
+        <p>テキストテキストテキストテキストテキストテキストテキスト、<br>テキストテキストテキストテキストテキストテキストテキストテキスト。<br>テキストテキストテキストテキストテキスト、<br>テキストテキストテキストテキストテキストテキスト。</p>
+      </div>
+      <div class="lower-block">
+        <div class="mission-swiper swiper" x-ref="container">
+          <div class="swiper-wrapper">
+            <template x-for="(item, idx) in items" :key="item.image || idx">
+              <div class="swiper-slide">
+                <figure class="mission-slide">
+                  <img :src="item.image" :alt="item.alt">
+                  <template x-if="item.caption">
+                    <figcaption x-text="item.caption"></figcaption>
+                  </template>
+                </figure>
+              </div>
+            </template>
+          </div>
+          <div class="swiper-pagination" x-ref="pager"></div>
+          <div class="swiper-button-prev" x-ref="prev"></div>
+          <div class="swiper-button-next" x-ref="next"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- 事業内容 -->
+  <section id="services" data-component-name="services" x-data="servicesComponent">
+    <div class="container">
+      <h2><span class="subtitle">SERVICES</span>私たちの提供するサービス</h2>
+      <p>テキストテキストテキストテキストテキストテキストテキスト、<br>テキストテキストテキストテキストテキストテキストテキストテキスト。<br>テキストテキストテキストテキストテキスト、<br>テキストテキストテキストテキストテキストテキスト。</p>
+
+      <template x-if="loading"><p>読み込み中...</p></template>
+      <template x-if="error"><p class="error" x-text="error"></p></template>
+
+      <div class="services-list">
+        <template x-for="(item, idx) in items" :key="item.name + idx">
+          <article :class="['service-card', item.typeClass]">
+            <figure class="service-thumb">
+              <img :src="item.image.url" :alt="item.name">
+            </figure>
+            <div class="service-body">
+              <h3 class="service-title">
+                <span class="en" x-text="item.name_en"></span>
+                <span class="ja" x-text="item.name"></span>
+              </h3>
+
+              <div class="service-desc" x-html="item.description"></div>
+
+              <ul class="service-tags" x-show="item.tags && item.tags.length">
+                <template x-for="tag in item.tags" :key="tag.id">
+                  <li class="tag" x-text="tag.name"></li>
+                </template>
+              </ul>
+
+              <p class="service-more">
+                <a class="btn-more"
+                  :href="item.more_link.url"
+                  :target="item.more_link.is_external ? '_blank' : null"
+                  :rel="item.more_link.is_external ? 'noopener noreferrer' : null">
+                  MORE
+                </a>
+              </p>
+            </div>
+          </article>
+        </template>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ここにworksを設定 -->
+  <section id="works" data-component-name="works" x-data="worksComponent">
+    <div class="container">
+      <h2><span class="subtitle">WORKS</span>制作事例</h2>
+      <p>テキストテキストテキストテキストテキストテキストテキスト。</p>
+
+      <div class="works-swiper swiper" x-ref="container">
+        <div class="swiper-wrapper">
+          <template x-for="item in items" :key="item.id">
+            <div class="swiper-slide">
+              <article class="work-card">
+                <figure class="work-thumb">
+                  <template x-if="item.images && item.images.length">
+                    <img :src="item.images[0].url" :alt="item.images[0].alt || item.title">
+                  </template>
+                </figure>
+                <div class="work-body">
+                  <h3 class="work-title" x-text="item.title"></h3>
+
+                  <ul class="work-tags" x-show="item.tags && item.tags.length">
+                    <template x-for="tag in item.tags" :key="tag.id">
+                      <li class="tag" x-text="tag.name"></li>
+                    </template>
+                  </ul>
+
+                  <div class="work-desc" x-html="item.description"></div>
+
+                  <p class="work-more" x-show="item.link && item.link.url">
+                    <a class="btn-more"
+                      :href="item.link.url"
+                      :target="item.link.is_external ? '_blank' : null"
+                      :rel="item.link.is_external ? 'noopener noreferrer' : null">
+                      詳細
+                    </a>
+                  </p>
+                </div>
+              </article>
+            </div>
+          </template>
+        </div>
+
+        <div class="swiper-pagination" x-ref="pager"></div>
+        <div class="swiper-button-prev" x-ref="prev"></div>
+        <div class="swiper-button-next" x-ref="next"></div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- 会社概要 -->
+  <section id="company" data-component-name="company" x-data="companyComponent">
+    <div class="container">
+      <h2><span class="subtitle">COMPANY</span>会社概要</h2>
+      <table>
+        <tr>
+          <th>会社名</th>
+          <td>株式会社サンプル</td>
+        </tr>
+        <tr>
+          <th>設立</th>
+          <td>2020年1月1日</td>
+        </tr>
+        <tr>
+          <th>所在地</th>
+          <td>東京都千代田区丸の内1-1-1</td>
+        </tr>
+        <tr>
+          <th>代表者</th>
+          <td>山田 太郎</td>
+        </tr>
+        <tr>
+          <th>事業内容</th>
+          <td>システム開発、コンサルティング、サポートサービス</td>
+        </tr>
+      </table>
+    </div>
+  </section>
+
+
+
+  <!-- よくある質問 -->
+  <section id="faq" data-component-name="faq" x-data="faqComponent">
+    <div class="container">
+      <h2><span class="subtitle">FAQ</span>よくある質問</h2>
+      <div class="faq-wrap">
+        <template x-if="loading">
+          <p>読み込み中...</p>
+        </template>
+        <template x-if="error">
+          <p class="error" x-text="error"></p>
+        </template>
+        <!-- FAQ一覧 -->
+        <template x-for="(item, idx) in items" :key="idx">
+          <div class="faq-item">
+            <h3 class="q" x-text="item.q"></h3>
+            <p class="a" x-text="item.a"></p>
+          </div>
+        </template>
+      </div>
+    </div>
+  </section>
+
+
+
+  <footer>
+    <div class="container">
+      <div class="image-block">
+        <img src="/images/footer-image.png" alt="Footer Image">
+        <h4>株式会社sample</h4>
+        <p>東京都中央区0-0-00 〇〇ビルディング0000</p>
+      </div>
+      <p class="copyright">&copy; 2024 株式会社サンプル. All rights reserved.</p>
+    </div>
+  </footer>
+
+
+  <script src="/js/store.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/header.js"></script>
+  <script src="/js/mv.js"></script>
+  <script src="/js/mission.js"></script>
+  <script src="/js/services.js"></script>
+  <script src="/js/works.js"></script>
+  <script src="/js/company.js"></script>
+  <script src="/js/faq.js"></script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+[
+  {
+    "id": "work-001",
+    "title": "老舗メーカーのブランド刷新に伴うコーポレートサイト全面改修。情報設計からデザイン、UI最適化、アクセシビリティ対応まで一貫して実施。",
+    "tags": [
+      { "id": "corporate", "name": "コーポレート" },
+      { "id": "uiux", "name": "UI/UX" }
+    ],
+    "description": "<p>既存資産を活かしつつ、KPIに紐づく導線最適化と高速な更新運用を実現しました。</p><ul><li>情報設計・サイトマップ再編</li><li>デザインシステム整備</li><li>アクセシビリティAA対応</li></ul>",
+    "images": [
+      { "url": "/img/work01.jpg", "alt": "ブランド刷新後のトップページ" },
+      { "url": "/img/work01_sub.jpg", "alt": "下層テンプレートの画面サンプル" }
+    ],
+    "link": { "url": "/works/work-001.html", "is_external": false },
+    "layout": 0
+  },
+  {
+    "id": "work-002",
+    "title": "急成長スタートアップの採用サイト構築。候補者体験を重視し、エントリー率向上に直結する設計と計測基盤を導入。",
+    "tags": [
+      { "id": "recruit", "name": "採用" },
+      { "id": "measurement", "name": "計測設計" }
+    ],
+    "description": "<p>職種別情報の整理とストーリーテリングにより、応募導線の離脱を継続的に改善。</p>",
+    "images": [
+      { "url": "/img/work02.jpg", "alt": "採用サイトのヒーローセクション" }
+    ],
+    "link": { "url": "/works/work-002.html", "is_external": false },
+    "layout": 0
+  },
+  {
+    "id": "work-003",
+    "title": "大規模ECのUI改善プロジェクト。検索・絞り込み体験を再設計し、カート到達率のボトルネックを特定・解消。",
+    "tags": [
+      { "id": "ec", "name": "EC" },
+      { "id": "abtest", "name": "A/Bテスト" }
+    ],
+    "description": "<p>検証主導の改善サイクルでCVRを段階的に引き上げ、継続運用プロセスを内製化。</p>",
+    "images": [
+      { "url": "/img/work03.jpg", "alt": "EC商品一覧のUI改善例" },
+      { "url": "/img/work03_sub.jpg", "alt": "フィルターUIのモック" }
+    ],
+    "link": { "url": "/works/work-003.html", "is_external": false },
+    "layout": 0
+  },
+  {
+    "id": "work-004",
+    "title": "短期キャンペーン向けLP制作。訴求要素の優先順位を明確化し、モバイルでの読みやすさと離脱抑制に注力。",
+    "tags": [
+      { "id": "lp", "name": "LP" },
+      { "id": "performance", "name": "パフォーマンス" }
+    ],
+    "description": "<p>Core Web Vitals 指標を意識した軽量構成で、広告流入時の初期表示を高速化。</p>",
+    "images": [
+      { "url": "/img/work04.jpg", "alt": "キャンペーンLPのファーストビュー" }
+    ],
+    "link": { "url": "/works/work-004.html", "is_external": false },
+    "layout": 0
+  },
+  {
+    "id": "work-005",
+    "title": "オウンドメディア立ち上げ支援。編集フローの設計からCMS選定、テンプレート構築、運用内製化まで伴走。",
+    "tags": [
+      { "id": "cms", "name": "CMS" },
+      { "id": "content", "name": "コンテンツ設計" }
+    ],
+    "description": "<p>SEO要件と執筆体験の両立を目指し、スキーマ設計とプレビュー運用を整備。</p>",
+    "images": [
+      { "url": "/img/work05.jpg", "alt": "メディア記事詳細ページの例" }
+    ],
+    "link": { "url": "/works/work-005.html", "is_external": false },
+    "layout": 0
+  },
+  {
+    "id": "work-006",
+    "title": "ブランドサイトの再構築。モーションとタイポグラフィを軸に、ブランドの世界観を体感できる導線を設計。",
+    "tags": [
+      { "id": "brand", "name": "ブランディング" },
+      { "id": "motion", "name": "モーション" }
+    ],
+    "description": "<p>演出の最適化とパフォーマンスのバランスを取りつつ、編集者が更新しやすい構造に。</p>",
+    "images": [
+      { "url": "/img/work06.jpg", "alt": "ブランドサイトのビジュアル表現" }
+    ],
+    "link": { "url": "/works/work-006.html", "is_external": false },
+    "layout": 0
+  }
+]

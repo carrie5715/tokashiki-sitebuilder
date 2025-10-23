@@ -1,0 +1,61 @@
+@use '../common/mixins' as *;
+
+// メインビジュアル
+#mv {
+  position: relative;
+  overflow: hidden;
+
+  .mv-bg-image {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+
+    picture, img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover; // 背景として全面表示
+    }
+  }
+
+  .mv-base-contents {
+    position: relative;
+    z-index: 1;
+  }
+
+  .container {
+    max-width: 1000px;
+    margin-inline: auto;
+    padding: 48px 24px;
+
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    min-height: 60vh;
+  }
+
+  h1 {
+    font-weight: 700;
+    font-size: clamp(24px, 4vw, 44px);
+    line-height: 1.4;
+  }
+
+  .lead { margin-top: 16px; line-height: 1.8; color: #555; }
+
+  .cta {
+    margin-top: 24px;
+    display: flex;
+    gap: 12px;
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 20px;
+      border-radius: 9999px;
+      background: #2563eb;
+      color: #fff;
+      font-weight: 700;
+    }
+  }
+}

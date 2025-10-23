@@ -1,0 +1,37 @@
+// src/scss/_mixin.scss
+
+// ブレークポイント変数
+$breakpoints: (
+  sm: 480px,
+  md: 768px,
+  lg: 1024px,
+  xl: 1280px,
+);
+
+// ブレークポイント取得関数
+@use 'sass:map';
+
+@function bp($key) {
+  @return map.get($breakpoints, $key);
+}
+
+// SP: 768px以下
+@mixin sp {
+  @media (max-width: #{bp(md)}) {
+    @content;
+  }
+}
+
+// タブレット（769〜1024px）
+@mixin tab {
+  @media (min-width: #{bp(md) + 1}) and (max-width: #{bp(lg)}) {
+    @content;
+  }
+}
+
+// PC（1025px以上）
+@mixin pc {
+  @media (min-width: #{bp(lg) + 1}) {
+    @content;
+  }
+}

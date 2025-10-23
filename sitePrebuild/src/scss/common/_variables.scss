@@ -1,0 +1,46 @@
+$font-gothic:
+  system-ui,
+  -apple-system,
+  BlinkMacSystemFont,
+  'Segoe UI',
+  Roboto,
+  'Helvetica Neue',
+  'Hiragino Kaku Gothic ProN',
+  'Noto Sans JP',
+  Meiryo,
+  sans-serif;
+$font-mincho: 'Hiragino Mincho ProN', 'Noto Serif JP', '游明朝', 'Yu Mincho', 'MS PMincho', serif;
+$font-noto-sans: 'Noto Sans JP', sans-serif;
+$font-noto-serif: 'Noto Serif JP', serif;
+$font-roboto: 'Roboto', sans-serif;
+$font-biz-udp-gothic: 'BIZ UDPGothic', sans-serif;
+
+:root {
+  // color
+  --col-black: #45494b;
+  --col-white: #fff;
+  --col-gray1: #777;
+  --col-gray2: #bbb;
+  --col-gray3: #b5b5b5;
+  --col-gray4: #989898;
+  --col-base-green: #005c55;
+  --col-light-green: #bed5d3;
+  --col-light-gray1: #f5f5f5;
+  --col-light-gray2: #efefef;
+  --col-light-gray3: #e6e6e6;
+  --col-light-gray4: #e6e6e6;
+  --col-light-gray5: #e1e1e1;
+  --col-red: #ef4c6f;
+  --col-blue: #3286d9;
+  --col-pink: #ffdfdf;
+
+  // font
+  --font-color-main: var(--col-black);
+  --font-color-link: var(--col-blue);
+  --font-gothic: #{$font-gothic};
+  --font-mincho: #{$font-mincho};
+  --font-noto-sans: #{$font-noto-sans};
+  --font-noto-serif: #{$font-noto-serif};
+  --font-biz-udp-gothic: #{$font-biz-udp-gothic};
+  --font-roboto: #{$font-roboto};
+}

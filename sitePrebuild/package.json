@@ -1,0 +1,24 @@
+{
+  "name": "siteprebuild",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "sass:dev": "sass --watch src/scss/common.scss:public/css/common.css src/scss/styles.scss:public/css/styles.css",
+    "sass:build": "sass src/scss/common.scss:drive_resources/css/common.css src/scss/styles.scss:drive_resources/css/styles.css",
+    "dev": "npm run sass:dev & vite",
+    "build": "npm run sass:build && node scripts/build_templates.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "chokidar-cli": "^3.0.0",
+    "eslint": "^9.34.0",
+    "fs-extra": "^11.3.2",
+    "prettier": "^3.6.2",
+    "sass": "^1.91.0",
+    "vite": "^7.1.3"
+  }
+}

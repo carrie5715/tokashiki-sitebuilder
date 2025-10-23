@@ -1,0 +1,27 @@
+@use '../common/mixins' as *;
+
+header {
+  width: 100%;
+  .header-wrap {
+    height: 70px;
+    max-width: 1000px;
+    margin: auto;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    border-radius: 9999px;
+    .logo {
+      width: 120px;
+      img {
+        width: 100%;
+        height: auto;
+      }
+    }
+    .header-nav {
+      display: flex;
+      height: 100%;
+      align-items: center;
+    }
+
+  }
+}

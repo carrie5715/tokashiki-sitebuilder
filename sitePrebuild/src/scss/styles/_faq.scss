@@ -1,0 +1,14 @@
+@use '../common/mixins' as *;
+
+#faq {
+  width: 100%;
+  background: #f7f8fa; // 淡いグレー
+
+  .container {
+    max-width: 1000px;
+    margin-inline: auto;
+    padding: 56px 24px;
+  }
+
+  .faq-wrap { margin-top: 24px; display: grid; gap: 20px; }
+}

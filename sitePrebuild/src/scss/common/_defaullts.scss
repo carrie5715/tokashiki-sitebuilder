@@ -1,0 +1,89 @@
+@use './mixins' as *;
+
+html {
+  font-size: 62.5%;
+  // font-size: 12px;
+  font-family: var(--font-noto-sans);
+  line-height: 1.6;
+  word-break: break-word;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  color: var(--font-color-main);
+}
+
+body {
+  font-size: 1.4rem;
+  border: 1px solid red;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  padding: 0;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  transition: opacity 0.2s ease-out 0s;
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+p {
+  margin: 0;
+}
+
+br {
+  &.br-sp {
+    display: none;
+    @include sp {
+      display: inline;
+    }
+  }
+  &.br-pc {
+    display: none;
+    @include pc {
+      display: inline;
+    }
+  }
+}
+
+a {
+  color: var(--font-color-link);
+  &.outer {
+    padding-right: 1.2em;
+    position: relative;
+    margin-right: 2px;
+    /*
+    &::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 2px;
+      width: 0.95em;
+      height: 100%;
+      background: url(../img/icon/ic_outer_link.svg) no-repeat center / 100% auto;
+    }
+    */
+  }
+}

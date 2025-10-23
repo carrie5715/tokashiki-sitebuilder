@@ -1,0 +1,14 @@
+@use '../common/mixins' as *;
+
+#mission {
+  width: 100%;
+  background: #f9fff7; // 淡いグリーン
+
+  .container {
+    max-width: 1000px;
+    margin-inline: auto;
+    padding: 56px 24px;
+  }
+
+  .mission-swiper { margin-top: 24px; }
+}

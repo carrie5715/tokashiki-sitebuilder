@@ -1,0 +1,12 @@
+@use '../common/mixins' as *;
+
+#company {
+  width: 100%;
+  background: #fffaf3; // 淡いクリーム
+
+  .container {
+    max-width: 1000px;
+    margin-inline: auto;
+    padding: 56px 24px;
+  }
+}
