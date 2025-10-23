@@ -61,14 +61,16 @@ const Build = {
 
     let indexLayout = this.getTemplateFile('layout', targetLayout || 'default');
 
-    // デバッグ: 読み込んだ生レイアウトを保存
-    try {
-      const outRootId = PropertiesService.getScriptProperties().getProperty(PROP_KEYS.OUTPUT_ID);
-      if (outRootId) {
-        this.saveHtmlToFolder(outRootId, `debug__layout_${targetLayout || 'default'}_raw.html`, indexLayout);
+    // デバッグ: 読み込んだ生レイアウトを保存（DEBUG_BUILD が true のときのみ）
+    if (typeof DEBUG_BUILD !== 'undefined' && DEBUG_BUILD) {
+      try {
+        const outRootId = PropertiesService.getScriptProperties().getProperty(PROP_KEYS.OUTPUT_ID);
+        if (outRootId) {
+          this.saveHtmlToFolder(outRootId, `debug__layout_${targetLayout || 'default'}_raw.html`, indexLayout);
+        }
+      } catch (e) {
+        // noop
       }
-    } catch (e) {
-      // noop
     }
 
     // セクション生成
@@ -96,14 +98,16 @@ const Build = {
     }
     indexLayout = this.applyTagReplacements(indexLayout, { header: headerHtml, footer: footerHtml });
 
-    // デバッグ: セクション・ヘッダー・フッター差し込み後も保存
-    try {
-      const outRootId = PropertiesService.getScriptProperties().getProperty(PROP_KEYS.OUTPUT_ID);
-      if (outRootId) {
-        this.saveHtmlToFolder(outRootId, `debug__layout_${targetLayout || 'default'}_before_meta.html`, indexLayout);
+    // デバッグ: セクション・ヘッダー・フッター差し込み後も保存（DEBUG_BUILD が true のときのみ）
+    if (typeof DEBUG_BUILD !== 'undefined' && DEBUG_BUILD) {
+      try {
+        const outRootId = PropertiesService.getScriptProperties().getProperty(PROP_KEYS.OUTPUT_ID);
+        if (outRootId) {
+          this.saveHtmlToFolder(outRootId, `debug__layout_${targetLayout || 'default'}_before_meta.html`, indexLayout);
+        }
+      } catch (e) {
+        // noop
       }
-    } catch (e) {
-      // noop
     }
 
     Utils.logToSheet(`${targetLayout}テンプレート読み込み完了:[${typeof indexLayout}]`, 'loadTemplates');
