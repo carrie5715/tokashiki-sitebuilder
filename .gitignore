@@ -11,6 +11,13 @@ public/**/*.map
 
 # Template outputs (commit CSS but ignore maps)
 templateBase/drive_resources/css/*.map
+templateBase/output
+
+# Site preview (generated/local downloads)
+sitePreview/public/
+sitePreview/source/
+sitePreview/.env
+sitePreview/google_oauth/
 
 # Generic build artifacts
 dist/

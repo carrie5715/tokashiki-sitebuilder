@@ -9,6 +9,8 @@ function onOpen() {
     .createMenu('サイト生成')
     .addItem('動作テスト（ログ出力）', 'testConsole')
     .addItem('ファイル出力', 'buildAll')
+    .addItem('出力をZIP作成（ダウンロード用）', 'zipOutput')
+    .addItem('出力ZIPの共有リンク生成', 'zipOutputWithLink')
     .addToUi();
 }
 
@@ -74,5 +76,51 @@ function buildAll () {
   if (typeof CommonInfo !== 'undefined' && CommonInfo.writeColorsCss) {
     const res = CommonInfo.writeColorsCss(ids.output.cssId);
     Utils.logToSheet(`CSS変数出力: ${res.filename}（${res.count}件）`, 'buildAll');
+  }
+}
+
+/**
+ * output フォルダを zip 化してダウンロードしやすくする（My Drive 直下に作成）
+ */
+function zipOutput() {
+  try {
+    // フォルダの存在を確実に
+    const ids = Build.checkDirectories();
+    const outId = ids.output.rootId;
+
+    const stamp = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyyMMdd_HHmmss');
+    const zipName = `output_${stamp}`;
+    const zipFile = Utils.zipFolder(outId, zipName); // My Drive 直下に作成されます
+
+    SpreadsheetApp.getActive().toast(`ZIP作成: ${zipFile.getName()}（マイドライブ直下）`, 'zipOutput', 5);
+    Utils.logToSheet(`ZIP作成: ${zipFile.getName()} (id=${zipFile.getId()})`, 'zipOutput');
+  } catch (e) {
+    SpreadsheetApp.getActive().toast('ZIP作成に失敗しました。ログを確認してください。', 'zipOutput', 5);
+    Utils.logToSheet(`ZIP作成エラー: ${e.message}`, 'zipOutput');
+    throw e;
+  }
+}
+
+/**
+ * output を zip 化し、共有リンク（リンクを知っている全員閲覧可）を作って Logs に出す
+ */
+function zipOutputWithLink() {
+  try {
+    const ids = Build.checkDirectories();
+    const outId = ids.output.rootId;
+    const stamp = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyyMMdd_HHmmss');
+    const zipName = `output_${stamp}`;
+    const zipFile = Utils.zipFolder(outId, zipName);
+
+    // 共有設定（リンクを知っている全員が閲覧可）
+    zipFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    const url = zipFile.getUrl();
+
+    SpreadsheetApp.getActive().toast(`共有リンク作成: ${zipFile.getName()}`, 'zipOutputWithLink', 5);
+    Utils.logToSheet(`ZIP共有リンク: ${url}`, 'zipOutputWithLink');
+  } catch (e) {
+    SpreadsheetApp.getActive().toast('共有リンク作成に失敗しました。ログを確認してください。', 'zipOutputWithLink', 5);
+    Utils.logToSheet(`ZIP共有リンクエラー: ${e.message}`, 'zipOutputWithLink');
+    throw e;
   }
 }
