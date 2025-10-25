@@ -8,10 +8,14 @@
     "push:dry": "dotenv -e .env -- bash -lc 'rclone sync ./drive_resources carrie5715_googledrive: --drive-root-folder-id \"$DRIVE_FOLDER_ID\" --dry-run --progress --checksum --exclude \".DS_Store\" --exclude \"Thumbs.db\"'",
     "push":     "dotenv -e .env -- bash -lc 'rclone sync ./drive_resources carrie5715_googledrive: --drive-root-folder-id \"$DRIVE_FOLDER_ID\" --progress --checksum --exclude \".DS_Store\" --exclude \"Thumbs.db\"'",
     "download:dry": "dotenv -e .env -- bash -lc 'rclone sync carrie5715_googledrive:output ./output --drive-root-folder-id \"$PROJECT_FOLDER_ID\" --dry-run --progress --checksum --create-empty-src-dirs --exclude \".DS_Store\" --exclude \"Thumbs.db\"'",
-    "download": "dotenv -e .env -- bash -lc 'rm -rf ./output && mkdir -p ./output && rclone copy carrie5715_googledrive:output ./output --drive-root-folder-id \"$PROJECT_FOLDER_ID\" --progress --checksum --create-empty-src-dirs --exclude \".DS_Store\" --exclude \"Thumbs.db\"'"
+    "download": "dotenv -e .env -- bash -lc 'rm -rf ./output && mkdir -p ./output && rclone copy carrie5715_googledrive:output ./output --drive-root-folder-id \"$PROJECT_FOLDER_ID\" --progress --checksum --create-empty-src-dirs --exclude \".DS_Store\" --exclude \"Thumbs.db\"'",
+  "preview": "npx serve -l 5174 output"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "serve": "^14.2.1"
+  }
 }
