@@ -152,7 +152,8 @@ var MissionInfo = (function () {
     if (typeof Utils !== 'undefined' && Utils.logToSheet) {
       Utils.logToSheet(`mission: ${Object.keys(mission).length}件`, 'MissionInfo');
     }
-    return { mission: JSON.parse(JSON.stringify(mission)), rows, slides };
+    const ok = (slides && slides.length > 0) || (rows && rows.length > 0);
+    return { mission: JSON.parse(JSON.stringify(mission)), rows, slides, ok };
   }
 
   // テンプレ置換用（改行は <br> に変換）

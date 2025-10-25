@@ -59,13 +59,13 @@ function buildAll () {
 
   // 追加: mv の取得と Parameters への追記（カテゴリ=mv）
   if (typeof MvInfo !== 'undefined' && MvInfo.readAndRecordMv) {
-    const mvRes = MvInfo.readAndRecordMv();
+    var mvRes = MvInfo.readAndRecordMv();
     Utils.logToSheet(`mv 追記: ${mvRes.rows.length}件`, 'buildAll');
   }
 
   // 追加: mission の取得と Parameters への追記、JSON出力、色変数登録
   if (typeof MissionInfo !== 'undefined' && MissionInfo.readAndRecordMission) {
-    const missionRes = MissionInfo.readAndRecordMission();
+    var missionRes = MissionInfo.readAndRecordMission();
     Utils.logToSheet(`mission 追記: ${missionRes.rows.length}件 / slides=${missionRes.slides.length}`, 'buildAll');
   }
 
@@ -75,7 +75,13 @@ function buildAll () {
   const mainHtml = Build.loadTemplates('top', order);
   Utils.logToSheet(`テンプレート読み込み完了:[${typeof mainHtml}]`, 'buildAll');
 
-  Build.saveHtmlToFolder(ids.output.rootId, 'index.html', mainHtml);
+  // scripts 差し込み（body閉じタグ前の <?= scripts ?> を置換）
+  var mvOk = !!(mvRes && mvRes.ok);
+  var missionOk = !!(missionRes && missionRes.ok);
+  const scriptsTag = Build.buildScriptsTag({ mvOk, missionOk });
+  const mainWithScripts = Build.applyTagReplacements(mainHtml, { scripts: scriptsTag });
+
+  Build.saveHtmlToFolder(ids.output.rootId, 'index.html', mainWithScripts);
   Utils.logToSheet(`HTML出力完了: output/index.html`, 'buildAll');
 
   // 最後に colors.css を出力（他コンポーネントで追加された colors も含めて集計）
@@ -83,6 +89,8 @@ function buildAll () {
     const res = CommonInfo.writeColorsCss(ids.output.cssId);
     Utils.logToSheet(`CSS変数出力: ${res.filename}（${res.count}件）`, 'buildAll');
   }
+
+  Utils.logToSheet(`##### 書き出し処理全て完了 #####`, 'buildAll');
 }
 
 /**

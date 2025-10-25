@@ -55,6 +55,75 @@ const Build = {
     };
   },
 
+  /**
+   * TEMPLATE_ROOT/js/<name> を output/js/ にコピー（同名があれば上書き）
+   * @param {string} name 例) "store.js"
+   * @returns {string|null} ファイルID（作成/更新）または null（ソースなし）
+   */
+  copyJsFromTemplate(name) {
+    if (!name) return null;
+    const rootId = DRIVE_FILES.TEMPLATE_ROOT;
+    const root = DriveApp.getFolderById(rootId);
+
+    // js フォルダ
+    const jsFolderIt = root.getFoldersByName('js');
+    if (!jsFolderIt.hasNext()) {
+      if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('TEMPLATE_ROOT/js が見つかりません', 'copyJsFromTemplate');
+      return null;
+    }
+    const jsFolder = jsFolderIt.next();
+
+    const files = jsFolder.getFilesByName(name);
+    if (!files.hasNext()) {
+      if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`テンプレ側のJSが見つかりません: ${name}`, 'copyJsFromTemplate');
+      return null;
+    }
+    const srcFile = files.next();
+    const blob = srcFile.getBlob().setName(name);
+
+    // 出力先: output/js
+    const outJsId = PropertiesService.getScriptProperties().getProperty(PROP_KEYS.OUTPUT_JS_ID);
+    if (!outJsId) throw new Error('OUTPUT_JS_ID が未設定です。Build.checkDirectories() を先に呼んでください。');
+    const outJsFolder = DriveApp.getFolderById(outJsId);
+
+    // 既存があれば中身を更新、なければ新規作成
+    const outIt = outJsFolder.getFilesByName(name);
+    if (outIt.hasNext()) {
+      const dst = outIt.next();
+      dst.setContent(blob.getDataAsString());
+      return dst.getId();
+    } else {
+      const created = outJsFolder.createFile(blob);
+      return created.getId();
+    }
+  },
+
+  /**
+   * スクリプトタグを構築し、必須/条件付きのJSファイルを output/js に配置
+   * @param {{mvOk:boolean, missionOk:boolean}} flags
+   * @returns {string} HTML の <script> タグ列
+   */
+  buildScriptsTag(flags) {
+    const list = [
+      'store.js',
+      'main.js',
+      'header.js',
+    ];
+    if (flags && flags.mvOk) list.push('mv.js');
+    if (flags && flags.missionOk) list.push('mission.js');
+
+    const tags = [];
+    list.forEach((name) => {
+      try {
+        const id = this.copyJsFromTemplate(name);
+        if (id) tags.push(`<script src="/js/${name}"></script>`);
+      } catch (e) {
+        if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`JSコピー失敗: ${name} - ${e.message}`, 'buildScriptsTag');
+      }
+    });
+    return tags.join('\n');
+  },
+
 
   loadTemplates(targetLayout, order) {
     Utils.logToSheet(`テンプレート読み込み開始`, 'loadTemplates');

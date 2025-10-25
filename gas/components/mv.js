@@ -85,7 +85,8 @@ var MvInfo = (function () {
 		if (typeof Utils !== 'undefined' && Utils.logToSheet) {
 			Utils.logToSheet(`mv: ${Object.keys(mv).length}件`, 'MvInfo');
 		}
-		return { mv: JSON.parse(JSON.stringify(mv)), rows };
+		const ok = Object.keys(mv || {}).length > 0;
+		return { mv: JSON.parse(JSON.stringify(mv)), rows, ok };
 	}
 
 	// テンプレ置換用: mv_<key> 形式のキーに変換して返却
