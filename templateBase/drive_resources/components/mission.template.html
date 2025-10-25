@@ -1,9 +1,29 @@
-<section id="mission">
-  <div class="mission-base">
-    <div class="base-conetnts">
-      <h2><?= mission_heading_text ?></h2>
-      <p><?= mission_intro_text ?></p>
+  <!-- ミッション -->
+  <section id="mission" data-component-name="mission" x-data="missionComponent">
+    <div class="container">
+      <div class="upper-block">
+        <p>OUR MISSION</p>
+        <h2><?= heading_text ?></h2>
+        <p><?= intro_text</p>
+      </div>
+      <div class="lower-block">
+        <div class="mission-swiper swiper" x-ref="container">
+          <div class="swiper-wrapper">
+            <template x-for="(item, idx) in items" :key="item.image || idx">
+              <div class="swiper-slide">
+                <figure class="mission-slide">
+                  <img :src="item.image" :alt="item.alt">
+                  <template x-if="item.caption">
+                    <figcaption x-text="item.caption"></figcaption>
+                  </template>
+                </figure>
+              </div>
+            </template>
+          </div>
+          <div class="swiper-pagination" x-ref="pager"></div>
+          <div class="swiper-button-prev" x-ref="prev"></div>
+          <div class="swiper-button-next" x-ref="next"></div>
+        </div>
+      </div>
     </div>
-    <?= mission_slider ?>
-  </div>
-</section>
+  </section>

@@ -1,6 +1,8 @@
 // グローバル保持
 var siteInfos = siteInfos || {};
 var colors    = colors || {};
+// 追加のカスタムCSS変数（--xxx 形式でそのまま出力）
+var cssVars   = cssVars || {};
 
 var CommonInfo = (function () {
   const BASIC_SHEET_NAME      = '基本設定';
@@ -139,6 +141,16 @@ var CommonInfo = (function () {
       decls.push(`  ${varName}: ${val};`);
     }
 
+    // 追加のCSS変数（名称はそのまま使用）
+    const extraKeys = Object.keys(cssVars || {});
+    for (let i = 0; i < extraKeys.length; i++) {
+      const name = String(extraKeys[i] || '').trim();
+      let val = cssVars[name];
+      if (!name || !/^--[a-z0-9\-]+$/i.test(name)) continue; // 無効な名前はスキップ
+      if (val == null || String(val).trim() === '') continue;
+      decls.push(`  ${name}: ${String(val).trim()};`);
+    }
+
     const body = decls.length ? `:root {\n${decls.join('\n')}\n}` : ':root {}';
     const header = [
       '/*',
@@ -186,10 +198,19 @@ var CommonInfo = (function () {
     }
   }
 
+  // 追加のCSS変数を登録（--name, value）
+  function addCssVar(name, value) {
+    if (!name) return;
+    const n = String(name).trim();
+    if (!/^--[a-z0-9\-]+$/i.test(n)) return; // 不正な名前は無視
+    cssVars[n] = value;
+  }
+
   return {
     readAndRecordBasicSettings,
     toCssVariables,
     writeColorsCss,
+    addCssVar,
     resetParametersSheet,
     // 必要ならエクスポート
     readBasicSettings_: readBasicSettings_,

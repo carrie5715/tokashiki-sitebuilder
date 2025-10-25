@@ -63,6 +63,12 @@ function buildAll () {
     Utils.logToSheet(`mv 追記: ${mvRes.rows.length}件`, 'buildAll');
   }
 
+  // 追加: mission の取得と Parameters への追記、JSON出力、色変数登録
+  if (typeof MissionInfo !== 'undefined' && MissionInfo.readAndRecordMission) {
+    const missionRes = MissionInfo.readAndRecordMission();
+    Utils.logToSheet(`mission 追記: ${missionRes.rows.length}件 / slides=${missionRes.slides.length}`, 'buildAll');
+  }
+
   const order = Build.getContentOrder();
   Utils.logToSheet(`コンテンツ表示順取得完了（${order.length}）`, 'buildAll');
 

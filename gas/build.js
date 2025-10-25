@@ -159,10 +159,16 @@ const Build = {
   /** mission */
   getMissionContents() {
     const template = this.getTemplateFile('components', 'mission');
-    const replacements = {
-      mission_heading_text: Utils.getSheetValue('mission', 'heading_text'),
-      mission_intro_text: Utils.getSheetValue('mission', 'intro_text'),
-    };
+    // MissionInfo があればそれを優先（改行→<br> を含む）
+    let replacements = {};
+    if (typeof MissionInfo !== 'undefined' && typeof MissionInfo.getTemplateReplacements === 'function') {
+      replacements = MissionInfo.getTemplateReplacements();
+    } else {
+      replacements = {
+        mission_heading_text: Utils.getSheetValue('mission', 'heading_text'),
+        mission_intro_text: Utils.getSheetValue('mission', 'intro_text'),
+      };
+    }
 
     return this.applyTagReplacements(template, replacements);
   },
