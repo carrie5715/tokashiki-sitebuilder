@@ -180,28 +180,25 @@
   <section id="company" data-component-name="company" x-data="companyComponent">
     <div class="container">
       <h2><span class="subtitle">COMPANY</span>会社概要</h2>
-      <table>
-        <tr>
-          <th>会社名</th>
-          <td>株式会社サンプル</td>
-        </tr>
-        <tr>
-          <th>設立</th>
-          <td>2020年1月1日</td>
-        </tr>
-        <tr>
-          <th>所在地</th>
-          <td>東京都千代田区丸の内1-1-1</td>
-        </tr>
-        <tr>
-          <th>代表者</th>
-          <td>山田 太郎</td>
-        </tr>
-        <tr>
-          <th>事業内容</th>
-          <td>システム開発、コンサルティング、サポートサービス</td>
-        </tr>
-      </table>
+      <div class="company-wrap">
+        <template x-if="loading">
+          <p>読み込み中...</p>
+        </template>
+        <template x-if="error">
+          <p class="error" x-text="error"></p>
+        </template>
+
+        <template x-if="!loading && !error">
+          <table>
+            <template x-for="(row, idx) in items" :key="idx">
+              <tr>
+                <th x-text="row.label"></th>
+                <td x-text="row.value"></td>
+              </tr>
+            </template>
+          </table>
+        </template>
+      </div>
     </div>
   </section>
 
