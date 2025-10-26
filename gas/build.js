@@ -100,7 +100,7 @@ const Build = {
 
   /**
    * スクリプトタグを構築し、必須/条件付きのJSファイルを output/js に配置
-   * @param {{mvOk:boolean, missionOk:boolean}} flags
+  * @param {{mvOk:boolean, missionOk:boolean, serviceOk?:boolean, companyOk?:boolean}} flags
    * @returns {string} HTML の <script> タグ列
    */
   buildScriptsTag(flags) {
@@ -112,6 +112,7 @@ const Build = {
     if (flags && flags.mvOk) list.push('mv.js');
     if (flags && flags.missionOk) list.push('mission.js');
   if (flags && flags.serviceOk) list.push('service.js');
+  if (flags && flags.companyOk) list.push('company.js');
 
     const tags = [];
     list.forEach((name) => {
@@ -156,6 +157,9 @@ const Build = {
         }
         if (item.id === 'service') {
           sectionString += this.getServiceContents() + '\n';
+        }
+        if (item.id === 'company') {
+          sectionString += this.getCompanyContents() + '\n';
         }
         // 他のセクションもこの分岐に追加
       });
@@ -226,6 +230,24 @@ const Build = {
         section_title: Utils.getSheetValue('service', 'section_title') || '',
         section_title_en: Utils.getSheetValue('service', 'section_title_en') || '',
         section_intro: Utils.getSheetValue('service', 'section_intro') || '',
+      };
+    }
+    return this.applyTagReplacements(template, replacements);
+  },
+
+  /** company */
+  getCompanyContents() {
+    const template = this.getTemplateFile('components', 'company');
+    let replacements = {};
+    if (typeof CompanyInfo !== 'undefined' && typeof CompanyInfo.getTemplateReplacements === 'function') {
+      replacements = CompanyInfo.getTemplateReplacements();
+    } else {
+      const rawTag = Utils.getSheetValue('company', 'googlemap_tag') || '';
+      const wrapped = (rawTag && String(rawTag).trim()) ? `<div class="googlemap-wrap">${String(rawTag).trim()}</div>` : '';
+      replacements = {
+        section_title: Utils.getSheetValue('company', 'section_title') || '',
+        section_title_en: Utils.getSheetValue('company', 'section_title_en') || '',
+        googlemap_tag: wrapped,
       };
     }
     return this.applyTagReplacements(template, replacements);

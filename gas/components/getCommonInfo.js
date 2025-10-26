@@ -9,6 +9,23 @@ var CommonInfo = (function () {
   const PARAMETERS_SHEET_NAME = 'Parameters';
   const LOGS_SHEET_NAME       = 'Logs';
 
+  // 上部1行を安全に固定（行数が少ない場合の例外を回避）
+  function safeFreezeTopRow_(sheet) {
+    try {
+      if (!sheet) return;
+      // 1行しかないと setFrozenRows(1) で「全行を固定」例外になるため、行を追加してから固定
+      if (sheet.getMaxRows() <= 1) {
+        sheet.insertRowsAfter(1, 1);
+      }
+      sheet.setFrozenRows(1);
+    } catch (e) {
+      // 固定に失敗しても致命的ではないので継続
+      if (typeof Utils !== 'undefined' && Utils.logToSheet) {
+        Utils.logToSheet(`safeFreezeTopRow エラー: ${e.message}`, 'CommonInfo');
+      }
+    }
+  }
+
   // 保存対象キー
   const SITE_KEYS = [
     'company_name', 'address', 'template', 'top_url', 'logo_url'
@@ -74,7 +91,7 @@ var CommonInfo = (function () {
     // ヘッダ付与（空なら）
     if (sheet.getLastRow() === 0) {
       sheet.getRange(1, 1, 1, 4).setValues([['カテゴリ', 'キー', 'バリュー', 'ノート']]);
-      sheet.setFrozenRows(1);
+      safeFreezeTopRow_(sheet);
     }
     return sheet;
   }
@@ -88,9 +105,9 @@ var CommonInfo = (function () {
       sh.deleteRows(2, lastRow - 1);
     }
     // ヘッダーが欠けている場合に備えて再設定
-    const headerRange = sh.getRange(1, 1, 1, 4);
-    headerRange.setValues([[ 'カテゴリ', 'キー', 'バリュー', 'ノート' ]]);
-    sh.setFrozenRows(1);
+  const headerRange = sh.getRange(1, 1, 1, 4);
+  headerRange.setValues([[ 'カテゴリ', 'キー', 'バリュー', 'ノート' ]]);
+  safeFreezeTopRow_(sh);
 
     if (typeof Utils !== 'undefined' && Utils.logToSheet) {
       Utils.logToSheet('Parameters シートをリセットしました', 'CommonInfo');
@@ -216,6 +233,7 @@ var CommonInfo = (function () {
     readBasicSettings_: readBasicSettings_,
     ensureParametersSheet_: ensureParametersSheet_,
     appendToParameters_: appendToParameters_,
+    safeFreezeTopRow_: safeFreezeTopRow_,
     SITE_KEYS, COLOR_KEYS
   };
 })();

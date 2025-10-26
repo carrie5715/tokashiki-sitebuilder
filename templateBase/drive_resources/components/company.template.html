@@ -1,0 +1,27 @@
+<!-- 会社概要 -->
+<section id="company" data-component-name="company" x-data="companyComponent">
+  <div class="container">
+    <h2><span class="subtitle"><?= section_title_en ?></span><?= section_title ?></h2>
+    <div class="company-wrap">
+      <template x-if="loading">
+        <p>読み込み中...</p>
+      </template>
+      <template x-if="error">
+        <p class="error" x-text="error"></p>
+      </template>
+
+      <template x-if="!loading && !error">
+        <table>
+          <template x-for="(row, idx) in items" :key="idx">
+            <tr>
+              <th x-text="row.label"></th>
+              <td x-text="row.value"></td>
+            </tr>
+          </template>
+        </table>
+      </template>
+    </div>
+    <!-- googlemap_tagがあった場合には、<div class="googlemap-wrap">で囲んで、タグのデータを入れて閉じる -->
+    <?= googlemap_tag ?>
+  </div>
+</section>
