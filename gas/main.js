@@ -47,6 +47,14 @@ function buildAll () {
   SpreadsheetApp.getActive().toast('出力準備OK（フォルダ確認済み）', 'buildAll', 3);
   Utils.logToSheet('出力準備OK（フォルダ確認・作成完了）', 'buildAll');
 
+  // テンプレ側のCSSを output/css にコピー（colors.css は別途生成）
+  try {
+    const copiedCss = Build.copyAllCssFromTemplate();
+    Utils.logToSheet(`テンプレCSSコピー: ${copiedCss}件`, 'buildAll');
+  } catch (e) {
+    Utils.logToSheet(`テンプレCSSコピー失敗: ${e.message}`, 'buildAll');
+  }
+
   // 追加: 基本設定の取得と Parameters への追記
   const common = CommonInfo.readAndRecordBasicSettings();
   Utils.logToSheet(`Parameters 追記: ${common.rows.length}件`, 'buildAll');

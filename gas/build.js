@@ -16,8 +16,7 @@ const Build = {
 
     // output/
     const output      = Utils.getOrCreateSubFolder_(parent, DIR_OUTPUT);
-    const outCss      = Utils.getOrCreateSubFolder_(output, OUT_CSS);        // output/css/
-    const outCssPages = Utils.getOrCreateSubFolder_(outCss, OUT_CSS_PAGES);  // output/css/pages/
+  const outCss      = Utils.getOrCreateSubFolder_(output, OUT_CSS);        // output/css/
     const outJs       = Utils.getOrCreateSubFolder_(output, OUT_JS);         // output/js/
     const outImg      = Utils.getOrCreateSubFolder_(output, OUT_IMG);        // output/img/
     // const outPages = Utils.getOrCreateSubFolder_(output, OUT_PAGES_HTML);  // ← 廃止
@@ -29,7 +28,7 @@ const Build = {
       [PROP_KEYS.ASSETS_IMG_ID]:       assetsImg.getId(),
       [PROP_KEYS.OUTPUT_ID]:           output.getId(),
       [PROP_KEYS.OUTPUT_CSS_ID]:       outCss.getId(),
-      [PROP_KEYS.OUTPUT_CSS_PAGES_ID]: outCssPages.getId(),
+      
       [PROP_KEYS.OUTPUT_JS_ID]:        outJs.getId(),
       [PROP_KEYS.OUTPUT_IMG_ID]:       outImg.getId(),
       // [PROP_KEYS.OUTPUT_CSS_COMPS_ID]:  // ← 廃止
@@ -46,7 +45,7 @@ const Build = {
       output: {
         rootId: output.getId(),
         cssId: outCss.getId(),
-        cssPagesId: outCssPages.getId(),
+        
         jsId: outJs.getId(),
         imgId: outImg.getId(),
         // cssComponentsId:  // ← 廃止
@@ -96,6 +95,56 @@ const Build = {
       const created = outJsFolder.createFile(blob);
       return created.getId();
     }
+  },
+
+  /**
+   * TEMPLATE_ROOT/css 内の全ファイルを output/css/ にコピー（同名があれば上書き）
+   * 注意: colors.css は GAS 側で生成するためスキップ
+   */
+  copyAllCssFromTemplate() {
+    const rootId = DRIVE_FILES.TEMPLATE_ROOT;
+    const root = DriveApp.getFolderById(rootId);
+
+    // css フォルダ
+    const cssFolderIt = root.getFoldersByName('css');
+    if (!cssFolderIt.hasNext()) {
+      if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('TEMPLATE_ROOT/css が見つかりません', 'copyAllCssFromTemplate');
+      return 0;
+    }
+    const cssFolder = cssFolderIt.next();
+
+    // 出力先: output/css
+    const outCssId = PropertiesService.getScriptProperties().getProperty(PROP_KEYS.OUTPUT_CSS_ID);
+    if (!outCssId) throw new Error('OUTPUT_CSS_ID が未設定です。Build.checkDirectories() を先に呼んでください。');
+    const outCssFolder = DriveApp.getFolderById(outCssId);
+
+    // 既存ファイルの名前->File マップ
+    const existing = {};
+    const outFiles = outCssFolder.getFiles();
+    while (outFiles.hasNext()) {
+      const f = outFiles.next();
+      existing[f.getName()] = f;
+    }
+
+    // コピー実行
+    let copied = 0;
+    const it = cssFolder.getFiles();
+    while (it.hasNext()) {
+      const src = it.next();
+      const name = src.getName();
+      // colors.css は GAS 生成物。テンプレに同名があってもスキップ
+      if (name === 'colors.css') continue;
+      const blob = src.getBlob().setName(name);
+      if (existing[name]) {
+        existing[name].setContent(blob.getDataAsString());
+      } else {
+        outCssFolder.createFile(blob);
+      }
+      copied++;
+    }
+
+    if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`CSSコピー: ${copied}件`, 'copyAllCssFromTemplate');
+    return copied;
   },
 
   /**
