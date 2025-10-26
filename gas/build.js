@@ -100,7 +100,7 @@ const Build = {
 
   /**
    * スクリプトタグを構築し、必須/条件付きのJSファイルを output/js に配置
-  * @param {{mvOk:boolean, missionOk:boolean, serviceOk?:boolean, companyOk?:boolean}} flags
+  * @param {{mvOk:boolean, missionOk:boolean, serviceOk?:boolean, companyOk?:boolean, worksOk?:boolean}} flags
    * @returns {string} HTML の <script> タグ列
    */
   buildScriptsTag(flags) {
@@ -113,6 +113,7 @@ const Build = {
     if (flags && flags.missionOk) list.push('mission.js');
   if (flags && flags.serviceOk) list.push('service.js');
   if (flags && flags.companyOk) list.push('company.js');
+  if (flags && flags.worksOk) list.push('works.js');
 
     const tags = [];
     list.forEach((name) => {
@@ -160,6 +161,9 @@ const Build = {
         }
         if (item.id === 'company') {
           sectionString += this.getCompanyContents() + '\n';
+        }
+        if (item.id === 'works') {
+          sectionString += this.getWorksContents() + '\n';
         }
         // 他のセクションもこの分岐に追加
       });
@@ -253,6 +257,21 @@ const Build = {
     return this.applyTagReplacements(template, replacements);
   },
 
+  /** works */
+  getWorksContents() {
+    const template = this.getTemplateFile('components', 'works');
+    let replacements = {};
+    if (typeof WorksInfo !== 'undefined' && typeof WorksInfo.getTemplateReplacements === 'function') {
+      replacements = WorksInfo.getTemplateReplacements();
+    } else {
+      replacements = {
+        section_title: Utils.getSheetValue('works', 'section_title') || '',
+        section_intro: Utils.getSheetValue('works', 'section_intro') || '',
+      };
+    }
+    return this.applyTagReplacements(template, replacements);
+  },
+
   /** header */
   getHeaderContents() {
     // 必要に応じて置換を追加
@@ -333,12 +352,21 @@ const Build = {
     // A〜D列を取得（2行目から最終行まで）
     const values = sheet.getRange(2, 1, lastRow - 1, 4).getValues();
 
-    // 表示フラグ(D列)がtrueの行だけ取り出し、order(A列)とid(B列)を抽出
+    // 表示フラグ(D列)がオンの行だけ取り出し（true/1/"TRUE"/"yes"/"on" 等を許容）
     const items = values
-      .filter(row => row[3] === true)
+      .filter(row => {
+        const v = row[3];
+        if (typeof v === 'boolean') return v;
+        if (typeof v === 'number') return v !== 0;
+        if (typeof v === 'string') {
+          const s = v.trim().toLowerCase();
+          return s === 'true' || s === '1' || s === 'yes' || s === 'y' || s === 'on';
+        }
+        return false;
+      })
       .map(row => ({
         order: Number(row[0]),
-        id: String(row[1])
+        id: String(row[1]).trim()
       }));
 
     // 表示順でソート

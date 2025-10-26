@@ -100,14 +100,23 @@ var CommonInfo = (function () {
   function resetParametersSheet() {
     const sh = ensureParametersSheet_();
     const lastRow = sh.getLastRow();
-    // ヘッダー以降の行を削除
-    if (lastRow > 1) {
-      sh.deleteRows(2, lastRow - 1);
+    const frozenRows = sh.getFrozenRows ? sh.getFrozenRows() : 1; // 通常1
+    const nonFrozenCount = Math.max(0, lastRow - frozenRows);
+
+    // Sheetsの制約: 「非固定の全行を削除」はエラーになるため、1行は残してクリアする
+    if (nonFrozenCount > 1) {
+      // 先に (frozen+2 〜 最終) を削除し、(frozen+1) は空行として残す
+      sh.deleteRows(frozenRows + 2, nonFrozenCount - 1);
+      sh.getRange(frozenRows + 1, 1, 1, 4).clearContent();
+    } else if (nonFrozenCount === 1) {
+      // 残っている1行は削除せず中身だけクリア
+      sh.getRange(frozenRows + 1, 1, 1, 4).clearContent();
     }
-    // ヘッダーが欠けている場合に備えて再設定
-  const headerRange = sh.getRange(1, 1, 1, 4);
-  headerRange.setValues([[ 'カテゴリ', 'キー', 'バリュー', 'ノート' ]]);
-  safeFreezeTopRow_(sh);
+
+    // ヘッダーを再設定（万一欠けていても復旧）
+    const headerRange = sh.getRange(1, 1, 1, 4);
+    headerRange.setValues([[ 'カテゴリ', 'キー', 'バリュー', 'ノート' ]]);
+    safeFreezeTopRow_(sh);
 
     if (typeof Utils !== 'undefined' && Utils.logToSheet) {
       Utils.logToSheet('Parameters シートをリセットしました', 'CommonInfo');
