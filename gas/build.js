@@ -111,6 +111,7 @@ const Build = {
     ];
     if (flags && flags.mvOk) list.push('mv.js');
     if (flags && flags.missionOk) list.push('mission.js');
+  if (flags && flags.serviceOk) list.push('service.js');
 
     const tags = [];
     list.forEach((name) => {
@@ -152,6 +153,9 @@ const Build = {
         }
         if (item.id === 'mission') {
           sectionString += this.getMissionContents() + '\n';
+        }
+        if (item.id === 'service') {
+          sectionString += this.getServiceContents() + '\n';
         }
         // 他のセクションもこの分岐に追加
       });
@@ -211,6 +215,22 @@ const Build = {
     return this.applyTagReplacements(template, replacements);
   },
 
+  /** services */
+  getServiceContents() {
+    const template = this.getTemplateFile('components', 'service');
+    let replacements = {};
+    if (typeof ServiceInfo !== 'undefined' && typeof ServiceInfo.getTemplateReplacements === 'function') {
+      replacements = ServiceInfo.getTemplateReplacements();
+    } else {
+      replacements = {
+        section_title: Utils.getSheetValue('service', 'section_title') || '',
+        section_title_en: Utils.getSheetValue('service', 'section_title_en') || '',
+        section_intro: Utils.getSheetValue('service', 'section_intro') || '',
+      };
+    }
+    return this.applyTagReplacements(template, replacements);
+  },
+
   /** header */
   getHeaderContents() {
     // 必要に応じて置換を追加
@@ -232,11 +252,21 @@ const Build = {
     let replacements = {};
     if (typeof MissionInfo !== 'undefined' && typeof MissionInfo.getTemplateReplacements === 'function') {
       replacements = MissionInfo.getTemplateReplacements();
+      // テンプレ互換: heading_text / intro_text キーがあれば優先で埋める
+      if (replacements['mission_heading_text'] && !replacements['heading_text']) {
+        replacements['heading_text'] = replacements['mission_heading_text'];
+      }
+      if (replacements['mission_intro_text'] && !replacements['intro_text']) {
+        replacements['intro_text'] = replacements['mission_intro_text'];
+      }
     } else {
       replacements = {
         mission_heading_text: Utils.getSheetValue('mission', 'heading_text'),
         mission_intro_text: Utils.getSheetValue('mission', 'intro_text'),
       };
+      // 互換キー
+      replacements['heading_text'] = replacements['mission_heading_text'];
+      replacements['intro_text'] = replacements['mission_intro_text'];
     }
 
     return this.applyTagReplacements(template, replacements);

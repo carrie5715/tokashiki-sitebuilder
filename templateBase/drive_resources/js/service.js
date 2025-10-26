@@ -1,5 +1,5 @@
 addEventListener('alpine:init', () => {
-  Alpine.data('servicesComponent', () => ({
+  Alpine.data('serviceComponent', () => ({
     items: [],
     loading: true,
     error: null,
@@ -15,7 +15,7 @@ addEventListener('alpine:init', () => {
           typeClass: layoutClassMap[item.layout] ?? 'type-a'
         }));
       } catch (e) {
-        console.error('services load failed:', e);
+        console.error('service load failed:', e);
         this.error = 'サービス情報の読み込みに失敗しました。';
       } finally {
         this.loading = false;

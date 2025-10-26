@@ -1,10 +1,10 @@
 [
   {
-    "name": "経営コンサルティング",
-    "name_en": "Consulting",
+    "title": "経営コンサルティング",
+    "subtitle": "Consulting",
     "description": "<p>経営課題の可視化から戦略立案、実行支援までを<strong>伴走型</strong>で支援します。</p><ul><li>現状診断とKPI設計</li><li>中期経営計画の策定</li><li>実行フェーズのPMO支援</li></ul>",
     "more_link": { "url": "/company.html#consulting", "is_external": false },
-    "image": { "url": "/img/service01.jpg" },
+    "image": { "url": "/img/service01.jpg", "alt": "経営コンサルティング" },
     "layout": 0,
     "tags": [
       { "id": "strategy", "name": "戦略策定" },
@@ -12,11 +12,11 @@
     ]
   },
   {
-    "name": "Web制作",
-    "name_en": "UI/UX · Web Design",
+    "title": "Web制作",
+    "subtitle": "UI/UX · Web Design",
     "description": "<p>ユーザー中心設計で、<em>成果に直結する</em>サイトを構築します。</p><ul><li>UI/UX設計</li><li>デザイン/実装</li><li>パフォーマンス最適化</li></ul>",
     "more_link": { "url": "/services/web.html", "is_external": false },
-    "image": { "url": "/img/service02.jpg" },
+    "image": { "url": "/img/service02.jpg", "alt": "Web制作" },
     "layout": 0,
     "tags": [
       { "id": "uiux", "name": "UI/UX" },
@@ -24,8 +24,8 @@
     ]
   },
   {
-    "name": "人材育成・研修",
-    "name_en": "Human Resource Development",
+    "title": "人材育成・研修",
+    "subtitle": "Human Resource Development",
     "description": "<p>実務に直結する研修を、対象者と目的に合わせて設計します。</p><ul><li>新人向け基礎研修</li><li>リーダー育成</li><li>オンボーディング支援</li></ul>",
     "more_link": { "url": "https://example.com/training", "is_external": true },
     "image": { "url": "/img/service03.jpg" },

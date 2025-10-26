@@ -94,26 +94,26 @@ header .header-wrap .header-nav {
   margin-top: 24px;
 }
 
-#services {
+#service {
   width: 100%;
   background: #fff7fb;
 }
-#services .container {
+#service .container {
   max-width: 1000px;
   margin-inline: auto;
   padding: 56px 24px;
 }
-#services .services-list {
+#service .services-list {
   display: grid;
   grid-template-columns: 1fr;
   gap: 32px;
 }
 @media (min-width: 768px) {
-  #services .services-list {
+  #service .services-list {
     grid-template-columns: 1fr 1fr;
   }
 }
-#services .service-card {
+#service .service-card {
   display: grid;
   gap: 16px;
 }

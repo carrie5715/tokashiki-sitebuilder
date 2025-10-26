@@ -69,6 +69,12 @@ function buildAll () {
     Utils.logToSheet(`mission 追記: ${missionRes.rows.length}件 / slides=${missionRes.slides.length}`, 'buildAll');
   }
 
+  // 追加: service の取得と Parameters への追記、JSON出力
+  if (typeof ServiceInfo !== 'undefined' && ServiceInfo.readAndRecordService) {
+    var serviceRes = ServiceInfo.readAndRecordService();
+    Utils.logToSheet(`service 追記: ${serviceRes.rows.length}件 / items=${serviceRes.items.length}`, 'buildAll');
+  }
+
   const order = Build.getContentOrder();
   Utils.logToSheet(`コンテンツ表示順取得完了（${order.length}）`, 'buildAll');
 
@@ -78,7 +84,8 @@ function buildAll () {
   // scripts 差し込み（body閉じタグ前の <?= scripts ?> を置換）
   var mvOk = !!(mvRes && mvRes.ok);
   var missionOk = !!(missionRes && missionRes.ok);
-  const scriptsTag = Build.buildScriptsTag({ mvOk, missionOk });
+  var serviceOk = !!(serviceRes && serviceRes.ok);
+  const scriptsTag = Build.buildScriptsTag({ mvOk, missionOk, serviceOk });
   const mainWithScripts = Build.applyTagReplacements(mainHtml, { scripts: scriptsTag });
 
   Build.saveHtmlToFolder(ids.output.rootId, 'index.html', mainWithScripts);

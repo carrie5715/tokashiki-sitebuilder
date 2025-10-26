@@ -25,7 +25,7 @@
       </div>
       <ul class="header-nav" data-target-name="header_nav">
         <li><a @click.prevent="onItemClick" href="#mission">ミッション</a></li>
-        <li><a @click.prevent="onItemClick" href="#services">事業内容</a></li>
+        <li><a @click.prevent="onItemClick" href="#service">事業内容</a></li>
         <li><a @click.prevent="onItemClick" href="#company">会社概要</a></li>
         <li><a @click.prevent="onItemClick" href="#faq">よくある質問</a></li>
         <li><a @click.prevent="onItemClick" href="#news">お知らせ</a></li>
@@ -82,7 +82,7 @@
 
 
   <!-- 事業内容 -->
-  <section id="services" data-component-name="services" x-data="servicesComponent">
+  <section id="service" data-component-name="service" x-data="serviceComponent">
     <div class="container">
       <h2><span class="subtitle">SERVICES</span>私たちの提供するサービス</h2>
       <p>テキストテキストテキストテキストテキストテキストテキスト、<br>テキストテキストテキストテキストテキストテキストテキストテキスト。<br>テキストテキストテキストテキストテキスト、<br>テキストテキストテキストテキストテキストテキスト。</p>
@@ -98,8 +98,8 @@
             </figure>
             <div class="service-body">
               <h3 class="service-title">
-                <span class="en" x-text="item.name_en"></span>
-                <span class="ja" x-text="item.name"></span>
+                <span class="en" x-text="item.subtitle"></span>
+                <span class="ja" x-text="item.title"></span>
               </h3>
 
               <div class="service-desc" x-html="item.description"></div>
@@ -114,8 +114,8 @@
                 <a class="btn-more"
                   :href="item.more_link.url"
                   :target="item.more_link.is_external ? '_blank' : null"
-                  :rel="item.more_link.is_external ? 'noopener noreferrer' : null">
-                  MORE
+                  :rel="item.more_link.is_external ? 'noopener noreferrer' : null"
+                  x-text="item.more_link.label">
                 </a>
               </p>
             </div>
@@ -248,7 +248,7 @@
   <script src="/js/header.js"></script>
   <script src="/js/mv.js"></script>
   <script src="/js/mission.js"></script>
-  <script src="/js/services.js"></script>
+  <script src="/js/service.js"></script>
   <script src="/js/works.js"></script>
   <script src="/js/company.js"></script>
   <script src="/js/faq.js"></script>
