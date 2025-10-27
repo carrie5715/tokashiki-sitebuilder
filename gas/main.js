@@ -11,6 +11,9 @@ function onOpen() {
     .addItem('ファイル出力', 'buildAll')
     .addItem('出力をZIP作成（ダウンロード用）', 'zipOutput')
     .addItem('出力ZIPの共有リンク生成', 'zipOutputWithLink')
+    .addSeparator()
+    .addItem('テンプレートID設定', 'setTemplateRootIdPrompt')
+    .addItem('テンプレートIDクリア', 'clearTemplateRootId')
     .addToUi();
 }
 
@@ -174,4 +177,34 @@ function zipOutputWithLink() {
     Utils.logToSheet(`ZIP共有リンクエラー: ${e.message}`, 'zipOutputWithLink');
     throw e;
   }
+}
+
+/**
+ * UIからテンプレートルートIDを設定（ScriptProperties.TEMPLATE_ROOT_ID）
+ */
+function setTemplateRootIdPrompt() {
+  const ui = SpreadsheetApp.getUi();
+  const res = ui.prompt('テンプレートルートIDを入力', 'Google DriveフォルダID（layout/components/js/cssが入ったルート）', ui.ButtonSet.OK_CANCEL);
+  if (res.getSelectedButton() !== ui.Button.OK) {
+    SpreadsheetApp.getActive().toast('キャンセルしました', 'setTemplateRootIdPrompt', 3);
+    return;
+  }
+  const value = (res.getResponseText() || '').trim();
+  if (!value) {
+    SpreadsheetApp.getActive().toast('IDが空です', 'setTemplateRootIdPrompt', 4);
+    return;
+  }
+  PropertiesService.getScriptProperties().setProperty('TEMPLATE_ROOT_ID', value);
+  Utils.logToSheet(`TEMPLATE_ROOT_ID を設定: ${value}`, 'setTemplateRootIdPrompt');
+  SpreadsheetApp.getActive().toast('テンプレートIDを設定しました', 'setTemplateRootIdPrompt', 3);
+}
+
+/**
+ * 設定済みのテンプレートルートIDをクリア（ScriptPropertiesから削除）
+ * 以後は 基本設定→定数 へフォールバック
+ */
+function clearTemplateRootId() {
+  PropertiesService.getScriptProperties().deleteProperty('TEMPLATE_ROOT_ID');
+  Utils.logToSheet('TEMPLATE_ROOT_ID をクリア', 'clearTemplateRootId');
+  SpreadsheetApp.getActive().toast('テンプレートIDをクリアしました', 'clearTemplateRootId', 3);
 }

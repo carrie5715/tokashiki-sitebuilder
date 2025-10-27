@@ -61,7 +61,7 @@ const Build = {
    */
   copyJsFromTemplate(name) {
     if (!name) return null;
-    const rootId = DRIVE_FILES.TEMPLATE_ROOT;
+    const rootId = Utils.getTemplateRootId_();
     const root = DriveApp.getFolderById(rootId);
 
     // js フォルダ
@@ -102,7 +102,7 @@ const Build = {
    * 注意: colors.css は GAS 側で生成するためスキップ
    */
   copyAllCssFromTemplate() {
-    const rootId = DRIVE_FILES.TEMPLATE_ROOT;
+    const rootId = Utils.getTemplateRootId_();
     const root = DriveApp.getFolderById(rootId);
 
     // css フォルダ
@@ -401,8 +401,17 @@ const Build = {
     } catch (e) {
       if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`ヘッダーナビ生成失敗: ${e.message}`, 'getHeaderContents');
     }
+
+    // 基本設定からロゴURLを取得（siteInfos を優先、なければシート直読み）。空ならデフォルトを使用
+    const s = (typeof siteInfos !== 'undefined') ? siteInfos : {};
+    const get = (k) => {
+      if (s && s[k] != null && String(s[k]).trim() !== '') return String(s[k]);
+      try { return String(Utils.getSheetValue('基本設定', k) || ''); } catch (_) { return ''; }
+    };
+    const logoUrl = get('logo_url') || '/images/logo.png';
+
     // プレースホルダ置換
-    return this.applyTagReplacements(template, { header_nav: navHtml });
+    return this.applyTagReplacements(template, { header_nav: navHtml, logo_url: logoUrl });
   },
 
   /** footer */
@@ -574,7 +583,7 @@ const Build = {
    * @return {string} HTML文字列 (UTF-8)
    */
   getTemplateFile(baseDir, targetKey) {
-    const rootId = DRIVE_FILES.TEMPLATE_ROOT;
+    const rootId = Utils.getTemplateRootId_();
     if (!rootId) throw new Error('DRIVE_FILES.TEMPLATE_ROOT が未設定です');
 
     if (baseDir !== 'layout' && baseDir !== 'components') {

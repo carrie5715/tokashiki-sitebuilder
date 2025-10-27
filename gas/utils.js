@@ -102,5 +102,50 @@ const Utils = {
     return saved;
   }
 
+  ,
+  /**
+   * テンプレートルートのフォルダIDを解決して返す。
+   * 優先度: ScriptProperties.TEMPLATE_ROOT_ID → siteInfos.template_root_id → 基本設定!template_root_id → DRIVE_FILES.TEMPLATE_ROOT
+   * 見つかった値は ScriptProperties に保存（キャッシュ）します。
+   * @return {string} フォルダID
+   */
+  getTemplateRootId_() {
+    try {
+      const props = PropertiesService.getScriptProperties();
+      const fromProp = props.getProperty('TEMPLATE_ROOT_ID');
+      if (fromProp && String(fromProp).trim() !== '') return String(fromProp).trim();
+
+      // グローバル siteInfos にあれば利用
+      if (typeof siteInfos !== 'undefined' && siteInfos && siteInfos.template_root_id) {
+        const v = String(siteInfos.template_root_id).trim();
+        if (v) {
+          props.setProperty('TEMPLATE_ROOT_ID', v);
+          return v;
+        }
+      }
+
+      // 基本設定シートの template_root_id
+      try {
+        const fromSheet = this.getSheetValue('基本設定', 'template_root_id');
+        if (fromSheet && String(fromSheet).trim() !== '') {
+          const v = String(fromSheet).trim();
+          props.setProperty('TEMPLATE_ROOT_ID', v);
+          return v;
+        }
+      } catch (e) {
+        // 無視（シートが無い/キーが無い等）
+      }
+
+      // 最後に定数のフォールバック
+      if (typeof DRIVE_FILES !== 'undefined' && DRIVE_FILES.TEMPLATE_ROOT) {
+        return String(DRIVE_FILES.TEMPLATE_ROOT).trim();
+      }
+    } catch (e) {
+      // noop
+    }
+
+    throw new Error('テンプレートルートIDが特定できません（ScriptProperties / 基本設定 / 定数のいずれにも存在しません）。');
+  }
+
 
 }
