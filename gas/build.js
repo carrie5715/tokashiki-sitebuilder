@@ -148,6 +148,74 @@ const Build = {
   },
 
   /**
+   * assets/img 配下の全ファイル・フォルダを output/img に再帰コピー（同名は上書き）
+   * @returns {number} コピー（新規作成+上書き）したファイル数
+   */
+  copyAssetsToOutputImg() {
+    const assetsImgId = PropertiesService.getScriptProperties().getProperty(PROP_KEYS.ASSETS_IMG_ID);
+    const outImgId    = PropertiesService.getScriptProperties().getProperty(PROP_KEYS.OUTPUT_IMG_ID);
+    if (!assetsImgId) throw new Error('ASSETS_IMG_ID が未設定です。Build.checkDirectories() を先に呼んでください。');
+    if (!outImgId)    throw new Error('OUTPUT_IMG_ID が未設定です。Build.checkDirectories() を先に呼んでください。');
+
+    const src = DriveApp.getFolderById(assetsImgId);
+    const dst = DriveApp.getFolderById(outImgId);
+
+    const count = this.copyFolderContents_(src, dst);
+    if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`assets/img → output/img: ${count}ファイル`, 'copyAssetsToOutputImg');
+    return count;
+  },
+
+  /**
+   * フォルダ配下を再帰コピー（同名ファイルは上書き、サブフォルダは作成）
+   * @param {GoogleAppsScript.Drive.Folder} src
+   * @param {GoogleAppsScript.Drive.Folder} dst
+   * @returns {number} 処理（新規+上書き）したファイル数
+   */
+  copyFolderContents_(src, dst) {
+    let copied = 0;
+
+    // 既存ファイルのマップ（名前→File）
+    const existingFiles = {};
+    const dstFiles = dst.getFiles();
+    while (dstFiles.hasNext()) {
+      const f = dstFiles.next();
+      existingFiles[f.getName()] = f;
+    }
+
+    // ファイルのコピー/上書き（バイナリ安全: 既存は捨てて Blob で作り直す）
+    const files = src.getFiles();
+    while (files.hasNext()) {
+      const s = files.next();
+      const name = s.getName();
+      const blob = s.getBlob().setName(name);
+      if (existingFiles[name]) {
+        try {
+          // 既存はバイナリ劣化を避けるため丸ごと入れ替え
+          existingFiles[name].setTrashed(true);
+        } catch (e) {
+          // 権限や複数親の都合で捨てられない場合は重複を許容
+          if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`既存削除失敗: ${name} - ${e.message}`, 'copyFolderContents_');
+        }
+      }
+      dst.createFile(blob);
+      copied++;
+    }
+
+    // サブフォルダの再帰コピー
+    const folders = src.getFolders();
+    while (folders.hasNext()) {
+      const sf = folders.next();
+      const name = sf.getName();
+      // 宛先に同名フォルダがあるか
+      const it = dst.getFoldersByName(name);
+      const df = it.hasNext() ? it.next() : dst.createFolder(name);
+      copied += this.copyFolderContents_(sf, df);
+    }
+
+    return copied;
+  },
+
+  /**
    * スクリプトタグを構築し、必須/条件付きのJSファイルを output/js に配置
   * @param {{mvOk:boolean, missionOk:boolean, serviceOk?:boolean, companyOk?:boolean, worksOk?:boolean}} flags
    * @returns {string} HTML の <script> タグ列

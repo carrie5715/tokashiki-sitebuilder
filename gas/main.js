@@ -55,6 +55,14 @@ function buildAll () {
     Utils.logToSheet(`テンプレCSSコピー失敗: ${e.message}`, 'buildAll');
   }
 
+  // assets/img → output/img へコピー（画像アセットを出力側に展開）
+  try {
+    const copiedAssets = Build.copyAssetsToOutputImg();
+    Utils.logToSheet(`assets→output/img コピー: ${copiedAssets}件`, 'buildAll');
+  } catch (e) {
+    Utils.logToSheet(`assets→output/img コピー失敗: ${e.message}`, 'buildAll');
+  }
+
   // 追加: 基本設定の取得と Parameters への追記
   const common = CommonInfo.readAndRecordBasicSettings();
   Utils.logToSheet(`Parameters 追記: ${common.rows.length}件`, 'buildAll');
