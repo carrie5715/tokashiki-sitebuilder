@@ -28,7 +28,9 @@ var CommonInfo = (function () {
 
   // 保存対象キー
   const SITE_KEYS = [
-    'company_name', 'address', 'template', 'top_url', 'logo_url'
+    'company_name', 'address', 'template', 'top_url', 'logo_url',
+    // 追加: フッター用
+    'copyright', 'copyrights'
   ];
   const COLOR_KEYS = [
     'theme_color', 'base_color1', 'base_color2', 'base_color3',

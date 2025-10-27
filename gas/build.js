@@ -330,9 +330,30 @@ const Build = {
 
   /** footer */
   getFooterContents() {
-    // 必要に応じて置換を追加
     const template = this.getTemplateFile('components', 'footer');
-    return template;
+    // CommonInfo の siteInfos を優先。なければ Utils.getSheetValue でフォールバック
+    const s = (typeof siteInfos !== 'undefined') ? siteInfos : {};
+    const get = (k) => {
+      if (s && s[k] != null && String(s[k]).trim() !== '') return String(s[k]);
+      try {
+        // 基本設定シートから直接取得（存在しない場合は空）
+        return String(Utils.getSheetValue('基本設定', k) || '');
+      } catch (e) {
+        return '';
+      }
+    };
+    const replacements = {
+      logo_url: get('logo_url'),
+      company_name: get('company_name'),
+      address: get('address'),
+      // シート側は copyrights の可能性があるためフォールバック
+      copyright: (function(){
+        const v = get('copyright');
+        if (v) return v;
+        return get('copyrights');
+      })(),
+    };
+    return this.applyTagReplacements(template, replacements);
   },
 
   /** mission */

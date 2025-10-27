@@ -84,6 +84,7 @@ header .header-wrap .header-nav {
 #mission {
   width: 100%;
   background: #f9fff7;
+  color: palevioletred;
 }
 #mission .container {
   max-width: 1000px;
