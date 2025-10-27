@@ -1,3 +1,28 @@
-<header>
-  <p>ヘッダー</p>
+<!-- ヘッダー -->
+<header x-data="headerComponent" data-component-name="header">
+  <div class="header-wrap">
+    <div class="logo" data-target-name="header_logo">
+      <img src="/images/logo.png" alt="Logo">
+    </div>
+    <ul class="header-nav" data-target-name="header_nav">
+      <!-- <li><a @click.prevent="onItemClick" href="#mission">ミッション</a></li> -->
+      <?= header_nav ?>
+    </ul>
+    <div>
+      <button data-target-name="header_contact_btn">お問い合わせ</button>
+    </div>
+  </div>
+  <div class="header-drawer-menu">
+    <div class="button-wrap">
+      <span class="hamburger"><span></span></span>
+    </div>
+    <div class="modal-bg">
+      <div class="drawer-wrap">
+        <ul class="drawer-nav" data-target-name="header_nav">
+          <!-- <li><a @click.prevent="onItemClick" href="#mission">ミッション</a></li> -->
+          <?= header_nav ?>
+        </ul>
+      </div>
+    </div>
+  </div>
 </header>

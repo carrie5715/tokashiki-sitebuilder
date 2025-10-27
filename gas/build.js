@@ -323,9 +323,18 @@ const Build = {
 
   /** header */
   getHeaderContents() {
-    // 必要に応じて置換を追加
+    // テンプレート取得
     const template = this.getTemplateFile('components', 'header');
-    return template;
+    // 表示順データからナビHTMLを構築
+    let navHtml = '';
+    try {
+      const order = this.getContentOrder();
+      navHtml = this.buildHeaderNav(order);
+    } catch (e) {
+      if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`ヘッダーナビ生成失敗: ${e.message}`, 'getHeaderContents');
+    }
+    // プレースホルダ置換
+    return this.applyTagReplacements(template, { header_nav: navHtml });
   },
 
   /** footer */
@@ -436,13 +445,54 @@ const Build = {
       })
       .map(row => ({
         order: Number(row[0]),
-        id: String(row[1]).trim()
+        id: String(row[1]).trim(),
+        name: String(row[2] || '').trim(), // ブロック名（空なら未設定）
       }));
 
     // 表示順でソート
     items.sort((a, b) => a.order - b.order);
 
     return items;
+  },
+
+  /**
+   * ヘッダーナビのLI群を生成
+   * @param {Array<{order:number,id:string,name?:string}>} order
+   * @returns {string} <li>...</li> の連結HTML
+   */
+  buildHeaderNav(order) {
+    if (!order || order.length === 0) return '';
+
+    // 文字列をHTMLエスケープ
+    const esc = (s) => String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
+    // 既知IDのデフォルトラベル（name未設定時のフォールバック）
+    const defaultLabels = {
+      mv: 'トップ',
+      mission: 'ミッション',
+      service: '事業内容',
+      company: '会社概要',
+      works: '制作実績',
+    };
+
+    // ブロック名が未設定のものは除外 + mv は常に除外
+    const list = order.filter(it => {
+      const hasName = it.name && it.name.trim() !== '';
+      const isMv = String(it.id || '').trim().toLowerCase() === 'mv';
+      return hasName && !isMv;
+    });
+
+    const items = list.map(it => {
+      const id = esc(it.id);
+  const label = esc(it.name || defaultLabels[it.id] || it.id.toUpperCase());
+      return `<li><a @click.prevent="onItemClick" href="#${id}">${label}</a></li>`;
+    });
+    return items.join('\n');
   },
 
   /**

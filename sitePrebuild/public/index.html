@@ -34,6 +34,22 @@
         <button data-target-name="header_contact_btn">お問い合わせ</button>
       </div>
     </div>
+    <div class="header-drawer-menu">
+      <div class="button-wrap">
+        <span class="hamburger"><span></span></span>
+      </div>
+      <div class="modal-bg">
+        <div class="drawer-wrap">
+          <ul class="drawer-nav" data-target-name="header_nav">
+            <li><a @click.prevent="onItemClick" href="#mission">ミッション</a></li>
+            <li><a @click.prevent="onItemClick" href="#service">事業内容</a></li>
+            <li><a @click.prevent="onItemClick" href="#company">会社概要</a></li>
+            <li><a @click.prevent="onItemClick" href="#faq">よくある質問</a></li>
+            <li><a @click.prevent="onItemClick" href="#news">お知らせ</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </header>
 
   <!-- メインビジュアル -->
