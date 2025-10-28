@@ -22,16 +22,9 @@ $breakpoints: (
   }
 }
 
-// タブレット（769〜1024px）
-@mixin tab {
-  @media (min-width: #{bp(md) + 1}) and (max-width: #{bp(lg)}) {
-    @content;
-  }
-}
-
-// PC（1025px以上）
+// PC（768px以上）
 @mixin pc {
-  @media (min-width: #{bp(lg) + 1}) {
+  @media (min-width: #{bp(md) + 1}) {
     @content;
   }
 }

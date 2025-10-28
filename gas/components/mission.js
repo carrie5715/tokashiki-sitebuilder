@@ -40,9 +40,10 @@ var MissionInfo = (function () {
       const tx = mission['text_color'];
       const hd = mission['heading_color'];
       if (typeof CommonInfo !== 'undefined' && CommonInfo.addCssVar) {
-        if (bg) CommonInfo.addCssVar('--mission-bg-color', String(bg));
-        if (tx) CommonInfo.addCssVar('--mission-text-color', String(tx));
-        if (hd) CommonInfo.addCssVar('--mission-heading-color', String(hd));
+        // 変数接頭辞を --pcol- に統一
+        if (bg) CommonInfo.addCssVar('--pcol-mission-bg-color', String(bg));
+        if (tx) CommonInfo.addCssVar('--pcol-mission-text-color', String(tx));
+        if (hd) CommonInfo.addCssVar('--pcol-mission-heading-color', String(hd));
       }
     } catch (e) {
       // noop（色指定がなくても続行）

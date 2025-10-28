@@ -160,12 +160,13 @@ var CommonInfo = (function () {
       if (val == null || String(val).trim() === '') continue;
       val = String(val).trim();
 
-      // snake_case → kebab-case、'color' トークンは除去、英字-数字の境界にハイフン
+  // snake_case → kebab-case、'color' トークンは除去、英字-数字の境界にハイフン
       const tokens = key.toLowerCase().split('_').filter(Boolean).filter(t => t !== 'color');
       const normTokens = tokens.map(t => t.replace(/([a-z]+)(\d+)/i, '$1-$2'));
       const suffix = normTokens.join('-');
       if (!suffix) continue;
-      const varName = `--color-${suffix}`;
+  // 変数接頭辞を --pcol- に統一（旧 --color- は廃止）
+  const varName = `--pcol-${suffix}`;
       decls.push(`  ${varName}: ${val};`);
     }
 
@@ -213,7 +214,7 @@ var CommonInfo = (function () {
         folder.createFile(blob);
       }
 
-      const count = (cssText.match(/--color-/g) || []).length;
+  const count = (cssText.match(/--pcol-/g) || []).length;
       if (typeof Utils !== 'undefined' && Utils.logToSheet) {
         Utils.logToSheet(`colors.css を出力しました（変数 ${count} 件）`, 'CommonInfo');
       }
