@@ -2,26 +2,162 @@
 
 header {
   width: 100%;
+  position: relative;
   .header-wrap {
-    height: 70px;
     max-width: 1000px;
     margin: auto;
-    padding: 16px 24px;
+    padding: 8px 48px 8px 20px;
     display: flex;
     justify-content: space-between;
-    border-radius: 9999px;
+    align-items: center;
+    box-shadow: 0px 0px 20px 0px #00000026;
     .logo {
-      width: 120px;
+    width: auto;
+      height: 6vw;
+      margin: 2vw 0;
       img {
-        width: 100%;
-        height: auto;
+        height: 100%;
+        width: auto;
       }
     }
     .header-nav {
-      display: flex;
-      height: 100%;
-      align-items: center;
+      display: none;
+    }
+    .button-wrap {
+      a {
+        display: inline-block;
+        padding: 8px 20px;
+        background-color: var(--pcol-base-color-2, var(--col-blue));
+        color: var(--pcol-base-white, var(--col-white));
+        border-radius: 9999px;
+        font-weight: bold;
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+    }
+  }
+  .header-drawer-menu {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    .button-wrap {
+      width: 10vw;
+      height: 10vw;
+      padding: 1vw;
+      position:absolute;
+      top: 2.8vw;
+      right: 1.8vw;
+      z-index: 1100;
+      .hamburger {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        pointer-events: auto;
+        cursor: pointer;
+        span,
+        &::before,
+        &::after {
+          width: 100%;
+          height: 2px;
+          background: var(--pcol-base-color-2, var(--col-blue));
+          position: absolute;
+          transition: all 0.3s ease;
+          display: block;
+        }
+        &::before,
+        &::after {
+          content: '';
+        }
+        $interval: 2.5vw;
+        &::before {
+          transform: translate(0, -#{$interval});
+        }
+        &::after {
+          transform: translate(0, #{$interval});
+        }
+
+      }
     }
 
+    // overlay background (closed by default)
+    .modal-bg {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.35);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    // drawer panel
+    .drawer-wrap {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+      width: 82vw;
+      max-width: 420px;
+      background: var(--pcol-base-white, #fff);
+      box-shadow: -8px 0 24px rgba(0,0,0,0.12);
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      pointer-events: auto; // パネルは常に操作可能（背景制御は .modal-bg 側）
+      display: flex;
+      flex-direction: column;
+      z-index: 1001; // 背景より前面
+    }
+
+    // drawer navigation
+    .drawer-nav {
+      list-style: none;
+      margin: 0;
+      padding: 16px 20px;
+      li {
+        margin: 0;
+        border-bottom: 1px solid var(--pcol-base-gray-1, #f1f1f3);
+        &:last-child { border-bottom: none; }
+        a {
+          display: block;
+          padding: 14px 4px;
+          color: var(--pcol-base-black, #212121);
+          text-decoration: none;
+          font-weight: 600;
+          &:hover {
+            color: var(--pcol-base-color-2, #326FF9);
+          }
+        }
+      }
+    }
+
+    &.open {
+      .button-wrap {
+        .hamburger {
+          span {
+            opacity: 0;
+          }
+          &::before {
+            transform: rotate(45deg);
+          }
+          &::after {
+            transform: rotate(-45deg);
+          }
+        }
+      }
+      .modal-bg {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .drawer-wrap {
+        transform: translateX(0);
+      }
+    }
   }
 }

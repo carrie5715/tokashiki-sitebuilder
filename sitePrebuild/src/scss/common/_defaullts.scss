@@ -13,7 +13,6 @@ html {
 
 body {
   font-size: 1.4rem;
-  border: 1px solid red;
 }
 
 * {
@@ -40,6 +39,7 @@ ol {
 img {
   max-width: 100%;
   height: auto;
+  display: block;
 }
 
 a {

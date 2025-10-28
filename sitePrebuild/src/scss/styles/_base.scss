@@ -1,5 +1,18 @@
 @use '../common/mixins' as *;
 
+html {
+  color: var(--font-color-main); // シートから当てようと思ったけどいったんしない
+}
+
+body {
+  background: var(--col-white); // シートから当てようと思ったけどいったんしない
+}
+
+a {
+  text-decoration: none;
+  color: var(--font-color-link);
+}
+
 .container {
   width: 100%;
 }
