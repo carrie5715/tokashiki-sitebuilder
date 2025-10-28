@@ -5,12 +5,17 @@
 node_modules/
 npm-debug.log*
 
-# Dev outputs (Vite/Sass)
-public/css/
-public/**/*.map
+# Dev outputs（個別ファイル単位で管理対象外にする）
+sitePrebuild/public/css/common.css
+sitePrebuild/public/css/common.css.map
+sitePrebuild/public/css/styles.css
+sitePrebuild/public/css/styles.css.map
 
-# Template outputs (commit CSS but ignore maps)
-templateBase/drive_resources/css/*.map
+# Template outputs（個別ファイル指定）
+templateBase/drive_resources/css/common.css
+templateBase/drive_resources/css/common.css.map
+templateBase/drive_resources/css/styles.css
+templateBase/drive_resources/css/styles.css.map
 templateBase/output
 
 # Site preview (generated/local downloads)
