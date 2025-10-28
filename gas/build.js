@@ -410,9 +410,24 @@ const Build = {
     };
     const logoUrl = get('logo_url') || '/images/logo.png';
     const contactUrl = get('contact_url') || '';
+    // contact_is_external: 真なら _blank、偽なら _self
+    const extRaw = get('contact_is_external');
+    const isExternal = (function(v){
+      if (v == null) return false;
+      if (typeof v === 'boolean') return v;
+      if (typeof v === 'number') return v !== 0;
+      const s = String(v).trim().toLowerCase();
+      return s === 'true' || s === '1' || s === 'yes' || s === 'y' || s === 'on';
+    })(extRaw);
+    const contactTarget = isExternal ? '_blank' : '_self';
 
     // プレースホルダ置換
-    return this.applyTagReplacements(template, { header_nav: navHtml, logo_url: logoUrl, contact_url: contactUrl });
+    return this.applyTagReplacements(template, {
+      header_nav: navHtml,
+      logo_url: logoUrl,
+      contact_url: contactUrl,
+      contact_is_external: contactTarget,
+    });
   },
 
   /** footer */
