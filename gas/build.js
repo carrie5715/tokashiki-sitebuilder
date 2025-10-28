@@ -402,16 +402,17 @@ const Build = {
       if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`ヘッダーナビ生成失敗: ${e.message}`, 'getHeaderContents');
     }
 
-    // 基本設定からロゴURLを取得（siteInfos を優先、なければシート直読み）。空ならデフォルトを使用
+    // 基本設定からロゴURL/お問い合わせURLを取得（siteInfos を優先、なければシート直読み）
     const s = (typeof siteInfos !== 'undefined') ? siteInfos : {};
     const get = (k) => {
       if (s && s[k] != null && String(s[k]).trim() !== '') return String(s[k]);
       try { return String(Utils.getSheetValue('基本設定', k) || ''); } catch (_) { return ''; }
     };
     const logoUrl = get('logo_url') || '/images/logo.png';
+    const contactUrl = get('contact_url') || '';
 
     // プレースホルダ置換
-    return this.applyTagReplacements(template, { header_nav: navHtml, logo_url: logoUrl });
+    return this.applyTagReplacements(template, { header_nav: navHtml, logo_url: logoUrl, contact_url: contactUrl });
   },
 
   /** footer */
