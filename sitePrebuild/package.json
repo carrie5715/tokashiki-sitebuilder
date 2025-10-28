@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "sass:dev": "sass --watch src/scss/common.scss:public/css/common.css src/scss/styles.scss:public/css/styles.css",
-    "sass:build": "sass src/scss/common.scss:drive_resources/css/common.css src/scss/styles.scss:drive_resources/css/styles.css",
+    "sass:build": "sass src/scss/common.scss:public/css/common.css src/scss/styles.scss:public/css/styles.css",
     "dev": "npm run sass:dev & vite",
     "build": "npm run sass:build && node scripts/build_templates.js",
     "direct": "npm run build && node scripts/direct_copy.js",

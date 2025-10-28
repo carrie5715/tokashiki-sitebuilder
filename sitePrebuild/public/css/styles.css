@@ -141,6 +141,9 @@ header .header-wrap .header-nav {
   margin-inline: auto;
   padding: 56px 24px;
 }
+#company iframe {
+  max-width: 100%;
+}
 
 #faq {
   width: 100%;

@@ -255,7 +255,7 @@ br.br-sp {
 br.br-pc {
   display: none;
 }
-@media (min-width: 1025px) {
+@media (min-width: 769px) {
   br.br-pc {
     display: inline;
   }
@@ -306,7 +306,7 @@ select {
   align-items: center;
   justify-content: center;
 }
-@media (min-width: 1025px) {
+@media (min-width: 769px) {
   select {
     border: 2px solid var(--col-base-green);
     height: 60px;
@@ -342,7 +342,7 @@ select {
   background: var(--col-base-green);
   color: var(--col-white);
 }
-@media (min-width: 1025px) {
+@media (min-width: 769px) {
   .radio-button span {
     border: 2px solid var(--col-base-green);
     height: 60px;
@@ -372,7 +372,7 @@ input[type=tel]::placeholder,
 textarea::placeholder {
   color: var(--col-gray2);
 }
-@media (min-width: 1025px) {
+@media (min-width: 769px) {
   input[type=text],
   input[type=email],
   input[type=tel],
@@ -391,7 +391,7 @@ textarea {
 .error input[type=tel] {
   background: var(--col-pink);
 }
-@media (min-width: 1025px) {
+@media (min-width: 769px) {
   .error input[type=text],
   .error input[type=email],
   .error input[type=tel] {
@@ -409,7 +409,7 @@ textarea {
   align-items: center;
   height: 20px;
 }
-@media (min-width: 1025px) {
+@media (min-width: 769px) {
   .cb-label {
     font-size: 1.8rem;
     min-height: 36px;
@@ -433,7 +433,7 @@ textarea {
   border-bottom: 3px solid var(--col-white);
   transform: rotate(-45deg);
 }
-@media (min-width: 1025px) {
+@media (min-width: 769px) {
   .cb-label input[type=checkbox]:checked + span::after {
     top: 10px;
     left: 7px;
@@ -451,7 +451,7 @@ textarea {
   line-height: 20px;
   display: inline-block;
 }
-@media (min-width: 1025px) {
+@media (min-width: 769px) {
   .cb-label span {
     padding-left: 54px;
     line-height: 36px;
@@ -469,7 +469,7 @@ textarea {
   border-radius: 4px;
   background: var(--col-white);
 }
-@media (min-width: 1025px) {
+@media (min-width: 769px) {
   .cb-label span::before {
     width: 36px;
     height: 36px;
@@ -482,7 +482,7 @@ textarea {
   width: 100%;
   padding-bottom: 6px;
 }
-@media (min-width: 1025px) {
+@media (min-width: 769px) {
   .submit-button {
     width: auto;
   }
@@ -515,7 +515,7 @@ textarea {
   letter-spacing: 0.15em;
   transition: all 0.2s ease-out;
 }
-@media (min-width: 1025px) {
+@media (min-width: 769px) {
   .submit-button button span {
     font-size: 2.4rem;
     height: 90px;
@@ -535,7 +535,7 @@ textarea {
   background: url(../img/icon/ic_chevron_right.svg) no-repeat center center/100% auto;
   z-index: 12;
 }
-@media (min-width: 1025px) {
+@media (min-width: 769px) {
   .submit-button button::before {
     width: 24px;
     height: 24px;
@@ -554,7 +554,7 @@ textarea {
   z-index: 0;
   transition: all 0.2s ease-out;
 }
-@media (min-width: 1025px) {
+@media (min-width: 769px) {
   .submit-button button::after {
     height: 90px;
     width: 600px;
