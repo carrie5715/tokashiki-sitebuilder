@@ -10,9 +10,9 @@
         <p class="error" x-text="error"></p>
       </template>
 
-      <template x-if="!loading && !error">
+      <template x-if="!loading && !error && items && items.length">
         <table>
-          <template x-for="(row, idx) in items" :key="idx">
+          <template x-for="(row, idx) in items" :key="'company-item-' + idx">
             <tr>
               <th x-text="row.label"></th>
               <td x-text="row.value"></td>

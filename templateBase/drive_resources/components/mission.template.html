@@ -7,9 +7,9 @@
         <p><?= intro_text ?></p>
       </div>
       <div class="lower-block">
-        <div class="mission-swiper swiper" x-ref="container">
+        <div class="mission-swiper swiper" x-ref="container" x-show="items && items.length">
           <div class="swiper-wrapper">
-            <template x-for="(item, idx) in items" :key="item.image || idx">
+            <template x-for="(item, idx) in items" :key="'mission-item-' + idx">
               <div class="swiper-slide">
                 <figure class="mission-slide">
                   <img :src="item.image" :alt="item.alt">
