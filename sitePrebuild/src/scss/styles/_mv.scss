@@ -4,18 +4,38 @@
 #mv {
   position: relative;
   overflow: hidden;
+  padding: 32px 14px 8px;
+  
+  $sep: 70%;
+  background: linear-gradient(
+    to bottom,
+    var(--pcol-base-white, var(--col-white)) 0%,
+    var(--pcol-base-white, var(--col-white)) $sep,
+    var(--pcol-base-color-2, var(--col-blue)) $sep,
+    var(--pcol-base-color-2, var(--col-blue)) 100%
+  );
+
+
 
   .mv-bg-image {
-    position: absolute;
+    margin-top: 16px;
     inset: 0;
     z-index: 0;
-
-    picture, img {
-      width: 100%;
+    width: 100%;
+    aspect-ratio: 7/10;
+    overflow: hidden;
+    position: relative;
+    border-radius: 16px;
+    img {
+      width: auto;
       height: 100%;
-      display: block;
-      object-fit: cover; // 背景として全面表示
+      max-width: none;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
     }
+
   }
 
   .mv-base-contents {
