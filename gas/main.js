@@ -130,6 +130,12 @@ function buildAll () {
     Utils.logToSheet(`CSS変数出力: ${res.filename}（${res.count}件）`, 'buildAll');
   }
 
+  // variables.css を出力（フォントウェイトなどの共通変数）
+  if (typeof CommonInfo !== 'undefined' && CommonInfo.writeVariablesCss) {
+    const resV = CommonInfo.writeVariablesCss(ids.output.cssId);
+    Utils.logToSheet(`CSS変数出力: ${resV.filename}（${resV.count}件）`, 'buildAll');
+  }
+
   Utils.logToSheet(`##### 書き出し処理全て完了 #####`, 'buildAll');
 }
 

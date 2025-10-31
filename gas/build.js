@@ -132,8 +132,8 @@ const Build = {
     while (it.hasNext()) {
       const src = it.next();
       const name = src.getName();
-      // colors.css は GAS 生成物。テンプレに同名があってもスキップ
-      if (name === 'colors.css') continue;
+      // colors.css / variables.css は GAS 生成物。テンプレに同名があってもスキップ
+      if (name === 'colors.css' || name === 'variables.css') continue;
       const blob = src.getBlob().setName(name);
       if (existing[name]) {
         existing[name].setContent(blob.getDataAsString());
@@ -311,11 +311,20 @@ const Build = {
     Utils.logToSheet(`${targetLayout}テンプレート読み込み完了:[${typeof indexLayout}]`, 'loadTemplates');
 
     // meta 情報の差し込み（MetaInfo に集約）
-    const metaRepl = (typeof MetaInfo !== 'undefined' && MetaInfo.getTemplateReplacements)
+    let metaRepl = (typeof MetaInfo !== 'undefined' && MetaInfo.getTemplateReplacements)
       ? MetaInfo.getTemplateReplacements()
       : ((typeof MetaInfo !== 'undefined' && MetaInfo.getLayoutReplacements)
         ? MetaInfo.getLayoutReplacements()
         : { title: '', description: '', url: '', image: '' });
+    // body_classes を最終差し込み
+    try {
+      if (typeof CommonInfo !== 'undefined' && CommonInfo.getBodyClassesString) {
+        const bodyCls = CommonInfo.getBodyClassesString();
+        metaRepl.body_classes = bodyCls;
+      }
+    } catch (e) {
+      // noop
+    }
     const output = this.applyTagReplacements(indexLayout, metaRepl);
     return output;
   },

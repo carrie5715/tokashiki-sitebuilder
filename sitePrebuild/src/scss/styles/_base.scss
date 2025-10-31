@@ -6,6 +6,7 @@ html {
 
 body {
   background: var(--col-white); // シートから当てようと思ったけどいったんしない
+  font-weight: var(--base-font-weight, 400);
 }
 
 a {
