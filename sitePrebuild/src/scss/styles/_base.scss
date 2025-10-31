@@ -14,6 +14,11 @@ a {
   color: var(--font-color-link);
 }
 
+strong {
+  font-weight: var(--bold-font-weight, 700);
+  color: var(--pcol-base-color-2, var(--col-blue));
+}
+
 .container {
   width: 100%;
 }
