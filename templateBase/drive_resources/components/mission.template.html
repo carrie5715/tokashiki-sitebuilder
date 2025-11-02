@@ -7,22 +7,24 @@
         <p class="intro"><?= intro_text ?></p>
       </div>
       <div class="lower-block">
-        <div class="mission-swiper swiper" x-ref="container" x-show="items && items.length">
-          <div class="swiper-wrapper">
-            <template x-for="(item, idx) in items" :key="'mission-item-' + idx">
-              <div class="swiper-slide">
-                <figure class="mission-slide">
-                  <img :src="item.image" :alt="item.alt">
-                  <template x-if="item.caption">
-                    <figcaption x-text="item.caption"></figcaption>
-                  </template>
-                </figure>
-              </div>
-            </template>
+        <div class="mission-swiper">
+          <div class="swiper" x-ref="container" x-show="items && items.length">
+            <div class="swiper-wrapper">
+              <template x-for="(item, idx) in items" :key="'mission-item-' + idx">
+                <div class="swiper-slide">
+                  <figure class="mission-slide">
+                    <img :src="item.image" :alt="item.alt">
+                    <template x-if="item.caption">
+                      <figcaption x-text="item.caption"></figcaption>
+                    </template>
+                  </figure>
+                </div>
+              </template>
+            </div>
+            <div class="swiper-button-prev" x-ref="prev"></div>
+            <div class="swiper-button-next" x-ref="next"></div>
           </div>
           <div class="swiper-pagination" x-ref="pager"></div>
-          <div class="swiper-button-prev" x-ref="prev"></div>
-          <div class="swiper-button-next" x-ref="next"></div>
         </div>
       </div>
     </div>
