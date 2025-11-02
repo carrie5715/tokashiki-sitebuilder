@@ -161,6 +161,9 @@ var MissionInfo = (function () {
   function getTemplateReplacements() {
     const br = (s) => String(s == null ? '' : s).replace(/\r\n|\r|\n/g, '<br>');
     return {
+      // テンプレで直接使うキー
+      section_title_en: br(mission['section_title_en']),
+      // 互換キー（Build 側で heading_text / intro_text にフォールバック挿入）
       mission_heading_text: br(mission['heading_text']),
       mission_intro_text: br(mission['intro_text']),
     };

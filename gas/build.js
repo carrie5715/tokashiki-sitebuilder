@@ -481,10 +481,15 @@ const Build = {
       if (replacements['mission_intro_text'] && !replacements['intro_text']) {
         replacements['intro_text'] = replacements['mission_intro_text'];
       }
+      // セクション英タイトルが未定義ならフォールバック取得
+      if (!('section_title_en' in replacements)) {
+        replacements['section_title_en'] = Utils.getSheetValue('mission', 'section_title_en') || '';
+      }
     } else {
       replacements = {
         mission_heading_text: Utils.getSheetValue('mission', 'heading_text'),
         mission_intro_text: Utils.getSheetValue('mission', 'intro_text'),
+        section_title_en: Utils.getSheetValue('mission', 'section_title_en') || '',
       };
       // 互換キー
       replacements['heading_text'] = replacements['mission_heading_text'];

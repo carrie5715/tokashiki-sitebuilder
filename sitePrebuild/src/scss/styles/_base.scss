@@ -22,3 +22,18 @@ strong {
 .container {
   width: 100%;
 }
+
+br {
+  &.sp {
+    display: inline;
+    @include pc {
+      display: none;
+    }
+  } 
+  &.pc {
+    display: none;
+    @include pc {
+      display: inline;
+    }
+  }
+}

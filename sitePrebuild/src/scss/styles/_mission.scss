@@ -2,13 +2,41 @@
 
 #mission {
   width: 100%;
-  background: #f9fff7; // 淡いグリーン
-  color: palevioletred;
-
+  background: var(--pcol-mission-bg-color, var(--col-blue));
+  color: var(--pcol-mission-text-color, var(--col-white));
+  strong {
+    color: var(--pcol-mission-text-color, var(--col-white)); 
+  }
   .container {
     max-width: 1000px;
     margin-inline: auto;
-    padding: 56px 24px;
+    .upper-block {
+      position: relative;
+      overflow: hidden;
+      .section-title {
+        display: block;
+        margin-left: -22vw;
+        font-size: 6.8rem;
+        font-weight: 900;
+        color: var(--pcol-mission-heading-color, var(--pcol-base-color-3));
+        white-space: nowrap;
+        letter-spacing: 0.8vw;
+      }
+      h2 {
+        margin-top: 2vw;
+        font-weight: 400;
+        line-height: 2;
+
+      }
+      .intro {
+        margin-top: 6vw;
+        font-size: 1.4rem;
+        line-height: 2;
+      }
+
+    }
+    text-align: center;
+    
   }
 
   .mission-swiper { margin-top: 24px; }
