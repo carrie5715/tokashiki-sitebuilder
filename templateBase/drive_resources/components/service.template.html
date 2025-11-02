@@ -3,7 +3,7 @@
   <section id="service" data-component-name="service" x-data="serviceComponent">
     <div class="container">
       <h2><span class="subtitle"><?= section_title_en ?></span><?= section_title ?></h2>
-      <p><?= section_intro ?></p>
+      <p class="intro"><?= section_intro ?></p>
 
       <template x-if="loading"><p>読み込み中...</p></template>
       <template x-if="error"><p class="error" x-text="error"></p></template>
@@ -22,18 +22,18 @@
 
               <div class="service-desc" x-html="item.description"></div>
 
-              <ul class="service-tags" x-show="item.tags && item.tags.length">
+              <ul class="service-tags tags" x-show="item.tags && item.tags.length">
                 <template x-for="tag in item.tags" :key="tag.id">
                   <li class="tag" x-text="tag.name"></li>
                 </template>
               </ul>
 
               <p class="service-more">
-                <a class="btn-more"
+                <a class="btn-more button"
                   :href="item.more_link.url"
                   :target="item.more_link.is_external ? '_blank' : null"
                   :rel="item.more_link.is_external ? 'noopener noreferrer' : null"
-                  x-text="item.more_link.label">
+                  x-text="item.more_link.label ?? 'MORE'">
                 </a>
               </p>
             </div>

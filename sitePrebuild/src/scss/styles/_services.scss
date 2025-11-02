@@ -2,23 +2,89 @@
 
 #service {
   width: 100%;
-  background: #fff7fb; // 淡いピンク
-
+  background: var(--pcol-base-white, var(--col-white));
   .container {
     max-width: 1000px;
     margin-inline: auto;
     padding: 56px 24px;
   }
 
-  .services-list {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 32px;
+  h2 {
+    font-weight: 400;
+    font-size: 2.6rem;
+    text-align: center;
+    padding-bottom: 3.2vw;
+    position: relative;
+    &::after {
+      content: '';
+      display: block;
+      width: 8vw;
+      height: 1vw;
+      background-color: var(--pcol-base-color-2, var(--col-blue));
+      border-radius: 9999px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: auto;
+      position: absolute
+    }
 
-    @media (min-width: 768px) {
-      grid-template-columns: 1fr 1fr;
+    .subtitle {
+      display: none;
     }
   }
 
-  .service-card { display: grid; gap: 16px; }
+  .intro {
+    text-align: center;
+    font-size: 1.4rem;
+    padding: 4vw;
+    margin-bottom: 4.8vw;
+  }
+
+  .services-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20vw;
+  }
+
+  .service-card {
+    display: grid;
+    gap: 16px;
+    figure {
+      width: 100%;
+      margin: 0;
+      border-radius: 12vw;
+      overflow: hidden;
+      img {
+        width: 100%;
+      }
+    }
+    .service-body {
+      .service-title {
+        display: flex;
+        flex-direction: column-reverse;
+        & > span {
+          display: block;
+        }
+        .ja {
+          font-size: 1.6rem;
+          font-weight: 400;
+        }
+        .en {
+          font-size: 1.4rem;
+          font-weight: 400;
+          color: var(--pcol-base-color-2, var(--col-blue));
+        }
+      }
+      .service-desc {
+        margin-top: 2vw;
+        font-size: 1.4rem;
+      }
+      .service-more {
+        display: flex;
+        justify-content: center;
+        padding-top: 4vw;
+      }
+    }
+  }
 }

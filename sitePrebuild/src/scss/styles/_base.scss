@@ -37,3 +37,39 @@ br {
     }
   }
 }
+
+.tags {
+  display: flex;
+  gap: 2vw;
+  padding: 2vw 0;
+
+  .tag {
+    display: block;
+    padding: 0.2vw 4vw;
+    font-size: 1rem;
+    border-radius: 1.2vw;
+    background-color: var(--pcol-base-gray-1, var(--col-light-gray2));
+    color: var(--pcol-base-gray-2, var(--col-gray-4));
+  }
+}
+
+.button {
+    min-width: 60vw;
+    min-height: 13vw;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--pcol-base-white, var(--col-white));
+    background-color: var(--pcol-base-color-2, var(--col-blue));
+    cursor: pointer;
+    font-size: 1.8rem;
+    font-weight: 500;
+    &.reverse {
+      background-color: var(--pcol-base-white, var(--col-white));
+      color: var(--pcol-base-color-2, var(--col-blue));
+    }
+    &::hover {
+      opacity: 0.8;
+    }
+}
