@@ -25,8 +25,8 @@ addEventListener('alpine:init', () => {
       this.swiper = new Swiper(this.$refs.container, {
         loop: false,
         spaceBetween: 24,
-        slidesPerView: 1.1, // モバイルで少し見切れ
-        centeredSlides: false,
+        slidesPerView: 1.4, // モバイルで少し見切れ
+        centeredSlides: true,
         pagination: { el: this.$refs.pager, clickable: true },
         navigation: { nextEl: this.$refs.next, prevEl: this.$refs.prev },
         breakpoints: {
@@ -37,6 +37,23 @@ addEventListener('alpine:init', () => {
         observer: true,
         observeParents: true
       });
+
+      // ビューポート入退場で reverse クラスをトグル（ローカルプレビュー用）
+      try {
+        const targetEl = this.$el; // section#works
+        const obs = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              targetEl.classList.add('reverse');
+            } else {
+              targetEl.classList.remove('reverse');
+            }
+          });
+        }, { threshold: 1.0 });
+        obs.observe(targetEl);
+      } catch (e) {
+        console.warn('reverseクラストグル用Observer初期化失敗:', e);
+      }
     }
   }));
 });

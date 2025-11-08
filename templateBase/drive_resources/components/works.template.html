@@ -2,46 +2,48 @@
 <section id="works" data-component-name="works" x-data="worksComponent">
   <div class="container">
     <h2><?= section_title ?></h2>
-    <p><?= section_intro ?></p>
+    <p class="intro"><?= section_intro ?></p>
 
-    <div class="works-swiper swiper" x-ref="container" x-show="items && items.length">
-      <div class="swiper-wrapper">
-        <template x-for="(item, idx) in items" :key="'works-item-' + idx">
-          <div class="swiper-slide">
-            <article class="work-card">
-              <figure class="work-thumb">
-                <template x-if="item.images && item.images.length">
-                  <img :src="item.images[0].url" :alt="item.images[0].alt || item.title">
-                </template>
-              </figure>
-              <div class="work-body">
-                <h3 class="work-title" x-text="item.title"></h3>
-
-                <ul class="work-tags" x-show="item.tags && item.tags.length">
-                  <template x-for="tag in item.tags" :key="tag.id">
-                    <li class="tag" x-text="tag.name"></li>
+    <div class="works-swiper">
+      <div class="swiper" x-ref="container" x-show="items && items.length">
+        <div class="swiper-wrapper">
+          <template x-for="(item, idx) in items" :key="'works-item-' + idx">
+            <div class="swiper-slide">
+              <article class="work-card">
+                <figure class="work-thumb">
+                  <template x-if="item.images && item.images.length">
+                    <img :src="item.images[0].url" :alt="item.images[0].alt || item.title">
                   </template>
-                </ul>
+                </figure>
+                <div class="work-body">
+                  <h3 class="work-title" x-text="item.title"></h3>
 
-                <div class="work-desc" x-html="item.description"></div>
+                  <ul class="work-tags tags" x-show="item.tags && item.tags.length">
+                    <template x-for="tag in item.tags" :key="tag.id">
+                      <li class="tag" x-text="tag.name"></li>
+                    </template>
+                  </ul>
 
-                <p class="work-more" x-show="item.link && item.link.url">
-                  <a class="btn-more"
-                    :href="item.link.url"
-                    :target="item.link.is_external ? '_blank' : null"
-                    :rel="item.link.is_external ? 'noopener noreferrer' : null">
-                    詳細
-                  </a>
-                </p>
-              </div>
-            </article>
-          </div>
-        </template>
+                  <div class="work-desc" x-html="item.description"></div>
+
+                  <p class="work-more" x-show="item.link && item.link.url">
+                    <a class="btn-more button"
+                      :href="item.link.url"
+                      :target="item.link.is_external ? '_blank' : null"
+                      :rel="item.link.is_external ? 'noopener noreferrer' : null">
+                      詳細
+                    </a>
+                  </p>
+                </div>
+              </article>
+            </div>
+          </template>
+        </div>
+
+        <div class="swiper-button-prev" x-ref="prev"></div>
+        <div class="swiper-button-next" x-ref="next"></div>
       </div>
-
       <div class="swiper-pagination" x-ref="pager"></div>
-      <div class="swiper-button-prev" x-ref="prev"></div>
-      <div class="swiper-button-next" x-ref="next"></div>
     </div>
   </div>
 </section>

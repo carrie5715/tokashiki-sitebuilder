@@ -182,6 +182,22 @@ var WorksInfo = (function () {
     const rows = readWorks_();
     appendToParameters_(rows);
 
+    // 追加カラー変数（colors.css に出力）
+    try {
+      const dk = works['dark_color'];
+      const lt = works['light_color'];
+      const tdk = works['tag_dark_color'];
+      const tlt = works['tag_light_color'];
+      if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
+        if (dk)  CommonInfo.addColorVar('--pcol-works-dark-color', String(dk));
+        if (lt)  CommonInfo.addColorVar('--pcol-works-light-color', String(lt));
+        if (tdk) CommonInfo.addColorVar('--pcol-works-tag-dark-color', String(tdk));
+        if (tlt) CommonInfo.addColorVar('--pcol-works-tag-light-color', String(tlt));
+      }
+    } catch (e) {
+      // noop
+    }
+
     const items = parseWorksItems_();
     writeWorksJson_(items);
 

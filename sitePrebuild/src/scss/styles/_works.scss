@@ -1,14 +1,125 @@
 @use '../common/mixins' as *;
 
 #works {
+  $def-transition: all 0.5s ease-out 0.2s;
   width: 100%;
-  background: #f7fffe; // 淡いシアン
+  background: var(--pcol-works-light-color, var(--pcol-base-white, --col-white));
+  color: var(--pcol-works-dark-color, var(--pcol-base-black, --col-black));
+
+  transition: $def-transition;
 
   .container {
     max-width: 1000px;
-    margin-inline: auto;
-    padding: 56px 24px;
+    padding: 56px 0;
   }
 
-  .works-swiper { margin-top: 24px; }
+  h2 {
+    font-weight: 400;
+    font-size: 2.6rem;
+    text-align: center;
+    padding-bottom: 3.2vw;
+    position: relative;
+  }
+
+  .intro {
+    display: block;
+    font-size: 1.4rem;
+    text-align: center;
+    margin-bottom: 4vw;
+    line-height: 2;
+    padding: 0 4vw;
+  }
+
+
+  .works-swiper {
+    margin-top: 24px;
+    position: relative;
+    padding-bottom: 40px;
+
+    .swiper {
+      .swiper-button-prev,
+      .swiper-button-next {
+        height: 100%;
+        width: 40px;
+        top: 0;
+        opacity: 0;
+        &::after {
+          display: none;
+        }
+      }
+      .swiper-button-prev {
+        left: 0;
+      }
+      .swiper-button-next {
+        right: 0;
+      }
+    }
+
+    .swiper-slide {
+      height: auto;
+      .work-card {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .work-thumb {
+        margin: 0 0 8px;
+        width: 100%;
+        border-radius: 12vw;
+        overflow: hidden;
+        img { width: 100%; }
+      }
+
+      .work-title {
+        color: var(--pcol-base-color-2, #326FF9);
+        font-weight: 700;
+        font-size: clamp(16px, 2.2vw, 20px);
+        line-height: 1.6;
+        margin-top: 8px;
+      }
+
+      .work-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+
+        .tag {
+          color: var(--pcol-works-tag-dark-color, var(--pcol-base-black,var(--col-black)));
+          background: var(--pcol-works-tag-light-color, var(--pcol-base-white, var(--col-white)));
+        }
+      }
+
+      .work-desc {
+        margin-top: 12px;
+        font-size: 14px;
+        line-height: 1.9;
+      }
+
+      .work-more {
+        margin-top: 14px;
+
+        .btn-more {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          background: var(--pcol-base-color-2, #326FF9);
+          color: #fff;
+          border-radius: 9999px;
+          padding: 10px 16px;
+          font-weight: 700;
+        }
+
+        .btn-more:hover {
+          filter: brightness(0.95);
+        }
+      }
+    }
+  }
+  &.reverse {
+    color: var(--pcol-works-light-color, var(--pcol-base-white, --col-white));
+    background: var(--pcol-works-dark-color, var(--pcol-base-black, --col-black));
+  }
 }
