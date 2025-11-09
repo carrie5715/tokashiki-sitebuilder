@@ -1,15 +1,89 @@
 @use '../common/mixins' as *;
 
 #company {
+  $light-color: var(--pcol-mission-text-color, var(--col-white));
+  $base-color: var(--pcol-mission-bg-color, var(--col-blue));
+  $dark-color: var(--pcol-mission-heading-color, var(--pcol-base-color-3));
+
   width: 100%;
-  background: #fffaf3; // 淡いクリーム
+  background: $base-color;
+  color: $light-color;
 
   .container {
     max-width: 1000px;
     margin-inline: auto;
-    padding: 56px 24px;
+    padding: 5.5vw 5.5vw 12vw;
+    .section-title {
+      display: block;
+      font-size: 6.8rem;
+      font-weight: 900;
+      color: $dark-color;
+      white-space: nowrap;
+      line-height: 1;
+      letter-spacing: 0.8vw;
+    }
+    h2 {
+      font-weight: 400;
+      font-size: 2.6rem;
+      text-align: center;
+      padding-bottom: 3.2vw;
+      position: relative;
+      margin-top: -0.5em;
+      &::after {
+        content: '';
+        display: block;
+        width: 8vw;
+        height: 1vw;
+        background-color: $light-color;
+        border-radius: 9999px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+        position: absolute
+      }
+    }
+    .company-wrap {
+      margin-top: 8vw;
+      .infos {
+        display: grid;
+        row-gap: 1rem;
+
+        .info-item {
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          padding: 3vw 4vw;
+          min-height: 3em;
+          background: $dark-color;
+          border-radius: 4vw;
+          .title {
+            flex: 0 0 30vw;
+            display: block;
+          }
+          .separator {
+            width: 2px;
+            height: 100%;
+            display: block;
+            background: $base-color;
+          }
+          .value {
+            flex: 1 1 auto;
+            display: block;
+            padding-left: 4vw;
+          }
+        }
+      }
+    }
   }
-  iframe {
-    max-width: 100%;
+  .googlemap-wrap {
+    margin-top: 6vw;
+    width: 100%;
+    border-radius: 2vw;
+    overflow: hidden;
+    iframe {
+      max-width: 100%;
+      display: block
+    }
   }
 }

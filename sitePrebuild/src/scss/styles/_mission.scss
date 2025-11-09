@@ -10,6 +10,7 @@
   .container {
     max-width: 1000px;
     margin-inline: auto;
+    text-align: center;
     .upper-block {
       position: relative;
       overflow: hidden;
@@ -33,10 +34,7 @@
         font-size: 1.4rem;
         line-height: 2;
       }
-
     }
-    text-align: center;
-    
   }
 
   .mission-swiper { 

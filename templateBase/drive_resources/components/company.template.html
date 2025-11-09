@@ -1,7 +1,8 @@
 <!-- 会社概要 -->
 <section id="company" data-component-name="company" x-data="companyComponent">
   <div class="container">
-    <h2><span class="subtitle"><?= section_title_en ?></span><?= section_title ?></h2>
+    <p class="section-title"><?= section_title_en ?></p>
+    <h2><?= section_title ?></h2>
     <div class="company-wrap">
       <template x-if="loading">
         <p>読み込み中...</p>
@@ -11,14 +12,15 @@
       </template>
 
       <template x-if="!loading && !error && items && items.length">
-        <table>
+        <div class="infos">
           <template x-for="(row, idx) in items" :key="'company-item-' + idx">
-            <tr>
-              <th x-text="row.label"></th>
-              <td x-text="row.value"></td>
-            </tr>
+            <div class="info-item">
+              <span class="title" x-text="row.label"></span>
+              <span class="separator"></span>
+              <span class="value" x-text="row.value"></span>
+            </div>
           </template>
-        </table>
+        </div>
       </template>
     </div>
     <!-- googlemap_tagがあった場合には、<div class="googlemap-wrap">で囲んで、タグのデータを入れて閉じる -->
