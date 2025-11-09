@@ -1,9 +1,14 @@
 <footer>
   <div class="container">
-    <div class="image-block">
-      <img src="<?= logo_url ?>" alt="Footer Image">
+    <div class="upper-block">
+      <img src="<?= logo_url ?>" alt="Footer Image" class="logo">
       <h4><?= company_name ?></h4>
       <p><?= address ?></p>
+    </div>
+    <div class="lower-block">
+      <ul class="footer-nav">
+        <?= footer_nav ?>
+      </ul>
     </div>
     <p class="copyright"><?= copyright ?></p>
   </div>

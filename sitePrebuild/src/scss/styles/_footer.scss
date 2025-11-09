@@ -2,36 +2,32 @@
 
 footer {
   width: 100%;
-  background: #f6f3ff; // 仮：淡いラベンダー
-  color: #222;
+  background: var(--pcol-base-white, var(--col-white));
+  padding-top: 2vw;
 
   .container {
+    width: 100%;
     max-width: 1000px;
-    margin-inline: auto;
-    padding: 32px 24px;
-
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
+    color: var(--pcol-base-white, var(--col-white));
+    background: var(--pcol-base-color-2, var(--col-blue));
+    border-radius: 4vw 4vw 0 0;
   }
 
-  .image-block {
-    display: grid;
-    grid-template-columns: auto 1fr;
+  .upper-block {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    gap: 16px;
+    padding: 8vw 4vw 8vw;
 
     img {
-      width: 80px;
-      height: 80px;
-      object-fit: cover;
-      border-radius: 8px; // 仮：角丸
-      background: #e9e6ff; // プレースホルダー背景
+      width: 30vw;
+      height: auto;
     }
 
     h4 {
       margin: 0;
-      font-size: 18px;
+      font-size: 1.8rem;
       line-height: 1.4;
       font-weight: 700;
     }
@@ -40,27 +36,14 @@ footer {
       margin: 4px 0 0;
       font-size: 14px;
       line-height: 1.7;
-      color: #555;
     }
   }
 
   .copyright {
     margin: 0;
-    padding-top: 16px;
+    padding: 4vw 2vw 8vw;
     border-top: 1px solid rgba(0, 0, 0, 0.06);
-    font-size: 12px;
-    color: #666;
+    font-size: 1.2rem;
     text-align: center;
-  }
-
-  @media (min-width: 768px) {
-    .container {
-      gap: 28px;
-      padding: 40px 24px;
-    }
-    .image-block img {
-      width: 96px;
-      height: 96px;
-    }
   }
 }
