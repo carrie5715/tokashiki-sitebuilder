@@ -140,6 +140,20 @@ var CompanyInfo = (function () {
     const rows = readCompany_();
     appendToParameters_(rows);
 
+    // 追加: company セクションのカラー変数を colors.css に出力
+    try {
+      const bg = company['bg_color'];
+      const tx = company['text_color'];
+      const hd = company['heading_color'];
+      if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
+        if (bg) CommonInfo.addColorVar('--pcol-company-bg-color', String(bg));
+        if (tx) CommonInfo.addColorVar('--pcol-company-text-color', String(tx));
+        if (hd) CommonInfo.addColorVar('--pcol-company-heading-color', String(hd));
+      }
+    } catch (e) {
+      // noop（色指定がなくても続行）
+    }
+
     const items = parseCompanyItems_();
     writeCompanyJson_(items);
 
