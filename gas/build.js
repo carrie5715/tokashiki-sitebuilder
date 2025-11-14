@@ -225,6 +225,7 @@ const Build = {
       'store.js',
       'main.js',
       'header.js',
+      'footer.js',
     ];
     if (flags && flags.mvOk) list.push('mv.js');
     if (flags && flags.missionOk) list.push('mission.js');
@@ -402,11 +403,11 @@ const Build = {
   getHeaderContents() {
     // テンプレート取得
     const template = this.getTemplateFile('components', 'header');
-    // 表示順データからナビHTMLを構築
+    // nav シートからナビHTMLを構築
     let navHtml = '';
     try {
-      const order = this.getContentOrder();
-      navHtml = this.buildHeaderNav(order);
+      const items = this.getNavItemsFromSheet_();
+      navHtml = this.buildNavLis_(items);
     } catch (e) {
       if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`ヘッダーナビ生成失敗: ${e.message}`, 'getHeaderContents');
     }
@@ -475,11 +476,21 @@ const Build = {
       // noop
     }
 
+    // nav シートからナビHTML
+    let footerNavHtml = '';
+    try {
+      const items = this.getNavItemsFromSheet_();
+      footerNavHtml = this.buildNavLis_(items);
+    } catch (e) {
+      // noop
+    }
+
     const replacements = {
       // footer シートがあればそちらを優先
       logo_url: (function(){ const v = getFooter('logo_url'); return v || get('logo_url'); })(),
       company_name: (function(){ const v = getFooter('company_name'); return v || get('company_name'); })(),
       address: (function(){ const v = getFooter('address'); return v || get('address'); })(),
+      footer_nav: footerNavHtml,
       // シート側は copyrights の可能性があるためフォールバック
       copyright: (function(){
         // footer シート優先
@@ -595,39 +606,50 @@ const Build = {
    * @param {Array<{order:number,id:string,name?:string}>} order
    * @returns {string} <li>...</li> の連結HTML
    */
-  buildHeaderNav(order) {
-    if (!order || order.length === 0) return '';
+  // nav シートから配列を取得（nav_1_url, nav_1_label, nav_1_external ...）
+  getNavItemsFromSheet_() {
+    const out = [];
+    const truthy = (v) => {
+      if (v == null) return false;
+      if (typeof v === 'boolean') return v;
+      if (typeof v === 'number') return v !== 0;
+      const s = String(v).trim().toLowerCase();
+      return s === 'true' || s === '1' || s === 'yes' || s === 'y' || s === 'on';
+    };
+    try {
+      for (let i = 1; i <= 200; i++) {
+        const url   = Utils.getSheetValue('nav', `nav_${i}_url`);
+        const label = Utils.getSheetValue('nav', `nav_${i}_label`);
+        const ext   = Utils.getSheetValue('nav', `nav_${i}_external`);
+        const href = (url == null) ? '' : String(url).trim();
+        const text = (label == null) ? '' : String(label).trim();
+        if (!href || !text) continue;
+        out.push({ order: i, url: href, label: text, external: truthy(ext) });
+      }
+    } catch (e) {
+      // シート未作成などは空配列
+    }
+    out.sort((a, b) => a.order - b.order);
+    return out;
+  },
 
-    // 文字列をHTMLエスケープ
+  // <li><a ...> のHTMLへ変換
+  buildNavLis_(items) {
+    if (!items || items.length === 0) return '';
     const esc = (s) => String(s)
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;');
-
-    // 既知IDのデフォルトラベル（name未設定時のフォールバック）
-    const defaultLabels = {
-      mv: 'トップ',
-      mission: 'ミッション',
-      service: '事業内容',
-      company: '会社概要',
-      works: '制作実績',
-    };
-
-    // ブロック名が未設定のものは除外 + mv は常に除外
-    const list = order.filter(it => {
-      const hasName = it.name && it.name.trim() !== '';
-      const isMv = String(it.id || '').trim().toLowerCase() === 'mv';
-      return hasName && !isMv;
+    const lis = items.map(it => {
+      const href = esc(it.url);
+      const label = esc(it.label);
+      const isAnchor = href.startsWith('#');
+      const target = (it.external && !isAnchor) ? ' target="_blank"' : '';
+      return `<li><a @click.prevent="onItemClick" href="${href}"${target}>${label}</a></li>`;
     });
-
-    const items = list.map(it => {
-      const id = esc(it.id);
-  const label = esc(it.name || defaultLabels[it.id] || it.id.toUpperCase());
-      return `<li><a @click.prevent="onItemClick" href="#${id}">${label}</a></li>`;
-    });
-    return items.join('\n');
+    return lis.join('\n');
   },
 
   /**
