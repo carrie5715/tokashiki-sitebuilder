@@ -453,12 +453,40 @@ const Build = {
         return '';
       }
     };
+    // footer シートから直接取得（存在すればこちらを優先）
+    const getFooter = (k) => {
+      try {
+        const v = Utils.getSheetValue('footer', k);
+        return (v != null && String(v).trim() !== '') ? String(v) : '';
+      } catch (e) {
+        return '';
+      }
+    };
+
+    // フッター用カラー変数を colors.css に登録（footer シートに値がある場合）
+    try {
+      const bg = getFooter('bg_color');
+      const tx = getFooter('text_color');
+      if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
+        if (bg) CommonInfo.addColorVar('--pcol-footer-bg-color', String(bg));
+        if (tx) CommonInfo.addColorVar('--pcol-footer-text-color', String(tx));
+      }
+    } catch (e) {
+      // noop
+    }
+
     const replacements = {
-      logo_url: get('logo_url'),
-      company_name: get('company_name'),
-      address: get('address'),
+      // footer シートがあればそちらを優先
+      logo_url: (function(){ const v = getFooter('logo_url'); return v || get('logo_url'); })(),
+      company_name: (function(){ const v = getFooter('company_name'); return v || get('company_name'); })(),
+      address: (function(){ const v = getFooter('address'); return v || get('address'); })(),
       // シート側は copyrights の可能性があるためフォールバック
       copyright: (function(){
+        // footer シート優先
+        const fv = getFooter('copyright');
+        if (fv) return fv;
+        const fvs = getFooter('copyrights');
+        if (fvs) return fvs;
         const v = get('copyright');
         if (v) return v;
         return get('copyrights');

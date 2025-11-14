@@ -16,8 +16,8 @@ footer {
   .upper-block {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    color: var(--pcol-footer-text-color, var(--pcol-base-white, var(--col-white)));
+    background: var(--pcol-footer-bg-color, var(--pcol-base-color-2, var(--col-blue)));
     padding: 8vw 4vw 8vw;
 
     img {
