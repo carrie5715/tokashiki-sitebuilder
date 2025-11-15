@@ -38,6 +38,10 @@ br {
   }
 }
 
+.hidden {
+  display: none !important;
+} 
+
 .tags {
   display: flex;
   gap: 2vw;

@@ -5,11 +5,14 @@ footer {
   background: var(--pcol-base-white, var(--col-white));
   padding-top: 2vw;
 
+  $base-bg: var(--pcol-footer-bg-color, var(--pcol-base-color-2, var(--col-blue)));
+  $base-text: var(--pcol-footer-text-color, var(--pcol-base-white, var(--col-white)));
+
   .container {
     width: 100%;
     max-width: 1000px;
-    color: var(--pcol-footer-text-color, var(--pcol-base-white, var(--col-white)));
-    background: var(--pcol-footer-bg-color, var(--pcol-base-color-2, var(--col-blue)));
+    color: $base-text;
+    background: $base-bg;
     border-radius: 4vw 4vw 0 0;
   }
 
@@ -34,6 +37,11 @@ footer {
       margin: 4px 0 0;
       font-size: 14px;
       line-height: 1.7;
+    }
+  }
+  .lower-block {
+    a {
+      color: $base-text;
     }
   }
 
