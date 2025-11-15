@@ -508,6 +508,19 @@ const Build = {
       footerSubNavHtml = this.buildNavLis_(footerSubNavItems);
     } catch (e) { /* noop */ }
 
+    // 表示制御フラグ（footer シート）: TRUE/1/yes/on などを真とみなす
+    const truthy = (v) => {
+      if (v == null) return false;
+      if (typeof v === 'boolean') return v;
+      if (typeof v === 'number') return v !== 0;
+      const s = String(v).trim().toLowerCase();
+      return s === 'true' || s === '1' || s === 'yes' || s === 'y' || s === 'on';
+    };
+    const mainNavShowRaw = getFooter('main_nav_show');
+    const subNavShowRaw  = getFooter('sub_nav_show');
+    const mainNavShow = truthy(mainNavShowRaw);
+    const subNavShow  = truthy(subNavShowRaw);
+
     const replacements = {
       // footer シートがあればそちらを優先
       logo_url: (function(){ const v = getFooter('logo_url'); return v || get('logo_url'); })(),
@@ -515,8 +528,8 @@ const Build = {
       address: (function(){ const v = getFooter('address'); return v || get('address'); })(),
       footer_nav: footerNavHtml,
       footer_sub_nav: footerSubNavHtml,
-      footer_nav_class: (footerNavItems.length === 0 ? 'hidden' : ''),
-      footer_sub_nav_class: (footerSubNavItems.length === 0 ? 'hidden' : ''),
+      footer_nav_class: (!mainNavShow || footerNavItems.length === 0 ? 'hidden' : ''),
+      footer_sub_nav_class: (!subNavShow || footerSubNavItems.length === 0 ? 'hidden' : ''),
       // シート側は copyrights の可能性があるためフォールバック
       copyright: (function(){
         // footer シート優先
