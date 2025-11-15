@@ -64,35 +64,50 @@ const Build = {
     const rootId = Utils.getTemplateRootId_();
     const root = DriveApp.getFolderById(rootId);
 
-    // js フォルダ
+    // js フォルダ（サブディレクトリ対応）
     const jsFolderIt = root.getFoldersByName('js');
     if (!jsFolderIt.hasNext()) {
       if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('TEMPLATE_ROOT/js が見つかりません', 'copyJsFromTemplate');
       return null;
     }
-    const jsFolder = jsFolderIt.next();
+    let curSrcFolder = jsFolderIt.next();
+    const parts = String(name).split('/').filter(Boolean);
+    const fileName = parts.pop();
+    // サブフォルダを順に辿る
+    for (const p of parts) {
+      const it = curSrcFolder.getFoldersByName(p);
+      if (!it.hasNext()) {
+        if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`テンプレ側のサブフォルダが見つかりません: js/${parts.join('/')}`, 'copyJsFromTemplate');
+        return null;
+      }
+      curSrcFolder = it.next();
+    }
 
-    const files = jsFolder.getFilesByName(name);
+    const files = curSrcFolder.getFilesByName(fileName);
     if (!files.hasNext()) {
       if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`テンプレ側のJSが見つかりません: ${name}`, 'copyJsFromTemplate');
       return null;
     }
     const srcFile = files.next();
-    const blob = srcFile.getBlob().setName(name);
+    const blob = srcFile.getBlob().setName(fileName);
 
-    // 出力先: output/js
+    // 出力先: output/js（必要ならサブフォルダを作成）
     const outJsId = PropertiesService.getScriptProperties().getProperty(PROP_KEYS.OUTPUT_JS_ID);
     if (!outJsId) throw new Error('OUTPUT_JS_ID が未設定です。Build.checkDirectories() を先に呼んでください。');
-    const outJsFolder = DriveApp.getFolderById(outJsId);
+    let curDstFolder = DriveApp.getFolderById(outJsId);
+    for (const p of parts) {
+      const it = curDstFolder.getFoldersByName(p);
+      curDstFolder = it.hasNext() ? it.next() : curDstFolder.createFolder(p);
+    }
 
     // 既存があれば中身を更新、なければ新規作成
-    const outIt = outJsFolder.getFilesByName(name);
+    const outIt = curDstFolder.getFilesByName(fileName);
     if (outIt.hasNext()) {
       const dst = outIt.next();
       dst.setContent(blob.getDataAsString());
       return dst.getId();
     } else {
-      const created = outJsFolder.createFile(blob);
+      const created = curDstFolder.createFile(blob);
       return created.getId();
     }
   },
@@ -224,7 +239,7 @@ const Build = {
     const list = [
       'store.js',
       'main.js',
-      'nav-utils.js',
+      'stores/nav-utils.js',
       'header.js',
       'footer.js',
     ];
