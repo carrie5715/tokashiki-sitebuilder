@@ -82,10 +82,10 @@ function buildAll () {
     Utils.logToSheet(`mv 追記: ${mvRes.rows.length}件`, 'buildAll');
   }
 
-  // 追加: mission の取得と Parameters への追記、JSON出力、色変数登録
-  if (typeof MissionInfo !== 'undefined' && MissionInfo.readAndRecordMission) {
-    var missionRes = MissionInfo.readAndRecordMission();
-    Utils.logToSheet(`mission 追記: ${missionRes.rows.length}件 / slides=${missionRes.slides.length}`, 'buildAll');
+  // 追加: message の取得と Parameters への追記、JSON出力、色変数登録（旧 mission）
+  if (typeof MessageInfo !== 'undefined' && MessageInfo.readAndRecordMessage) {
+    var messageRes = MessageInfo.readAndRecordMessage();
+    Utils.logToSheet(`message 追記: ${messageRes.rows.length}件 / slides=${messageRes.slides.length}`, 'buildAll');
   }
 
   // 追加: service の取得と Parameters への追記、JSON出力
@@ -114,11 +114,11 @@ function buildAll () {
 
   // scripts 差し込み（body閉じタグ前の <?= scripts ?> を置換）
   var mvOk = !!(mvRes && mvRes.ok);
-  var missionOk = !!(missionRes && missionRes.ok);
+  var messageOk = !!(messageRes && messageRes.ok);
   var serviceOk = !!(serviceRes && serviceRes.ok);
   var companyOk = !!(companyRes && companyRes.ok);
   var worksOk = !!(worksRes && worksRes.ok);
-  const scriptsTag = Build.buildScriptsTag({ mvOk, missionOk, serviceOk, companyOk, worksOk });
+  const scriptsTag = Build.buildScriptsTag({ mvOk, messageOk, serviceOk, companyOk, worksOk });
   const mainWithScripts = Build.applyTagReplacements(mainHtml, { scripts: scriptsTag });
 
   Build.saveHtmlToFolder(ids.output.rootId, 'index.html', mainWithScripts);

@@ -1,18 +1,18 @@
-  <!-- ミッション -->
-  <section id="mission" data-component-name="mission" x-data="missionComponent">
+  <!-- メッセージ (旧ミッション) -->
+  <section id="message" data-component-name="message" x-data="messageComponent">
     <div class="container">
       <div class="upper-block">
-        <p class="section-title"><?= section_title_en ?></p>
-        <h2><?= heading_text ?></h2>
-        <p class="intro"><?= intro_text ?></p>
+        <p class="section-title"><?!= section_title_en ?></p>
+        <h2><?!= heading_text ?></h2>
+        <p class="intro"><?!= intro_text ?></p>
       </div>
       <div class="lower-block">
-        <div class="mission-swiper">
+        <div class="message-swiper">
           <div class="swiper" x-ref="container" x-show="items && items.length">
             <div class="swiper-wrapper">
-              <template x-for="(item, idx) in items" :key="'mission-item-' + idx">
+              <template x-for="(item, idx) in items" :key="'message-item-' + idx">
                 <div class="swiper-slide">
-                  <figure class="mission-slide">
+                  <figure class="message-slide">
                     <img :src="item.image" :alt="item.alt">
                     <template x-if="item.caption">
                       <figcaption x-text="item.caption"></figcaption>

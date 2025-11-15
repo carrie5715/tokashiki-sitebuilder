@@ -231,8 +231,8 @@ const Build = {
   },
 
   /**
-   * スクリプトタグを構築し、必須/条件付きのJSファイルを output/js に配置
-  * @param {{mvOk:boolean, missionOk:boolean, serviceOk?:boolean, companyOk?:boolean, worksOk?:boolean}} flags
+  * スクリプトタグを構築し、必須/条件付きのJSファイルを output/js に配置
+* @param {{mvOk:boolean, messageOk:boolean, serviceOk?:boolean, companyOk?:boolean, worksOk?:boolean}} flags
    * @returns {string} HTML の <script> タグ列
    */
   buildScriptsTag(flags) {
@@ -244,7 +244,7 @@ const Build = {
       'footer.js',
     ];
     if (flags && flags.mvOk) list.push('mv.js');
-    if (flags && flags.missionOk) list.push('mission.js');
+    if (flags && flags.messageOk) list.push('message.js');
   if (flags && flags.serviceOk) list.push('service.js');
   if (flags && flags.companyOk) list.push('company.js');
   if (flags && flags.worksOk) list.push('works.js');
@@ -287,8 +287,8 @@ const Build = {
         if (item.id === 'mv') {
           sectionString += this.getMvContents() + '\n';
         }
-        if (item.id === 'mission') {
-          sectionString += this.getMissionContents() + '\n';
+        if (item.id === 'message') {
+          sectionString += this.getMessageContents() + '\n';
         }
         if (item.id === 'service') {
           sectionString += this.getServiceContents() + '\n';
@@ -545,35 +545,30 @@ const Build = {
     return this.applyTagReplacements(template, replacements);
   },
 
-  /** mission */
-  getMissionContents() {
-    const template = this.getTemplateFile('components', 'mission');
-    // MissionInfo があればそれを優先（改行→<br> を含む）
+  /** message (旧 mission) */
+  getMessageContents() {
+    const template = this.getTemplateFile('components', 'message');
     let replacements = {};
-    if (typeof MissionInfo !== 'undefined' && typeof MissionInfo.getTemplateReplacements === 'function') {
-      replacements = MissionInfo.getTemplateReplacements();
-      // テンプレ互換: heading_text / intro_text キーがあれば優先で埋める
-      if (replacements['mission_heading_text'] && !replacements['heading_text']) {
-        replacements['heading_text'] = replacements['mission_heading_text'];
+    if (typeof MessageInfo !== 'undefined' && typeof MessageInfo.getTemplateReplacements === 'function') {
+      replacements = MessageInfo.getTemplateReplacements();
+      if (replacements['message_heading_text'] && !replacements['heading_text']) {
+        replacements['heading_text'] = replacements['message_heading_text'];
       }
-      if (replacements['mission_intro_text'] && !replacements['intro_text']) {
-        replacements['intro_text'] = replacements['mission_intro_text'];
+      if (replacements['message_intro_text'] && !replacements['intro_text']) {
+        replacements['intro_text'] = replacements['message_intro_text'];
       }
-      // セクション英タイトルが未定義ならフォールバック取得
       if (!('section_title_en' in replacements)) {
-        replacements['section_title_en'] = Utils.getSheetValue('mission', 'section_title_en') || '';
+        replacements['section_title_en'] = Utils.getSheetValue('message', 'section_title_en') || '';
       }
     } else {
       replacements = {
-        mission_heading_text: Utils.getSheetValue('mission', 'heading_text'),
-        mission_intro_text: Utils.getSheetValue('mission', 'intro_text'),
-        section_title_en: Utils.getSheetValue('mission', 'section_title_en') || '',
+        message_heading_text: Utils.getSheetValue('message', 'heading_text'),
+        message_intro_text: Utils.getSheetValue('message', 'intro_text'),
+        section_title_en: Utils.getSheetValue('message', 'section_title_en') || '',
       };
-      // 互換キー
-      replacements['heading_text'] = replacements['mission_heading_text'];
-      replacements['intro_text'] = replacements['mission_intro_text'];
+      replacements['heading_text'] = replacements['message_heading_text'];
+      replacements['intro_text'] = replacements['message_intro_text'];
     }
-
     return this.applyTagReplacements(template, replacements);
   },
 
