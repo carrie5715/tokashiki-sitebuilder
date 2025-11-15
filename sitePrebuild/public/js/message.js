@@ -1,20 +1,17 @@
 addEventListener('alpine:init', () => {
-  Alpine.data('missionComponent', () => ({
+  Alpine.data('messageComponent', () => ({
     items: [],
     swiper: null,
     async init() {
       try {
-        const res = await fetch('/data/mission.json', { cache: 'no-store' });
+        const res = await fetch('/data/message.json', { cache: 'no-store' });
         if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
         this.items = await res.json();
 
-        // Alpineがテンプレートを描画し終わるのを待つ
         await this.$nextTick();
 
-        // 再初期化対策
         if (this.swiper?.destroy) this.swiper.destroy(true, true);
 
-        // refsで安全にスコープ
         this.swiper = new Swiper(this.$refs.container, {
           loop: true,
           slidesPerView: 1,
@@ -32,7 +29,7 @@ addEventListener('alpine:init', () => {
           observeParents: true,
         });
       } catch (e) {
-        console.error('mission load failed:', e);
+        console.error('message load failed:', e);
       }
     },
   }));

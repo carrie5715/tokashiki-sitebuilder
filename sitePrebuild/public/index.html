@@ -24,7 +24,7 @@
         <img src="/images/logo.png" alt="Logo">
       </div>
       <ul class="header-nav" data-target-name="header_nav">
-        <li><a @click.prevent="onItemClick" href="#mission">ミッション</a></li>
+        <li><a @click.prevent="onItemClick" href="#message">メッセージ</a></li>
         <li><a @click.prevent="onItemClick" href="#service">事業内容</a></li>
         <li><a @click.prevent="onItemClick" href="#company">会社概要</a></li>
         <li><a @click.prevent="onItemClick" href="#faq">よくある質問</a></li>
@@ -41,7 +41,7 @@
       <div class="modal-bg">
         <div class="drawer-wrap">
           <ul class="drawer-nav" data-target-name="header_nav">
-            <li><a @click.prevent="onItemClick" href="#mission">ミッション</a></li>
+            <li><a @click.prevent="onItemClick" href="#message">メッセージ</a></li>
             <li><a @click.prevent="onItemClick" href="#service">事業内容</a></li>
             <li><a @click.prevent="onItemClick" href="#company">会社概要</a></li>
             <li><a @click.prevent="onItemClick" href="#faq">よくある質問</a></li>
@@ -68,18 +68,18 @@
   </section>
 
   <!-- ミッション -->
-  <section id="mission" data-component-name="mission" x-data="missionComponent">
+  <section id="message" data-component-name="message" x-data="messageComponent">
     <div class="container">
       <div class="upper-block">
-        <h2><span class="subtitle">MISSION</span>お客様一人ひとりに、<br>最適なサービスを</h2>
+        <h2><span class="subtitle">MESSAGE</span>お客様一人ひとりに、<br>最適なサービスを</h2>
         <p>テキストテキストテキストテキストテキストテキストテキスト、<br>テキストテキストテキストテキストテキストテキストテキストテキスト。<br>テキストテキストテキストテキストテキスト、<br>テキストテキストテキストテキストテキストテキスト。</p>
       </div>
       <div class="lower-block">
-        <div class="mission-swiper swiper" x-ref="container">
+        <div class="message-swiper swiper" x-ref="container">
           <div class="swiper-wrapper">
             <template x-for="(item, idx) in items" :key="item.image || idx">
               <div class="swiper-slide">
-                <figure class="mission-slide">
+                <figure class="message-slide">
                   <img :src="item.image" :alt="item.alt">
                   <template x-if="item.caption">
                     <figcaption x-text="item.caption"></figcaption>
@@ -260,7 +260,7 @@
   <script src="/js/main.js"></script>
   <script src="/js/header.js"></script>
   <script src="/js/mv.js"></script>
-  <script src="/js/mission.js"></script>
+  <script src="/js/message.js"></script>
   <script src="/js/service.js"></script>
   <script src="/js/works.js"></script>
   <script src="/js/company.js"></script>
