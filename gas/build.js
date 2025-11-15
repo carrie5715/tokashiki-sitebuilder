@@ -224,6 +224,7 @@ const Build = {
     const list = [
       'store.js',
       'main.js',
+      'nav-utils.js',
       'header.js',
       'footer.js',
     ];
