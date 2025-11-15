@@ -242,6 +242,7 @@ const Build = {
       'stores/nav-utils.js',
       'header.js',
       'footer.js',
+      'contact.js',
     ];
     if (flags && flags.mvOk) list.push('mv.js');
     if (flags && flags.messageOk) list.push('message.js');
@@ -298,6 +299,9 @@ const Build = {
         }
         if (item.id === 'works') {
           sectionString += this.getWorksContents() + '\n';
+        }
+        if (item.id === 'contact') {
+          sectionString += this.getContactContents() + '\n';
         }
         // 他のセクションもこの分岐に追加
       });
@@ -363,6 +367,77 @@ const Build = {
       };
     }
 
+    return this.applyTagReplacements(template, replacements);
+  },
+
+  /** contact */
+  getContactContents() {
+    const template = this.getTemplateFile('components', 'contact');
+
+    const title = Utils.getSheetValue('contact', 'title') || '';
+    const message = Utils.getSheetValue('contact', 'message') || '';
+    const description = Utils.getSheetValue('contact', 'description') || '';
+
+    // items の構築: item1.. の行を走査し、C列 (識別子:ラベル) を解析
+    let itemsHtml = '';
+    try {
+      const ss = SpreadsheetApp.getActive();
+      const sh = ss.getSheetByName('contact');
+      if (sh) {
+        const values = sh.getDataRange().getValues();
+        if (values && values.length > 0) {
+          // ヘッダー判定（A1=key,B1=value など）
+          const a1 = (values[0][0] != null ? String(values[0][0]).trim().toLowerCase() : '');
+          const b1 = (values[0][1] != null ? String(values[0][1]).trim().toLowerCase() : '');
+          const hasHeader = (a1 === 'key' && (b1 === 'value' || b1 === 'val' || b1 === '値'));
+          const startRow = hasHeader ? 1 : 0;
+          const chunks = [];
+          for (let r = startRow; r < values.length; r++) {
+            const key = values[r][0] != null ? String(values[r][0]).trim() : '';
+            if (!/^item\d+$/i.test(key)) continue;
+            const rawVal = values[r][1] != null ? String(values[r][1]).trim() : '';
+            const meta = values[r][2] != null ? String(values[r][2]).trim() : '';
+            if (!rawVal && !meta) continue;
+
+            let ident = '';
+            let label = '';
+            if (meta && meta.includes(':')) {
+              const idx = meta.indexOf(':');
+              ident = meta.slice(0, idx).trim().toLowerCase();
+              label = meta.slice(idx + 1).trim();
+            } else {
+              ident = (meta || '').trim().toLowerCase();
+              label = '';
+            }
+
+            const typeClass = ident ? ` type-${ident}` : '';
+
+            // href の決定
+            let href = rawVal;
+            if (ident === 'tel') href = `tel:${rawVal}`;
+            else if (ident === 'mail') href = `mailto:${rawVal}`;
+
+            // target 判定
+            const openInNew = (ident === 'line' || ident === 'form' || ident === 'link');
+            const targetAttr = openInNew ? ' target="_blank" rel="noopener noreferrer"' : '';
+
+            const body = label || rawVal || '';
+            const html =
+              `<div class="item${typeClass}">\n` +
+              `  <a href="${href}"${targetAttr}>\n` +
+              `    <span class="item-body">${body}</span>\n` +
+              `  </a>\n` +
+              `</div>`;
+            chunks.push(html);
+          }
+          itemsHtml = chunks.join('\n');
+        }
+      }
+    } catch (e) {
+      if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`contact items 構築失敗: ${e.message}`, 'getContactContents');
+    }
+
+    const replacements = { title, message, description, items: itemsHtml };
     return this.applyTagReplacements(template, replacements);
   },
 
