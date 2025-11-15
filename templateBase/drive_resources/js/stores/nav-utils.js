@@ -1,6 +1,3 @@
-// Alpine composable-like store for navigation click handling
-// Usage in components: this.$store.navUtils.onNavItemClick(e)
-
 document.addEventListener('alpine:init', () => {
   Alpine.store('navUtils', {
     onNavItemClick(e) {

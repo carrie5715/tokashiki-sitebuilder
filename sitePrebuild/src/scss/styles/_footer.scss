@@ -8,16 +8,14 @@ footer {
   .container {
     width: 100%;
     max-width: 1000px;
-    color: var(--pcol-base-white, var(--col-white));
-    background: var(--pcol-base-color-2, var(--col-blue));
+    color: var(--pcol-footer-text-color, var(--pcol-base-white, var(--col-white)));
+    background: var(--pcol-footer-bg-color, var(--pcol-base-color-2, var(--col-blue)));
     border-radius: 4vw 4vw 0 0;
   }
 
   .upper-block {
     display: flex;
     flex-direction: column;
-    color: var(--pcol-footer-text-color, var(--pcol-base-white, var(--col-white)));
-    background: var(--pcol-footer-bg-color, var(--pcol-base-color-2, var(--col-blue)));
     padding: 8vw 4vw 8vw;
 
     img {
