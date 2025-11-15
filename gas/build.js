@@ -422,9 +422,12 @@ const Build = {
             const targetAttr = openInNew ? ' target="_blank" rel="noopener noreferrer"' : '';
 
             const body = label || rawVal || '';
+            // Alpine用クリックハンドラ付与 (@click="onCtaClick($event, type, index)")
+            const indexInList = chunks.length; // 0始まりインデックス
+            const clickAttr = ` @click="onCtaClick($event, '${ident}', ${indexInList})"`;
             const html =
               `<div class="item${typeClass}">\n` +
-              `  <a href="${href}"${targetAttr}>\n` +
+              `  <a href="${href}"${targetAttr}${clickAttr}>\n` +
               `    <span class="item-body">${body}</span>\n` +
               `  </a>\n` +
               `</div>`;

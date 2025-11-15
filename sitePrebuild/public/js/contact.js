@@ -1,6 +1,7 @@
 addEventListener('alpine:init', () => {
   Alpine.data('contactComponent', () => ({
     onCtaClick(event, type, index) {
+      console.log('Contact CTA clicked: event[%O] type[%s] index[%s]', event, type, index);
       if (true) {
         return; // pass-through now
       }
