@@ -2,10 +2,19 @@
 
 #works {
   $def-transition: all 0.5s ease-out 0.2s;
-  width: 100%;
-  background: var(--pcol-works-light-color, var(--pcol-base-white, --col-white));
-  color: var(--pcol-works-dark-color, var(--pcol-base-black, --col-black));
 
+  $base-bg-color: var(--pcol-works-base-bg-color, var(--pcol-base-white, --col-white));
+  $base-text-color: var(--pcol-works-base-text-color, var(--pcol-base-black, --col-black));
+  $base-tag-bg: var(--pcol-works-base-tag-bg, var(--pcol-base-white, --col-white));
+  $base-tag-text: var(--pcol-works-base-tag-text, var(--pcol-base-black, --col-black));
+  $acc-bg-color: var(--pcol-works-acc-bg-color, var(--pcol-base-white, --col-white));
+  $acc-text-color: var(--pcol-works-acc-text-color, var(--pcol-base-black, --col-black));
+  $acc-tag-bg: var(--pcol-works-acc-tag-bg, var(--pcol-base-white, --col-white));
+  $acc-tag-text: var(--pcol-works-acc-tag-text, var(--pcol-base-black, --col-black));
+
+  width: 100%;
+  background: $base-bg-color;
+  color: $base-text-color;
   transition: $def-transition;
 
   .container {
@@ -86,8 +95,8 @@
         margin-top: 12px;
 
         .tag {
-          color: var(--pcol-works-tag-dark-color, var(--pcol-base-black,var(--col-black)));
-          background: var(--pcol-works-tag-light-color, var(--pcol-base-white, var(--col-white)));
+          color: $base-tag-text;
+          background: $base-tag-bg;
         }
       }
 
@@ -119,7 +128,17 @@
     }
   }
   &.reverse {
-    color: var(--pcol-works-light-color, var(--pcol-base-white, --col-white));
-    background: var(--pcol-works-dark-color, var(--pcol-base-black, --col-black));
+    color: $acc-text-color;
+    background: $acc-bg-color;
+    .works-swiper {
+      .swiper-slide {
+        .work-tags {
+          .tag {
+            color: $acc-tag-text;
+            background: $acc-tag-bg;
+          }
+        }
+      }
+    }
   }
 }
