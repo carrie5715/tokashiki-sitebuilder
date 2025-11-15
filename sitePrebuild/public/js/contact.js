@@ -1,20 +1,10 @@
 addEventListener('alpine:init', () => {
   Alpine.data('contactComponent', () => ({
-    /**
-     * CTAクリック時ハンドラ（将来計測/制御用）
-     * @param {MouseEvent} event
-     * @param {string} type  識別子 (tel/mail/line/form/link/link-self 等)
-     * @param {number} index item連番
-     */
     onCtaClick(event, type, index) {
-      // 将来: 計測イベント送信 / ABテスト / クリック制御 等
-      // 現状は完全スルー（ネイティブ挙動に任せる）
       if (true) {
-        return; // pass-through
+        return; // pass-through now
       }
-      // ここは今後制御したいときに使用
       event.preventDefault();
-
       const anchor = event.currentTarget.closest('a');
       if (!anchor) return;
       const href = anchor.getAttribute('href');
