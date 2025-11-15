@@ -6,10 +6,18 @@
       <p><?= address ?></p>
     </div>
     <div class="lower-block">
-      <ul class="footer-nav">
-        <!-- <li><a @click.prevent="onItemClick" href="#mission">ミッション</a></li> -->
-        <?= footer_nav ?>
-      </ul>
+      <div class="main-list <?= footer_nav_class ?>">
+        <ul class="footer-nav">
+          <!-- <li><a @click.prevent="onItemClick" href="#mission">ミッション</a></li> -->
+          <?= footer_nav ?>
+        </ul>
+      </div>
+      <div class="sub-list <?= footer_sub_nav_class ?>">
+        <ul class="footer-nav">
+          <!-- <li><a @click.prevent="onItemClick" href="#mission">ミッション</a></li> -->
+          <?= footer_sub_nav ?>
+        </ul>
+      </div>
     </div>
     <p class="copyright"><?= copyright ?></p>
   </div>

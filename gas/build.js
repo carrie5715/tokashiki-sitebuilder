@@ -493,13 +493,20 @@ const Build = {
     }
 
     // nav シートからナビHTML
+    let footerNavItems = [];
     let footerNavHtml = '';
     try {
-      const items = this.getNavItemsFromSheet_();
-      footerNavHtml = this.buildNavLis_(items);
-    } catch (e) {
-      // noop
-    }
+      footerNavItems = this.getNavItemsFromSheet_();
+      footerNavHtml = this.buildNavLis_(footerNavItems);
+    } catch (e) { /* noop */ }
+
+    // footer サブナビ（ftsub_nav_1_url など）取得
+    let footerSubNavItems = [];
+    let footerSubNavHtml = '';
+    try {
+      footerSubNavItems = this.getFooterSubNavItems_();
+      footerSubNavHtml = this.buildNavLis_(footerSubNavItems);
+    } catch (e) { /* noop */ }
 
     const replacements = {
       // footer シートがあればそちらを優先
@@ -507,6 +514,9 @@ const Build = {
       company_name: (function(){ const v = getFooter('company_name'); return v || get('company_name'); })(),
       address: (function(){ const v = getFooter('address'); return v || get('address'); })(),
       footer_nav: footerNavHtml,
+      footer_sub_nav: footerSubNavHtml,
+      footer_nav_class: (footerNavItems.length === 0 ? 'hidden' : ''),
+      footer_sub_nav_class: (footerSubNavItems.length === 0 ? 'hidden' : ''),
       // シート側は copyrights の可能性があるためフォールバック
       copyright: (function(){
         // footer シート優先
@@ -666,6 +676,30 @@ const Build = {
       return `<li><a @click.prevent="onItemClick" href="${href}"${target}>${label}</a></li>`;
     });
     return lis.join('\n');
+  },
+
+  // footer シートからサブナビ (ftsub_nav_{n}_{url|label|external}) を取得
+  getFooterSubNavItems_() {
+    const out = [];
+    const truthy = (v) => {
+      if (v == null) return false;
+      if (typeof v === 'boolean') return v;
+      if (typeof v === 'number') return v !== 0;
+      const s = String(v).trim().toLowerCase();
+      return s === 'true' || s === '1' || s === 'yes' || s === 'y' || s === 'on';
+    };
+    for (let i = 1; i <= 200; i++) {
+      let url, label, ext;
+      try { url = Utils.getSheetValue('footer', `ftsub_nav_${i}_url`); } catch (_) { url = ''; }
+      try { label = Utils.getSheetValue('footer', `ftsub_nav_${i}_label`); } catch (_) { label = ''; }
+      try { ext = Utils.getSheetValue('footer', `ftsub_nav_${i}_external`); } catch (_) { ext = ''; }
+      const href = (url == null) ? '' : String(url).trim();
+      const text = (label == null) ? '' : String(label).trim();
+      if (!href || !text) continue;
+      out.push({ order: i, url: href, label: text, external: truthy(ext) });
+    }
+    out.sort((a, b) => a.order - b.order);
+    return out;
   },
 
   /**
