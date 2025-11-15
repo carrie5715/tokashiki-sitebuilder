@@ -182,17 +182,27 @@ var WorksInfo = (function () {
     const rows = readWorks_();
     appendToParameters_(rows);
 
-    // 追加カラー変数（colors.css に出力）
+    // 新しいカラー変数（colors.css に出力）
+    // 対象キーを列挙し、存在するものだけ CSS 変数へ: --pcol-works- + key ( _ -> - )
     try {
-      const dk = works['dark_color'];
-      const lt = works['light_color'];
-      const tdk = works['tag_dark_color'];
-      const tlt = works['tag_light_color'];
+      const colorKeys = [
+        'base_bg_color',
+        'base_text_color',
+        'base_tag_bg',
+        'base_tag_text',
+        'acc_bg_color',
+        'acc_text_color',
+        'acc_tag_bg',
+        'acc_tag_text'
+      ];
       if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
-        if (dk)  CommonInfo.addColorVar('--pcol-works-dark-color', String(dk));
-        if (lt)  CommonInfo.addColorVar('--pcol-works-light-color', String(lt));
-        if (tdk) CommonInfo.addColorVar('--pcol-works-tag-dark-color', String(tdk));
-        if (tlt) CommonInfo.addColorVar('--pcol-works-tag-light-color', String(tlt));
+        colorKeys.forEach(k => {
+          const v = works[k];
+          if (v != null && String(v).trim() !== '') {
+            const cssName = '--pcol-works-' + k.replace(/_/g, '-');
+            CommonInfo.addColorVar(cssName, String(v));
+          }
+        });
       }
     } catch (e) {
       // noop
