@@ -1,37 +1,37 @@
 [
   {
-    "image": "/img/mission01.jpg",
-    "alt": "ミッション画像1",
+    "image": "/img/message01.jpg",
+    "alt": "メッセージ画像1",
     "type": 0,
     "caption": "私たちの使命は顧客価値の最大化です。"
   },
   {
-    "image": "/img/mission02.jpg",
-    "alt": "ミッション画像2",
+    "image": "/img/message02.jpg",
+    "alt": "メッセージ画像2",
     "type": 0,
     "caption": "社会課題の解決にテクノロジーで貢献します。"
   },
   {
-    "image": "/img/mission03.jpg",
-    "alt": "ミッション画像3",
+    "image": "/img/message03.jpg",
+    "alt": "メッセージ画像3",
     "type": 0,
     "caption": "持続可能な成長を目指します。"
   },
   {
-    "image": "/img/mission04.jpg",
-    "alt": "ミッション画像4",
+    "image": "/img/message04.jpg",
+    "alt": "メッセージ画像4",
     "type": 0,
     "caption": "チームの力で新しい価値を創造します。"
   },
   {
-    "image": "/img/mission05.jpg",
-    "alt": "ミッション画像5",
+    "image": "/img/message05.jpg",
+    "alt": "メッセージ画像5",
     "type": 0,
     "caption": "ユーザー体験を最優先に設計します。"
   },
   {
-    "image": "/img/mission06.jpg",
-    "alt": "ミッション画像6",
+    "image": "/img/message06.jpg",
+    "alt": "メッセージ画像6",
     "type": 0,
     "caption": "信頼と透明性を重視します。"
   }
