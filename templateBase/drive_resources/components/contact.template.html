@@ -1,26 +1,27 @@
 <!-- お問い合わせ -->
 <section id="contact" data-component-name="contact" x-data="contactComponent">
   <div class="container">
+    <div class="card-body">
+      <?= title ?>
+      <!-- <h2>お問い合わせ</h2> -->
 
-    <?= title ?>
-    <!-- <h2>お問い合わせ</h2> -->
+      <?= message ?>
+      <!-- <p class="message">まずはお気軽に<br>お問い合わせください</p> -->
+      
+      <?= description ?>
+      <!-- <p class="description">テキストテキストテキスト<br>テキストテキストテキスト。</p> -->
 
-    <?= message ?>
-    <!-- <p class="message">まずはお気軽に<br>お問い合わせください</p> -->
-    
-    <?= description ?>
-    <!-- <p class="description">テキストテキストテキスト<br>テキストテキストテキスト。</p> -->
-
-    <div class="contact-wrap">
-      <div class="items-list">
-        <?= items ?>
-        <!--
-        <div class="item type-tel">
-          <a href="xxxxxxx">
-            <span class="item-body">電話でお問い合わせ</span>
-          </a>  
-        </div>  
-        -->
+      <div class="contact-wrap">
+        <div class="items-list">
+          <?= items ?>
+          <!--
+          <div class="item type-tel">
+            <a href="xxxxxxx">
+              <span class="item-body">電話でお問い合わせ</span>
+            </a>  
+          </div>  
+          -->
+        </div>
       </div>
     </div>
   </div>

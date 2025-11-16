@@ -1,5 +1,53 @@
 @use '../common/mixins' as *;
 
 #contact {
+  background: var(--pcol-contact-background, var(--pcol-base-white, --col-white));
+  .container {
+    width: 100%;
+    padding: 4vw 4vw;
+    .card-body {
+      $card_bg: var(--pcol-contact-card-bg-color, var(--pcol-base-color-2, var(--col-blue)));
+      $card_text: var(--pcol-contact-card-text-color, var(--pcol-base-white, var(--col-white)));
 
+      padding: 4vw;
+      background: $card_bg;
+      color: $card_text;
+      border-radius: 4vw;
+      h2 {
+        font-weight: 400;
+        font-size: 2.6rem;
+        text-align: center;
+        position: relative;
+      }
+      .message {
+        margin-top: 2vw;
+        font-size: 1.8rem;
+        font-weight: 500;
+        text-align: center;
+      }
+      .description {
+        font-size: 1.4rem;
+        margin-top: 2vw;
+        text-align: center;
+      }
+      .items-list {
+        margin-top: 4vw;
+        display: grid;
+        gap: 2vw;
+        .item {
+          pointer-events: auto;
+          cursor: pointer;
+          a {
+            display: flex;
+            min-height: 5rem;
+            border-radius: 9999px;
+            background: $card_text; // カード背景と反転
+            color: $card_bg;
+            justify-content: center;
+            align-items: center;
+          }
+        }
+      }
+    }
+  }
 }

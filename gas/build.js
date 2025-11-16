@@ -378,6 +378,22 @@ const Build = {
     const message = Utils.getSheetValue('contact', 'message') || '';
     const description = Utils.getSheetValue('contact', 'description') || '';
 
+    // contact セクション用カラー変数登録（存在するキーのみ）
+    try {
+      if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
+        const colorKeys = [ 'background', 'card_bg_color', 'card_text_color' ];
+        colorKeys.forEach(k => {
+          const v = Utils.getSheetValue('contact', k);
+          if (v != null && String(v).trim() !== '') {
+            const cssName = '--pcol-contact-' + k.replace(/_/g, '-');
+            CommonInfo.addColorVar(cssName, String(v));
+          }
+        });
+      }
+    } catch (e) {
+      if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`contact 色変数登録失敗: ${e.message}`, 'getContactContents');
+    }
+
     // items の構築: item1.. の行を走査し、C列 (識別子:ラベル) を解析
     let itemsHtml = '';
     try {
@@ -440,7 +456,12 @@ const Build = {
       if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`contact items 構築失敗: ${e.message}`, 'getContactContents');
     }
 
-    const replacements = { title, message, description, items: itemsHtml };
+    // 空の場合はタグごと出力しない。値がある場合のみ包んで挿入
+    const titleHtml = title ? `<h2>${title}</h2>` : '';
+    const messageHtml = message ? `<p class="message">${message}</p>` : '';
+    const descriptionHtml = description ? `<p class="description">${description}</p>` : '';
+
+    const replacements = { title: titleHtml, message: messageHtml, description: descriptionHtml, items: itemsHtml };
     return this.applyTagReplacements(template, replacements);
   },
 
