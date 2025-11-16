@@ -1,4 +1,4 @@
-<!-- ヘッダー -->
+<!-- SectionTitle: ヘッダー -->
 <header x-data="headerComponent" data-component-name="header">
   <div class="header-wrap">
     <div class="logo" data-target-name="header_logo">
@@ -21,6 +21,10 @@
         <ul class="drawer-nav" data-target-name="header_nav">
           <!-- <li><a @click.prevent="onItemClick" href="#message">メッセージ</a></li> -->
           <?= header_nav ?>
+        </ul>
+        <ul class="drawer-contact" data-target-name="header_contact">
+          <!-- <li><a @click.prevent="onItemClick" href="#message">メッセージ</a></li> -->
+          <?= header_contact ?>
         </ul>
       </div>
     </div>

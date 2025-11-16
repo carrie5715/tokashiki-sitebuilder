@@ -1,31 +1,31 @@
-  <!-- メッセージ (旧ミッション) -->
-  <section id="message" data-component-name="message" x-data="messageComponent">
-    <div class="container">
-      <div class="upper-block">
-        <p class="section-title"><?= section_title_en ?></p>
-        <h2><?= heading_text ?></h2>
-        <p class="intro"><?= intro_text ?></p>
-      </div>
-      <div class="lower-block">
-        <div class="message-swiper">
-          <div class="swiper" x-ref="container" x-show="items && items.length">
-            <div class="swiper-wrapper">
-              <template x-for="(item, idx) in items" :key="'message-item-' + idx">
-                <div class="swiper-slide">
-                  <figure class="message-slide">
-                    <img :src="item.image" :alt="item.alt">
-                    <template x-if="item.caption">
-                      <figcaption x-text="item.caption"></figcaption>
-                    </template>
-                  </figure>
-                </div>
-              </template>
-            </div>
-            <div class="swiper-button-prev" x-ref="prev"></div>
-            <div class="swiper-button-next" x-ref="next"></div>
+<!-- SectionTitle: メッセージ (旧ミッション) -->
+<section id="message" data-component-name="message" x-data="messageComponent">
+  <div class="container">
+    <div class="upper-block">
+      <p class="section-title"><?= section_title_en ?></p>
+      <h2><?= heading_text ?></h2>
+      <p class="intro"><?= intro_text ?></p>
+    </div>
+    <div class="lower-block">
+      <div class="message-swiper">
+        <div class="swiper" x-ref="container" x-show="items && items.length">
+          <div class="swiper-wrapper">
+            <template x-for="(item, idx) in items" :key="'message-item-' + idx">
+              <div class="swiper-slide">
+                <figure class="message-slide">
+                  <img :src="item.image" :alt="item.alt">
+                  <template x-if="item.caption">
+                    <figcaption x-text="item.caption"></figcaption>
+                  </template>
+                </figure>
+              </div>
+            </template>
           </div>
-          <div class="swiper-pagination" x-ref="pager"></div>
+          <div class="swiper-button-prev" x-ref="prev"></div>
+          <div class="swiper-button-next" x-ref="next"></div>
         </div>
+        <div class="swiper-pagination" x-ref="pager"></div>
       </div>
     </div>
-  </section>
+  </div>
+</section>

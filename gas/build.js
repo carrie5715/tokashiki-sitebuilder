@@ -939,6 +939,20 @@ const Build = {
     return template.replace(/<\?=\s*([a-zA-Z0-9_]+)\s*\?>/g, function(match, key) {
       return (key in replacements) ? String(replacements[key]) : match;
     });
+  },
+
+  /**
+   * HTMLコメントを削除（ただし先頭が "SectionTitle:" のコメントは残す）
+   * @param {string} html
+   * @returns {string}
+   */
+  stripHtmlCommentsExceptSectionTitle_(html) {
+    if (!html) return html;
+    return String(html).replace(/<!--([\s\S]*?)-->/g, (m, body) => {
+      const text = String(body).trim();
+      if (/^SectionTitle:\s*/.test(text)) return m; // 残す
+      return '';
+    });
   }
 
 

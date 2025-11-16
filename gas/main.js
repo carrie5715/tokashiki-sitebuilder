@@ -1,5 +1,5 @@
 // デバッグ出力のON/OFF（debug__*.html の出力制御などに使用）
-var DEBUG_BUILD = true; // 必要に応じて false に変更
+var DEBUG_BUILD = false; // 納品用にデバッグ出力を無効化
 
 /**
  * スプレッドシートを開いた時にカスタムメニューを追加する
@@ -121,7 +121,12 @@ function buildAll () {
   const scriptsTag = Build.buildScriptsTag({ mvOk, messageOk, serviceOk, companyOk, worksOk });
   const mainWithScripts = Build.applyTagReplacements(mainHtml, { scripts: scriptsTag });
 
-  Build.saveHtmlToFolder(ids.output.rootId, 'index.html', mainWithScripts);
+  // 出力直前にHTMLコメントを整理（SectionTitle: 以外は削除）
+  const finalHtml = (typeof Build.stripHtmlCommentsExceptSectionTitle_ === 'function')
+    ? Build.stripHtmlCommentsExceptSectionTitle_(mainWithScripts)
+    : mainWithScripts;
+
+  Build.saveHtmlToFolder(ids.output.rootId, 'index.html', finalHtml);
   Utils.logToSheet(`HTML出力完了: output/index.html`, 'buildAll');
 
   // 最後に colors.css を出力（他コンポーネントで追加された colors も含めて集計）
