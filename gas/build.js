@@ -546,9 +546,19 @@ const Build = {
     })(extRaw);
     const contactTarget = isExternal ? '_blank' : '_self';
 
+    // contact シート由来のヘッダー内コンタクトリンク群を生成
+    let headerContactHtml = '';
+    try {
+      const contactItems = this.getHeaderContactItemsFromContactSheet_();
+      headerContactHtml = this.buildHeaderContactLis_(contactItems);
+    } catch (e) {
+      if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`ヘッダー用contact生成失敗: ${e.message}`, 'getHeaderContents');
+    }
+
     // プレースホルダ置換
     return this.applyTagReplacements(template, {
       header_nav: navHtml,
+      header_contact: headerContactHtml,
       logo_url: logoUrl,
       contact_url: contactUrl,
       contact_is_external: contactTarget,
@@ -781,6 +791,73 @@ const Build = {
       const isAnchor = href.startsWith('#');
       const target = (it.external && !isAnchor) ? ' target="_blank"' : '';
       return `<li><a @click.prevent="onItemClick" href="${href}"${target}>${label}</a></li>`;
+    });
+    return lis.join('\n');
+  },
+
+  // contact シートからヘッダー用のコンタクトリンク配列を取得
+  // 形式: { order:number, ident:string, url:string, label:string, external:boolean }
+  getHeaderContactItemsFromContactSheet_() {
+    const items = [];
+    try {
+      const ss = SpreadsheetApp.getActive();
+      const sh = ss.getSheetByName('contact');
+      if (!sh) return items;
+      const values = sh.getDataRange().getValues();
+      if (!values || values.length === 0) return items;
+
+      const a1 = (values[0][0] != null ? String(values[0][0]).trim().toLowerCase() : '');
+      const b1 = (values[0][1] != null ? String(values[0][1]).trim().toLowerCase() : '');
+      const hasHeader = (a1 === 'key' && (b1 === 'value' || b1 === 'val' || b1 === '値'));
+      const startRow = hasHeader ? 1 : 0;
+      for (let r = startRow; r < values.length; r++) {
+        const key = values[r][0] != null ? String(values[r][0]).trim() : '';
+        if (!/^item\d+$/i.test(key)) continue;
+        const rawVal = values[r][1] != null ? String(values[r][1]).trim() : '';
+        const meta = values[r][2] != null ? String(values[r][2]).trim() : '';
+        if (!rawVal && !meta) continue;
+
+        let ident = '';
+        let label = '';
+        if (meta && meta.includes(':')) {
+          const idx = meta.indexOf(':');
+          ident = meta.slice(0, idx).trim().toLowerCase();
+          label = meta.slice(idx + 1).trim();
+        } else {
+          ident = (meta || '').trim().toLowerCase();
+          label = '';
+        }
+
+        // href の決定
+        let href = rawVal;
+        if (ident === 'tel') href = `tel:${rawVal}`;
+        else if (ident === 'mail') href = `mailto:${rawVal}`;
+
+        // target 判定（contactコンポーネントと同仕様: line/form/link は新規タブ）
+        const openInNew = (ident === 'line' || ident === 'form' || ident === 'link');
+
+        const text = label || rawVal || '';
+        items.push({ order: items.length + 1, ident, url: href, label: text, external: openInNew });
+      }
+    } catch (_) { /* noop */ }
+    return items;
+  },
+
+  // ヘッダー用 contact 配列を <li>..</li> 群へ変換
+  buildHeaderContactLis_(items) {
+    if (!items || items.length === 0) return '';
+    const esc = (s) => String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+    const lis = items.map(it => {
+      const cls = esc(it.ident || '');
+      const href = esc(it.url || '');
+      const label = esc(it.label || '');
+      const target = it.external ? ' target="_blank" rel="noopener noreferrer"' : '';
+      return `<li class="type-${cls}"><a @click.prevent="onContactItemClick" href="${href}"${target}>${label}</a></li>`;
     });
     return lis.join('\n');
   },

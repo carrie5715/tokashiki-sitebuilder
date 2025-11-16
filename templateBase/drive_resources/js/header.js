@@ -40,6 +40,11 @@ document.addEventListener('alpine:init', () => {
       } finally {
         this.closeDrawer();
       }
+    },
+
+    onContactItemClick(e) {
+      this.closeDrawer();
+      this.$store.navUtils.onNavItemClick(e);
     }
   }));
 });
