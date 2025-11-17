@@ -94,6 +94,12 @@ function buildAll () {
     Utils.logToSheet(`service 追記: ${serviceRes.rows.length}件 / items=${serviceRes.items.length}`, 'buildAll');
   }
 
+  // 追加: faq の取得と Parameters への追記、JSON出力
+  if (typeof FaqInfo !== 'undefined' && FaqInfo.readAndRecordFaq) {
+    var faqRes = FaqInfo.readAndRecordFaq();
+    Utils.logToSheet(`faq 追記: ${faqRes.rows.length}件 / items=${faqRes.items.length}`, 'buildAll');
+  }
+
   // 追加: company の取得と Parameters への追記、JSON出力
   if (typeof CompanyInfo !== 'undefined' && CompanyInfo.readAndRecordCompany) {
     var companyRes = CompanyInfo.readAndRecordCompany();
@@ -117,8 +123,9 @@ function buildAll () {
   var messageOk = !!(messageRes && messageRes.ok);
   var serviceOk = !!(serviceRes && serviceRes.ok);
   var companyOk = !!(companyRes && companyRes.ok);
+  var faqOk = !!(typeof faqRes !== 'undefined' && faqRes && faqRes.ok);
   var worksOk = !!(worksRes && worksRes.ok);
-  const scriptsTag = Build.buildScriptsTag({ mvOk, messageOk, serviceOk, companyOk, worksOk });
+  const scriptsTag = Build.buildScriptsTag({ mvOk, messageOk, serviceOk, faqOk, companyOk, worksOk });
   const mainWithScripts = Build.applyTagReplacements(mainHtml, { scripts: scriptsTag });
 
   // 出力直前にHTMLコメントを整理（SectionTitle: 以外は削除）

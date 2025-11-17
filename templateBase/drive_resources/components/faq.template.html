@@ -1,0 +1,28 @@
+
+<!-- SectionTitle: よくある質問 -->
+<section id="faq" data-component-name="faq" x-data="faqComponent" class="<?= faq_classes ?>">
+  <div class="container">
+    <p class="section-title"><?= section_title_en ?></p>
+    <h2><?= section_title ?></h2>
+    <?= description ?>
+    <!-- <p class="description">テキストテキストテキスト</p> -->
+
+    <div class="faq-wrap">
+      <template x-if="loading">
+        <p>読み込み中...</p>
+      </template>
+      <template x-if="error">
+        <p class="error" x-text="error"></p>
+      </template>
+      <!-- FAQ一覧 -->
+      <template x-for="(item, idx) in items" :key="idx">
+        <div class="faq-item">
+          <h3 class="q" x-text="item.q" @click="faqItemClick"></h3>
+          <div class="a-block">
+            <p class="a" x-text="item.a"></p>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</section>

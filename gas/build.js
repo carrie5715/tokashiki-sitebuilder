@@ -246,9 +246,10 @@ const Build = {
     ];
     if (flags && flags.mvOk) list.push('mv.js');
     if (flags && flags.messageOk) list.push('message.js');
-  if (flags && flags.serviceOk) list.push('service.js');
-  if (flags && flags.companyOk) list.push('company.js');
-  if (flags && flags.worksOk) list.push('works.js');
+    if (flags && flags.serviceOk) list.push('service.js');
+    if (flags && flags.faqOk) list.push('faq.js');
+    if (flags && flags.companyOk) list.push('company.js');
+    if (flags && flags.worksOk) list.push('works.js');
 
     const tags = [];
     list.forEach((name) => {
@@ -293,6 +294,9 @@ const Build = {
         }
         if (item.id === 'service') {
           sectionString += this.getServiceContents() + '\n';
+        }
+        if (item.id === 'faq') {
+          sectionString += this.getFaqContents() + '\n';
         }
         if (item.id === 'company') {
           sectionString += this.getCompanyContents() + '\n';
@@ -476,6 +480,28 @@ const Build = {
         section_title: Utils.getSheetValue('service', 'section_title') || '',
         section_title_en: Utils.getSheetValue('service', 'section_title_en') || '',
         section_intro: Utils.getSheetValue('service', 'section_intro') || '',
+      };
+    }
+    return this.applyTagReplacements(template, replacements);
+  },
+
+  /** faq */
+  getFaqContents() {
+    const template = this.getTemplateFile('components', 'faq');
+    let replacements = {};
+    if (typeof FaqInfo !== 'undefined' && typeof FaqInfo.getTemplateReplacements === 'function') {
+      replacements = FaqInfo.getTemplateReplacements();
+    } else {
+      // フォールバック（最小限）
+      const typeVal = String(Utils.getSheetValue('faq', 'type') || '').trim();
+      const classes = typeVal ? `type-${typeVal}` : '';
+      const desc = String(Utils.getSheetValue('faq', 'description') || '').trim();
+      const descHtml = desc ? `<p class="description">${desc}</p>` : '';
+      replacements = {
+        section_title: Utils.getSheetValue('faq', 'section_title') || '',
+        section_title_en: Utils.getSheetValue('faq', 'section_title_en') || '',
+        description: descHtml,
+        faq_classes: classes,
       };
     }
     return this.applyTagReplacements(template, replacements);

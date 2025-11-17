@@ -234,8 +234,10 @@
         <!-- FAQ一覧 -->
         <template x-for="(item, idx) in items" :key="idx">
           <div class="faq-item">
-            <h3 class="q" x-text="item.q"></h3>
-            <p class="a" x-text="item.a"></p>
+            <h3 class="q" x-text="item.q" @click="faqItemClick"></h3>
+            <div class="a-block">
+              <p class="a" x-text="item.a"></p>
+            </div>
           </div>
         </template>
       </div>

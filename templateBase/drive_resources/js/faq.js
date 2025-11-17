@@ -15,5 +15,8 @@ document.addEventListener('alpine:init', () => {
         this.loading = false;
       }
     },
+    onFaqItemClick(e) {
+      console.log('FAQ item clicked', e);
+    }
   }));
 });
