@@ -159,7 +159,7 @@ var ServiceInfo = (function () {
       }
 
       if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-        Utils.logToSheet(`service.json を出力しました（${(items || []).length}件）`, 'ServiceInfo');
+        // Utils.logToSheet(`service.json を出力しました（${(items || []).length}件）`, 'ServiceInfo');
       }
     } catch (e) {
       if (typeof Utils !== 'undefined' && Utils.logToSheet) {
@@ -178,7 +178,7 @@ var ServiceInfo = (function () {
     writeServiceJson_(items);
 
     if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-      Utils.logToSheet(`service: ${Object.keys(service).length}件`, 'ServiceInfo');
+      // Utils.logToSheet(`service: ${Object.keys(service).length}件`, 'ServiceInfo');
     }
     const ok = (items && items.length > 0) || (rows && rows.length > 0);
     return { service: JSON.parse(JSON.stringify(service)), rows, items, ok };

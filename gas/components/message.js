@@ -107,7 +107,7 @@ var MessageInfo = (function () {
         dataFolder.createFile(blob);
       }
       if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-        Utils.logToSheet(`message.json を出力しました（${(slides || []).length}件）`, 'MessageInfo');
+        // Utils.logToSheet(`message.json を出力しました（${(slides || []).length}件）`, 'MessageInfo');
       }
     } catch (e) {
       if (typeof Utils !== 'undefined' && Utils.logToSheet) {
@@ -123,7 +123,7 @@ var MessageInfo = (function () {
     const slides = buildSlides_();
     writeMessageJson_(slides);
     if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-      Utils.logToSheet(`message: ${Object.keys(message).length}件`, 'MessageInfo');
+      // Utils.logToSheet(`message: ${Object.keys(message).length}件`, 'MessageInfo');
     }
     const ok = (slides && slides.length > 0) || (rows && rows.length > 0);
     return { message: JSON.parse(JSON.stringify(message)), rows, slides, ok };

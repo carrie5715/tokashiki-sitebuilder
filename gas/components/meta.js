@@ -84,7 +84,7 @@ var MetaInfo = (function () {
     appendToParameters_(rows);
 
     if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-      Utils.logToSheet(`meta: ${Object.keys(meta).length}件`, 'MetaInfo');
+      // Utils.logToSheet(`meta: ${Object.keys(meta).length}件`, 'MetaInfo');
     }
     return { meta: JSON.parse(JSON.stringify(meta)), rows };
   }

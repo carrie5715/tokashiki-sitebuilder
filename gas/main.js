@@ -20,6 +20,10 @@ function onOpen() {
  * 出力
  */
 function buildAll () {
+
+  const stTime = new Date().getTime();
+  Utils.logToSheet('>>>>> 処理開始 >>>>>', 'buildAll');
+
   // 全体処理開始前に Parameters をリセット
   if (typeof CommonInfo !== 'undefined' && CommonInfo.resetParametersSheet) {
     CommonInfo.resetParametersSheet();
@@ -35,7 +39,7 @@ function buildAll () {
   // テンプレ側のCSSを output/css にコピー（colors.css は別途生成）
   try {
     const copiedCss = Build.copyAllCssFromTemplate();
-    Utils.logToSheet(`テンプレCSSコピー: ${copiedCss}件`, 'buildAll');
+    // Utils.logToSheet(`テンプレCSSコピー: ${copiedCss}件`, 'buildAll');
   } catch (e) {
     Utils.logToSheet(`テンプレCSSコピー失敗: ${e.message}`, 'buildAll');
   }
@@ -43,62 +47,62 @@ function buildAll () {
   // assets/img → output/img へコピー（画像アセットを出力側に展開）
   try {
     const copiedAssets = Build.copyAssetsToOutputImg();
-    Utils.logToSheet(`assets→output/img コピー: ${copiedAssets}件`, 'buildAll');
+    // Utils.logToSheet(`assets→output/img コピー: ${copiedAssets}件`, 'buildAll');
   } catch (e) {
     Utils.logToSheet(`assets→output/img コピー失敗: ${e.message}`, 'buildAll');
   }
 
   // 追加: 基本設定の取得と Parameters への追記
   const common = CommonInfo.readAndRecordBasicSettings();
-  Utils.logToSheet(`Parameters 追記: ${common.rows.length}件`, 'buildAll');
+  // Utils.logToSheet(`Parameters 追記: ${common.rows.length}件`, 'buildAll');
 
   // 追加: meta の取得と Parameters への追記（カテゴリ=meta）
   if (typeof MetaInfo !== 'undefined' && MetaInfo.readAndRecordMeta) {
     const m = MetaInfo.readAndRecordMeta();
-    Utils.logToSheet(`meta 追記: ${m.rows.length}件`, 'buildAll');
+    // Utils.logToSheet(`meta 追記: ${m.rows.length}件`, 'buildAll');
   }
 
   // 追加: mv の取得と Parameters への追記（カテゴリ=mv）
   if (typeof MvInfo !== 'undefined' && MvInfo.readAndRecordMv) {
     var mvRes = MvInfo.readAndRecordMv();
-    Utils.logToSheet(`mv 追記: ${mvRes.rows.length}件`, 'buildAll');
+    // Utils.logToSheet(`mv 追記: ${mvRes.rows.length}件`, 'buildAll');
   }
 
   // 追加: message の取得と Parameters への追記、JSON出力、色変数登録（旧 mission）
   if (typeof MessageInfo !== 'undefined' && MessageInfo.readAndRecordMessage) {
     var messageRes = MessageInfo.readAndRecordMessage();
-    Utils.logToSheet(`message 追記: ${messageRes.rows.length}件 / slides=${messageRes.slides.length}`, 'buildAll');
+    // Utils.logToSheet(`message 追記: ${messageRes.rows.length}件 / slides=${messageRes.slides.length}`, 'buildAll');
   }
 
   // 追加: service の取得と Parameters への追記、JSON出力
   if (typeof ServiceInfo !== 'undefined' && ServiceInfo.readAndRecordService) {
     var serviceRes = ServiceInfo.readAndRecordService();
-    Utils.logToSheet(`service 追記: ${serviceRes.rows.length}件 / items=${serviceRes.items.length}`, 'buildAll');
+    // Utils.logToSheet(`service 追記: ${serviceRes.rows.length}件 / items=${serviceRes.items.length}`, 'buildAll');
   }
 
   // 追加: faq の取得と Parameters への追記、JSON出力
   if (typeof FaqInfo !== 'undefined' && FaqInfo.readAndRecordFaq) {
     var faqRes = FaqInfo.readAndRecordFaq();
-    Utils.logToSheet(`faq 追記: ${faqRes.rows.length}件 / items=${faqRes.items.length}`, 'buildAll');
+    // Utils.logToSheet(`faq 追記: ${faqRes.rows.length}件 / items=${faqRes.items.length}`, 'buildAll');
   }
 
   // 追加: company の取得と Parameters への追記、JSON出力
   if (typeof CompanyInfo !== 'undefined' && CompanyInfo.readAndRecordCompany) {
     var companyRes = CompanyInfo.readAndRecordCompany();
-    Utils.logToSheet(`company 追記: ${companyRes.rows.length}件 / items=${companyRes.items.length}`, 'buildAll');
+    // Utils.logToSheet(`company 追記: ${companyRes.rows.length}件 / items=${companyRes.items.length}`, 'buildAll');
   }
 
   // 追加: works の取得と Parameters への追記、JSON出力
   if (typeof WorksInfo !== 'undefined' && WorksInfo.readAndRecordWorks) {
     var worksRes = WorksInfo.readAndRecordWorks();
-    Utils.logToSheet(`works 追記: ${worksRes.rows.length}件 / items=${worksRes.items.length}`, 'buildAll');
+    // Utils.logToSheet(`works 追記: ${worksRes.rows.length}件 / items=${worksRes.items.length}`, 'buildAll');
   }
 
   const order = Build.getContentOrder();
-  Utils.logToSheet(`コンテンツ表示順取得完了（${order.length}）`, 'buildAll');
+  // Utils.logToSheet(`コンテンツ表示順取得完了（${order.length}）`, 'buildAll');
 
   const mainHtml = Build.loadTemplates('top', order);
-  Utils.logToSheet(`テンプレート読み込み完了:[${typeof mainHtml}]`, 'buildAll');
+  // Utils.logToSheet(`テンプレート読み込み完了:[${typeof mainHtml}]`, 'buildAll');
 
   // scripts 差し込み（body閉じタグ前の <?= scripts ?> を置換）
   var mvOk = !!(mvRes && mvRes.ok);
@@ -129,8 +133,11 @@ function buildAll () {
     const resV = CommonInfo.writeVariablesCss(ids.output.cssId);
     Utils.logToSheet(`CSS変数出力: ${resV.filename}（${resV.count}件）`, 'buildAll');
   }
-
-  Utils.logToSheet(`##### 書き出し処理全て完了 #####`, 'buildAll');
+ 
+  const edTime = new Date().getTime();
+  const elapSec = ((edTime - stTime) / 1000).toFixed(2);
+  
+  Utils.logToSheet(`##### 書き出し処理全て完了 処理時間: ${elapSec} 秒 #####`, 'buildAll');
 }
 
 /**
@@ -147,7 +154,7 @@ function zipOutput() {
     const zipFile = Utils.zipFolder(outId, zipName); // My Drive 直下に作成されます
 
     SpreadsheetApp.getActive().toast(`ZIP作成: ${zipFile.getName()}（マイドライブ直下）`, 'zipOutput', 5);
-    Utils.logToSheet(`ZIP作成: ${zipFile.getName()} (id=${zipFile.getId()})`, 'zipOutput');
+    // Utils.logToSheet(`ZIP作成: ${zipFile.getName()} (id=${zipFile.getId()})`, 'zipOutput');
   } catch (e) {
     SpreadsheetApp.getActive().toast('ZIP作成に失敗しました。ログを確認してください。', 'zipOutput', 5);
     Utils.logToSheet(`ZIP作成エラー: ${e.message}`, 'zipOutput');
@@ -195,7 +202,7 @@ function setTemplateRootIdPrompt() {
     return;
   }
   PropertiesService.getScriptProperties().setProperty('TEMPLATE_ROOT_ID', value);
-  Utils.logToSheet(`TEMPLATE_ROOT_ID を設定: ${value}`, 'setTemplateRootIdPrompt');
+  // Utils.logToSheet(`TEMPLATE_ROOT_ID を設定: ${value}`, 'setTemplateRootIdPrompt');
   SpreadsheetApp.getActive().toast('テンプレートIDを設定しました', 'setTemplateRootIdPrompt', 3);
 }
 

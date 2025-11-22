@@ -150,7 +150,7 @@ var CommonInfo = (function () {
     safeFreezeTopRow_(sh);
 
     if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-      Utils.logToSheet('Parameters シートをリセットしました', 'CommonInfo');
+      // Utils.logToSheet('Parameters シートをリセットしました', 'CommonInfo');
     }
   }
 
@@ -170,7 +170,7 @@ var CommonInfo = (function () {
 
     // 任意でログ
     if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-      Utils.logToSheet(`基本設定: siteInfos=${Object.keys(siteInfos).length}, colors=${Object.keys(colors).length}`, 'CommonInfo');
+      // Utils.logToSheet(`基本設定: siteInfos=${Object.keys(siteInfos).length}, colors=${Object.keys(colors).length}`, 'CommonInfo');
     }
     return { siteInfos: JSON.parse(JSON.stringify(siteInfos)), colors: JSON.parse(JSON.stringify(colors)), rows };
   }
@@ -245,7 +245,7 @@ var CommonInfo = (function () {
 
   const count = (cssText.match(/--pcol-/g) || []).length;
       if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-        Utils.logToSheet(`colors.css を出力しました（変数 ${count} 件）`, 'CommonInfo');
+        // Utils.logToSheet(`colors.css を出力しました（変数 ${count} 件）`, 'CommonInfo');
       }
       return { filename: filename, count };
     } catch (e) {
@@ -298,7 +298,7 @@ var CommonInfo = (function () {
 
       const count = (cssText.match(/--[a-z0-9\-]+:/gi) || []).length;
       if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-        Utils.logToSheet(`variables.css を出力しました（変数 ${count} 件）`, 'CommonInfo');
+        // Utils.logToSheet(`variables.css を出力しました（変数 ${count} 件）`, 'CommonInfo');
       }
       return { filename: filename, count };
     } catch (e) {

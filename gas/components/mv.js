@@ -83,7 +83,7 @@ var MvInfo = (function () {
 		appendToParameters_(rows);
 
 		if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-			Utils.logToSheet(`mv: ${Object.keys(mv).length}件`, 'MvInfo');
+			// Utils.logToSheet(`mv: ${Object.keys(mv).length}件`, 'MvInfo');
 		}
 		const ok = Object.keys(mv || {}).length > 0;
 		return { mv: JSON.parse(JSON.stringify(mv)), rows, ok };

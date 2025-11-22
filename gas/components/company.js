@@ -118,7 +118,7 @@ var CompanyInfo = (function () {
       }
 
       if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-        Utils.logToSheet(`company.json を出力しました（${(items || []).length}件）`, 'CompanyInfo');
+        // Utils.logToSheet(`company.json を出力しました（${(items || []).length}件）`, 'CompanyInfo');
       }
     } catch (e) {
       if (typeof Utils !== 'undefined' && Utils.logToSheet) {
@@ -158,7 +158,7 @@ var CompanyInfo = (function () {
     writeCompanyJson_(items);
 
     if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-      Utils.logToSheet(`company: ${Object.keys(company).length}件`, 'CompanyInfo');
+      // Utils.logToSheet(`company: ${Object.keys(company).length}件`, 'CompanyInfo');
     }
     const ok = (items && items.length > 0) || (rows && rows.length > 0);
     return { company: JSON.parse(JSON.stringify(company)), rows, items, ok };

@@ -101,7 +101,7 @@ var FaqInfo = (function () {
       }
 
       if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-        Utils.logToSheet(`faq.json を出力しました（${(items || []).length}件）`, 'FaqInfo');
+        // Utils.logToSheet(`faq.json を出力しました（${(items || []).length}件）`, 'FaqInfo');
       }
     } catch (e) {
       if (typeof Utils !== 'undefined' && Utils.logToSheet) {
@@ -137,7 +137,7 @@ var FaqInfo = (function () {
     writeFaqJson_(items);
 
     if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-      Utils.logToSheet(`faq: ${Object.keys(faq).length}件`, 'FaqInfo');
+      // Utils.logToSheet(`faq: ${Object.keys(faq).length}件`, 'FaqInfo');
     }
     const ok = (items && items.length > 0) || (rows && rows.length > 0);
     return { faq: JSON.parse(JSON.stringify(faq)), rows, items, ok };

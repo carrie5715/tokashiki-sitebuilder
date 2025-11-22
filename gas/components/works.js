@@ -167,7 +167,7 @@ var WorksInfo = (function () {
       }
 
       if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-        Utils.logToSheet(`works.json を出力しました（${(items || []).length}件）`, 'WorksInfo');
+        // Utils.logToSheet(`works.json を出力しました（${(items || []).length}件）`, 'WorksInfo');
       }
     } catch (e) {
       if (typeof Utils !== 'undefined' && Utils.logToSheet) {
@@ -212,7 +212,7 @@ var WorksInfo = (function () {
     writeWorksJson_(items);
 
     if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-      Utils.logToSheet(`works: ${Object.keys(works).length}件`, 'WorksInfo');
+      // Utils.logToSheet(`works: ${Object.keys(works).length}件`, 'WorksInfo');
     }
     const ok = (items && items.length > 0) || (rows && rows.length > 0);
     return { works: JSON.parse(JSON.stringify(works)), rows, items, ok };

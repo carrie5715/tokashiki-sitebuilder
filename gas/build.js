@@ -158,7 +158,7 @@ const Build = {
       copied++;
     }
 
-    if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`CSSコピー: ${copied}件`, 'copyAllCssFromTemplate');
+    // if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`CSSコピー: ${copied}件`, 'copyAllCssFromTemplate');
     return copied;
   },
 
@@ -176,7 +176,7 @@ const Build = {
     const dst = DriveApp.getFolderById(outImgId);
 
     const count = this.copyFolderContents_(src, dst);
-    if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`assets/img → output/img: ${count}ファイル`, 'copyAssetsToOutputImg');
+    // if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`assets/img → output/img: ${count}ファイル`, 'copyAssetsToOutputImg');
     return count;
   },
 
@@ -265,7 +265,7 @@ const Build = {
 
 
   loadTemplates(targetLayout, order) {
-    Utils.logToSheet(`テンプレート読み込み開始`, 'loadTemplates');
+    // Utils.logToSheet(`テンプレート読み込み開始`, 'loadTemplates');
 
     let indexLayout = this.getTemplateFile('layout', targetLayout || 'default');
 
@@ -285,7 +285,7 @@ const Build = {
     let sectionString = ''
     if (order && order.length > 0) {
       order.forEach((item) => {
-        Utils.logToSheet(`セクションID:[${item.id}]`, 'loadTemplates');
+        // Utils.logToSheet(`セクションID:[${item.id}]`, 'loadTemplates');
         if (item.id === 'mv') {
           sectionString += this.getMvContents() + '\n';
         }
@@ -333,7 +333,7 @@ const Build = {
       }
     }
 
-    Utils.logToSheet(`${targetLayout}テンプレート読み込み完了:[${typeof indexLayout}]`, 'loadTemplates');
+    // Utils.logToSheet(`${targetLayout}テンプレート読み込み完了:[${typeof indexLayout}]`, 'loadTemplates');
 
     // meta 情報の差し込み（MetaInfo に集約）
     let metaRepl = (typeof MetaInfo !== 'undefined' && MetaInfo.getTemplateReplacements)
@@ -949,7 +949,7 @@ const Build = {
     const file = files.next();
 
     const html = file.getBlob().getDataAsString('UTF-8');
-    if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`OK: ${baseDir}/${filename}`, 'getTemplateFile');
+    // if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`OK: ${baseDir}/${filename}`, 'getTemplateFile');
     return html;
   },
 
