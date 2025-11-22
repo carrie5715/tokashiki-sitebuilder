@@ -7,7 +7,6 @@ var DEBUG_BUILD = false; // 納品用にデバッグ出力を無効化
 function onOpen() {
   SpreadsheetApp.getUi()
     .createMenu('サイト生成')
-    .addItem('動作テスト（ログ出力）', 'testConsole')
     .addItem('ファイル出力', 'buildAll')
     .addItem('出力をZIP作成（ダウンロード用）', 'zipOutput')
     .addItem('出力ZIPの共有リンク生成', 'zipOutputWithLink')
@@ -18,26 +17,6 @@ function onOpen() {
 }
 
 /**
- * 動作テスト：console.log / Logger.log に出力し、トーストも表示する
- */
-function testConsole() {
-  // 画面右下のトースト通知（ユーザーに見える）
-  SpreadsheetApp.getActive().toast('動作テストを実行しました。ログを確認してください。', 'テスト', 4);
-
-  // console.log は V8 ランタイムで使用可（Apps Script の実行ログに出力される）
-  console.log('[testConsole] console.log からのメッセージです');
-
-  // Logger.log でも一応出しておく（旧来のログ）k
-  Logger.log('[testConsole] Logger.log からのメッセージです');
-
-  // 例として現在のスプレッドシート名も出力
-  const name = SpreadsheetApp.getActiveSpreadsheet().getName();
-  Utils.logToSheet('テストのログよ')
-  console.log(`[testConsole] Spreadsheet: ${name}`);
-  Logger.log(`[testConsole] Spreadsheet: ${name}`);
-}
-
-/**
  * 出力
  */
 function buildAll () {
@@ -45,6 +24,9 @@ function buildAll () {
   if (typeof CommonInfo !== 'undefined' && CommonInfo.resetParametersSheet) {
     CommonInfo.resetParametersSheet();
   }
+
+  // 処理開始時に Utility シート（Parameters / Logs）を末尾配置 & タブ色保証
+  try { if (typeof Utils !== 'undefined' && Utils.ensureUtilitySheets) { Utils.ensureUtilitySheets(); } } catch (e) {}
 
   const ids = Build.checkDirectories();
   SpreadsheetApp.getActive().toast('出力準備OK（フォルダ確認済み）', 'buildAll', 3);

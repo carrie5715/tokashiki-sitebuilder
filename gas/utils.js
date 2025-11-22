@@ -27,12 +27,38 @@ const Utils = {
     // ログ行を追加
     sheet.appendRow([new Date(), funcName || '', message]);
 
-    // ヘッダー含め31行を超えたら古い行を削除
+    // 行数制限（最新20件 + ヘッダー）
     const lastRow = sheet.getLastRow();
     if (lastRow > 20) {
       const extra = lastRow - 20;
       sheet.deleteRows(2, extra);
     }
+  },
+  
+  /**
+   * Parameters / Logs シートを末尾に配置しタブ色をオレンジ (#FFA500) に統一する。
+   * 既に存在する場合は移動と色設定のみ。内容は変更しない。
+   */
+  ensureUtilitySheets() {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const ORANGE = '#FFA500';
+    const sheetNames = ['Parameters', 'Logs'];
+
+    sheetNames.forEach(name => {
+      let sheet = ss.getSheetByName(name);
+      if (!sheet) {
+        sheet = ss.insertSheet(name);
+      }
+      // タブ色設定（失敗は無視）
+      try { sheet.setTabColor(ORANGE); } catch (e) {}
+      // 末尾へ移動（既に末尾なら何もしない）
+      try {
+        if (sheet.getIndex() !== ss.getSheets().length) {
+          ss.setActiveSheet(sheet);
+          ss.moveActiveSheet(ss.getSheets().length);
+        }
+      } catch (e) {}
+    });
   },
 
   /**
