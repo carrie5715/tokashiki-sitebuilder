@@ -80,6 +80,12 @@ function buildAll () {
     // Utils.logToSheet(`service 追記: ${serviceRes.rows.length}件 / items=${serviceRes.items.length}`, 'buildAll');
   }
 
+  // 追加: contact の取得と Parameters への追記（色変数登録含む）
+  if (typeof ContactInfo !== 'undefined' && ContactInfo.readAndRecordContact) {
+    var contactRes = ContactInfo.readAndRecordContact();
+    // Utils.logToSheet(`contact 追記: ${contactRes.rows.length}件 / items=${contactRes.items.length}`, 'buildAll');
+  }
+
   // 追加: faq の取得と Parameters への追記、JSON出力
   if (typeof FaqInfo !== 'undefined' && FaqInfo.readAndRecordFaq) {
     var faqRes = FaqInfo.readAndRecordFaq();
@@ -96,6 +102,12 @@ function buildAll () {
   if (typeof WorksInfo !== 'undefined' && WorksInfo.readAndRecordWorks) {
     var worksRes = WorksInfo.readAndRecordWorks();
     // Utils.logToSheet(`works 追記: ${worksRes.rows.length}件 / items=${worksRes.items.length}`, 'buildAll');
+  }
+
+  // 追加: footer の取得と Parameters への追記、色変数登録
+  if (typeof FooterInfo !== 'undefined' && FooterInfo.readAndRecordFooter) {
+    var footerRes = FooterInfo.readAndRecordFooter();
+    // Utils.logToSheet(`footer 追記: ${footerRes.rows.length}件`, 'buildAll');
   }
 
   const order = Build.getContentOrder();

@@ -1,0 +1,117 @@
+// footer シート処理を集約
+var footer = footer || {};
+
+var FooterInfo = (function() {
+  const SHEET_NAME = 'footer';
+  const PARAMETERS_SHEET_NAME = 'Parameters';
+  const LOGS_SHEET_NAME = 'Logs';
+
+  function readFooter_() {
+    const ss = SpreadsheetApp.getActive();
+    const sh = ss.getSheetByName(SHEET_NAME);
+    if (!sh) return [];
+    const values = sh.getDataRange().getValues();
+    if (!values || values.length === 0) return [];
+
+    const a1 = (values[0][0] != null ? String(values[0][0]).trim().toLowerCase() : '');
+    const b1 = (values[0][1] != null ? String(values[0][1]).trim().toLowerCase() : '');
+    const hasHeader = (a1 === 'key' && (b1 === 'value' || b1 === 'val' || b1 === '値'));
+
+    const startRow = hasHeader ? 1 : 0;
+    const rows = [];
+    for (let r = startRow; r < values.length; r++) {
+      const key  = values[r][0] ? String(values[r][0]).trim() : '';
+      const val  = values[r][1] != null ? values[r][1] : '';
+      const note = values[r][2] != null ? String(values[r][2]) : '';
+      if (!key) continue;
+      footer[key] = val;
+      rows.push({ category: 'footer', key, value: val, note });
+    }
+    return rows;
+  }
+
+  function ensureParametersSheet_() {
+    if (typeof CommonInfo !== 'undefined' && CommonInfo.ensureParametersSheet_) {
+      return CommonInfo.ensureParametersSheet_();
+    }
+    const ss = SpreadsheetApp.getActive();
+    let sheet = ss.getSheetByName(PARAMETERS_SHEET_NAME);
+    if (sheet) return sheet;
+    const sheets = ss.getSheets();
+    let logsIndex = -1;
+    for (let i = 0; i < sheets.length; i++) {
+      if (sheets[i].getName() === LOGS_SHEET_NAME) { logsIndex = i; break; }
+    }
+    sheet = (logsIndex >= 0)
+      ? ss.insertSheet(PARAMETERS_SHEET_NAME, logsIndex)
+      : ss.insertSheet(PARAMETERS_SHEET_NAME);
+    if (sheet.getLastRow() === 0) {
+      sheet.getRange(1, 1, 1, 4).setValues([[ 'カテゴリ', 'キー', 'バリュー', 'ノート' ]]);
+      sheet.setFrozenRows(1);
+    }
+    return sheet;
+  }
+
+  function appendToParameters_(rows) {
+    if (!rows || rows.length === 0) return;
+    if (typeof CommonInfo !== 'undefined' && CommonInfo.appendToParameters_) {
+      return CommonInfo.appendToParameters_(rows);
+    }
+    const sh = ensureParametersSheet_();
+    const start = Math.max(sh.getLastRow(), 1) + 1;
+    const values = rows.map(r => [r.category, r.key, r.value, r.note || '']);
+    sh.getRange(start, 1, values.length, 4).setValues(values);
+  }
+
+  function readAndRecordFooter() {
+    const rows = readFooter_();
+    appendToParameters_(rows);
+    // カラー変数登録
+    try {
+      if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
+        const bg = footer['bg_color'];
+        const tx = footer['text_color'];
+        if (bg != null && String(bg).trim() !== '') CommonInfo.addColorVar('--pcol-footer-bg-color', String(bg));
+        if (tx != null && String(tx).trim() !== '') CommonInfo.addColorVar('--pcol-footer-text-color', String(tx));
+      }
+    } catch (e) {
+      if (typeof Utils !== 'undefined' && Utils.logToSheet) {
+        Utils.logToSheet(`footer 色変数登録失敗: ${e.message}`, 'FooterInfo');
+      }
+    }
+    const ok = rows.length > 0;
+    return { footer: JSON.parse(JSON.stringify(footer)), rows, ok };
+  }
+
+  function getTemplateReplacements() {
+    // base fields
+    const logoUrl = String(footer['logo_url'] || '').trim();
+    const companyName = String(footer['company_name'] || '').trim();
+    const address = String(footer['address'] || '').trim();
+    const mainNavShow = String(footer['main_nav_show'] || '').trim();
+    const subNavShow  = String(footer['sub_nav_show'] || '').trim();
+    // copyright variants
+    let cp = String(footer['copyright'] || '').trim();
+    if (!cp) cp = String(footer['copyrights'] || '').trim();
+    return {
+      logo_url: logoUrl,
+      company_name: companyName,
+      address: address,
+      main_nav_show: mainNavShow,
+      sub_nav_show: subNavShow,
+      copyright: cp,
+    };
+  }
+
+  function getAll() { return JSON.parse(JSON.stringify(footer)); }
+
+  return {
+    readAndRecordFooter,
+    getTemplateReplacements,
+    getAll,
+    // internal
+    readFooter_: readFooter_,
+    appendToParameters_: appendToParameters_,
+    ensureParametersSheet_: ensureParametersSheet_,
+  };
+})();

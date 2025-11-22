@@ -10,53 +10,34 @@ const Build = {
       throw new Error('親フォルダなし');
     }
 
-    // assets/
     const assets    = Utils.getOrCreateSubFolder_(parent, DIR_ASSETS);
-    const assetsImg = Utils.getOrCreateSubFolder_(assets, ASSETS_IMG);       // assets/img/
+    const assetsImg = Utils.getOrCreateSubFolder_(assets, ASSETS_IMG);
 
-    // output/
-    const output      = Utils.getOrCreateSubFolder_(parent, DIR_OUTPUT);
-  const outCss      = Utils.getOrCreateSubFolder_(output, OUT_CSS);        // output/css/
-    const outJs       = Utils.getOrCreateSubFolder_(output, OUT_JS);         // output/js/
-    const outImg      = Utils.getOrCreateSubFolder_(output, OUT_IMG);        // output/img/
-    // const outPages = Utils.getOrCreateSubFolder_(output, OUT_PAGES_HTML);  // ← 廃止
+    const output = Utils.getOrCreateSubFolder_(parent, DIR_OUTPUT);
+    const outCss = Utils.getOrCreateSubFolder_(output, OUT_CSS);
+    const outJs  = Utils.getOrCreateSubFolder_(output, OUT_JS);
+    const outImg = Utils.getOrCreateSubFolder_(output, OUT_IMG);
 
-    // 保存（必要なもののみ）
     PropertiesService.getScriptProperties().setProperties({
-      [PROP_KEYS.PARENT_ID]:           parent.getId(),
-      [PROP_KEYS.ASSETS_ID]:           assets.getId(),
-      [PROP_KEYS.ASSETS_IMG_ID]:       assetsImg.getId(),
-      [PROP_KEYS.OUTPUT_ID]:           output.getId(),
-      [PROP_KEYS.OUTPUT_CSS_ID]:       outCss.getId(),
-      
-      [PROP_KEYS.OUTPUT_JS_ID]:        outJs.getId(),
-      [PROP_KEYS.OUTPUT_IMG_ID]:       outImg.getId(),
-      // [PROP_KEYS.OUTPUT_CSS_COMPS_ID]:  // ← 廃止
-      // [PROP_KEYS.OUTPUT_PAGES_ID]:      // ← 廃止
+      [PROP_KEYS.PARENT_ID]: parent.getId(),
+      [PROP_KEYS.ASSETS_ID]: assets.getId(),
+      [PROP_KEYS.ASSETS_IMG_ID]: assetsImg.getId(),
+      [PROP_KEYS.OUTPUT_ID]: output.getId(),
+      [PROP_KEYS.OUTPUT_CSS_ID]: outCss.getId(),
+      [PROP_KEYS.OUTPUT_JS_ID]: outJs.getId(),
+      [PROP_KEYS.OUTPUT_IMG_ID]: outImg.getId(),
     }, true);
 
-    // 呼び出し側で使いやすいよう返却
     return {
       parentId: parent.getId(),
-      assets: {
-        rootId: assets.getId(),
-        imgId: assetsImg.getId(),
-      },
-      output: {
-        rootId: output.getId(),
-        cssId: outCss.getId(),
-        
-        jsId: outJs.getId(),
-        imgId: outImg.getId(),
-        // cssComponentsId:  // ← 廃止
-        // pagesHtmlId:      // ← 廃止
-      },
+      assets: { rootId: assets.getId(), imgId: assetsImg.getId() },
+      output: { rootId: output.getId(), cssId: outCss.getId(), jsId: outJs.getId(), imgId: outImg.getId() },
     };
   },
 
   /**
    * TEMPLATE_ROOT/js/<name> を output/js/ にコピー（同名があれば上書き）
-   * @param {string} name 例) "store.js"
+   * @param {string} name 例) "store.js" / "stores/nav-utils.js"
    * @returns {string|null} ファイルID（作成/更新）または null（ソースなし）
    */
   copyJsFromTemplate(name) {
@@ -64,7 +45,6 @@ const Build = {
     const rootId = Utils.getTemplateRootId_();
     const root = DriveApp.getFolderById(rootId);
 
-    // js フォルダ（サブディレクトリ対応）
     const jsFolderIt = root.getFoldersByName('js');
     if (!jsFolderIt.hasNext()) {
       if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('TEMPLATE_ROOT/js が見つかりません', 'copyJsFromTemplate');
@@ -73,11 +53,10 @@ const Build = {
     let curSrcFolder = jsFolderIt.next();
     const parts = String(name).split('/').filter(Boolean);
     const fileName = parts.pop();
-    // サブフォルダを順に辿る
     for (const p of parts) {
       const it = curSrcFolder.getFoldersByName(p);
       if (!it.hasNext()) {
-        if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`テンプレ側のサブフォルダが見つかりません: js/${parts.join('/')}`, 'copyJsFromTemplate');
+        if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`テンプレ側サブフォルダなし: js/${parts.join('/')}`, 'copyJsFromTemplate');
         return null;
       }
       curSrcFolder = it.next();
@@ -85,22 +64,20 @@ const Build = {
 
     const files = curSrcFolder.getFilesByName(fileName);
     if (!files.hasNext()) {
-      if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`テンプレ側のJSが見つかりません: ${name}`, 'copyJsFromTemplate');
+      if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`テンプレJSなし: ${name}`, 'copyJsFromTemplate');
       return null;
     }
     const srcFile = files.next();
     const blob = srcFile.getBlob().setName(fileName);
 
-    // 出力先: output/js（必要ならサブフォルダを作成）
     const outJsId = PropertiesService.getScriptProperties().getProperty(PROP_KEYS.OUTPUT_JS_ID);
-    if (!outJsId) throw new Error('OUTPUT_JS_ID が未設定です。Build.checkDirectories() を先に呼んでください。');
+    if (!outJsId) throw new Error('OUTPUT_JS_ID 未設定。先に Build.checkDirectories() を呼んでください。');
     let curDstFolder = DriveApp.getFolderById(outJsId);
     for (const p of parts) {
       const it = curDstFolder.getFoldersByName(p);
       curDstFolder = it.hasNext() ? it.next() : curDstFolder.createFolder(p);
     }
 
-    // 既存があれば中身を更新、なければ新規作成
     const outIt = curDstFolder.getFilesByName(fileName);
     if (outIt.hasNext()) {
       const dst = outIt.next();
@@ -114,13 +91,13 @@ const Build = {
 
   /**
    * TEMPLATE_ROOT/css 内の全ファイルを output/css/ にコピー（同名があれば上書き）
-   * 注意: colors.css は GAS 側で生成するためスキップ
+   * 注意: colors.css / variables.css は GAS 側生成のためスキップ
+   * @returns {number} コピー（新規+上書き）したファイル数
    */
   copyAllCssFromTemplate() {
     const rootId = Utils.getTemplateRootId_();
     const root = DriveApp.getFolderById(rootId);
 
-    // css フォルダ
     const cssFolderIt = root.getFoldersByName('css');
     if (!cssFolderIt.hasNext()) {
       if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('TEMPLATE_ROOT/css が見つかりません', 'copyAllCssFromTemplate');
@@ -128,12 +105,10 @@ const Build = {
     }
     const cssFolder = cssFolderIt.next();
 
-    // 出力先: output/css
     const outCssId = PropertiesService.getScriptProperties().getProperty(PROP_KEYS.OUTPUT_CSS_ID);
-    if (!outCssId) throw new Error('OUTPUT_CSS_ID が未設定です。Build.checkDirectories() を先に呼んでください。');
+    if (!outCssId) throw new Error('OUTPUT_CSS_ID 未設定。先に Build.checkDirectories() を呼んでください。');
     const outCssFolder = DriveApp.getFolderById(outCssId);
 
-    // 既存ファイルの名前->File マップ
     const existing = {};
     const outFiles = outCssFolder.getFiles();
     while (outFiles.hasNext()) {
@@ -141,14 +116,12 @@ const Build = {
       existing[f.getName()] = f;
     }
 
-    // コピー実行
     let copied = 0;
     const it = cssFolder.getFiles();
     while (it.hasNext()) {
       const src = it.next();
       const name = src.getName();
-      // colors.css / variables.css は GAS 生成物。テンプレに同名があってもスキップ
-      if (name === 'colors.css' || name === 'variables.css') continue;
+      if (name === 'colors.css' || name === 'variables.css') continue; // 生成物スキップ
       const blob = src.getBlob().setName(name);
       if (existing[name]) {
         existing[name].setContent(blob.getDataAsString());
@@ -157,8 +130,6 @@ const Build = {
       }
       copied++;
     }
-
-    // if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`CSSコピー: ${copied}件`, 'copyAllCssFromTemplate');
     return copied;
   },
 
@@ -377,12 +348,15 @@ const Build = {
   /** contact */
   getContactContents() {
     const template = this.getTemplateFile('components', 'contact');
-
+    // ContactInfo があればそちらを利用
+    if (typeof ContactInfo !== 'undefined' && typeof ContactInfo.getTemplateReplacements === 'function') {
+      const repl = ContactInfo.getTemplateReplacements();
+      return this.applyTagReplacements(template, repl);
+    }
+    // フォールバック（従来処理）
     const title = Utils.getSheetValue('contact', 'title') || '';
     const message = Utils.getSheetValue('contact', 'message') || '';
     const description = Utils.getSheetValue('contact', 'description') || '';
-
-    // contact セクション用カラー変数登録（存在するキーのみ）
     try {
       if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
         const colorKeys = [ 'background', 'card_bg_color', 'card_text_color' ];
@@ -397,8 +371,6 @@ const Build = {
     } catch (e) {
       if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`contact 色変数登録失敗: ${e.message}`, 'getContactContents');
     }
-
-    // items の構築: item1.. の行を走査し、C列 (識別子:ラベル) を解析
     let itemsHtml = '';
     try {
       const ss = SpreadsheetApp.getActive();
@@ -406,7 +378,6 @@ const Build = {
       if (sh) {
         const values = sh.getDataRange().getValues();
         if (values && values.length > 0) {
-          // ヘッダー判定（A1=key,B1=value など）
           const a1 = (values[0][0] != null ? String(values[0][0]).trim().toLowerCase() : '');
           const b1 = (values[0][1] != null ? String(values[0][1]).trim().toLowerCase() : '');
           const hasHeader = (a1 === 'key' && (b1 === 'value' || b1 === 'val' || b1 === '値'));
@@ -418,7 +389,6 @@ const Build = {
             const rawVal = values[r][1] != null ? String(values[r][1]).trim() : '';
             const meta = values[r][2] != null ? String(values[r][2]).trim() : '';
             if (!rawVal && !meta) continue;
-
             let ident = '';
             let label = '';
             if (meta && meta.includes(':')) {
@@ -429,21 +399,14 @@ const Build = {
               ident = (meta || '').trim().toLowerCase();
               label = '';
             }
-
             const typeClass = ident ? ` type-${ident}` : '';
-
-            // href の決定
             let href = rawVal;
             if (ident === 'tel') href = `tel:${rawVal}`;
             else if (ident === 'mail') href = `mailto:${rawVal}`;
-
-            // target 判定
             const openInNew = (ident === 'line' || ident === 'form' || ident === 'link');
             const targetAttr = openInNew ? ' target="_blank" rel="noopener noreferrer"' : '';
-
             const body = label || rawVal || '';
-            // Alpine用クリックハンドラ付与 (@click="onCtaClick($event, type, index)")
-            const indexInList = chunks.length; // 0始まりインデックス
+            const indexInList = chunks.length;
             const clickAttr = ` @click="onCtaClick($event, '${ident}', ${indexInList})"`;
             const html =
               `<div class="item${typeClass}">\n` +
@@ -459,12 +422,9 @@ const Build = {
     } catch (e) {
       if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`contact items 構築失敗: ${e.message}`, 'getContactContents');
     }
-
-    // 空の場合はタグごと出力しない。値がある場合のみ包んで挿入
     const titleHtml = title ? `<h2>${title}</h2>` : '';
     const messageHtml = message ? `<p class="message">${message}</p>` : '';
     const descriptionHtml = description ? `<p class="description">${description}</p>` : '';
-
     const replacements = { title: titleHtml, message: messageHtml, description: descriptionHtml, items: itemsHtml };
     return this.applyTagReplacements(template, replacements);
   },
@@ -594,28 +554,40 @@ const Build = {
   /** footer */
   getFooterContents() {
     const template = this.getTemplateFile('components', 'footer');
-    // CommonInfo の siteInfos を優先。なければ Utils.getSheetValue でフォールバック
+    // 新: FooterInfo があれば優先利用
+    if (typeof FooterInfo !== 'undefined' && typeof FooterInfo.getTemplateReplacements === 'function') {
+      const baseRepl = FooterInfo.getTemplateReplacements();
+      // ナビ生成（従来 Build 内ロジック再利用）
+      let footerNavItems = [];
+      let footerNavHtml = '';
+      try { footerNavItems = this.getNavItemsFromSheet_(); footerNavHtml = this.buildNavLis_(footerNavItems); } catch (_) {}
+      let footerSubNavItems = [];
+      let footerSubNavHtml = '';
+      try { footerSubNavItems = this.getFooterSubNavItems_(); footerSubNavHtml = this.buildNavLis_(footerSubNavItems); } catch (_) {}
+      const truthy = (v) => {
+        if (v == null) return false;
+        if (typeof v === 'boolean') return v;
+        if (typeof v === 'number') return v !== 0;
+        const s = String(v).trim().toLowerCase();
+        return s === 'true' || s === '1' || s === 'yes' || s === 'y' || s === 'on';
+      };
+      const mainShow = truthy(baseRepl.main_nav_show);
+      const subShow  = truthy(baseRepl.sub_nav_show);
+      baseRepl.footer_nav = footerNavHtml;
+      baseRepl.footer_sub_nav = footerSubNavHtml;
+      baseRepl.footer_nav_class = (!mainShow || footerNavItems.length === 0 ? 'hidden' : '');
+      baseRepl.footer_sub_nav_class = (!subShow || footerSubNavItems.length === 0 ? 'hidden' : '');
+      return this.applyTagReplacements(template, baseRepl);
+    }
+    // 旧: FooterInfo 無い場合のフォールバック
     const s = (typeof siteInfos !== 'undefined') ? siteInfos : {};
     const get = (k) => {
       if (s && s[k] != null && String(s[k]).trim() !== '') return String(s[k]);
-      try {
-        // 基本設定シートから直接取得（存在しない場合は空）
-        return String(Utils.getSheetValue('基本設定', k) || '');
-      } catch (e) {
-        return '';
-      }
+      try { return String(Utils.getSheetValue('基本設定', k) || ''); } catch (_) { return ''; }
     };
-    // footer シートから直接取得（存在すればこちらを優先）
     const getFooter = (k) => {
-      try {
-        const v = Utils.getSheetValue('footer', k);
-        return (v != null && String(v).trim() !== '') ? String(v) : '';
-      } catch (e) {
-        return '';
-      }
+      try { const v = Utils.getSheetValue('footer', k); return (v != null && String(v).trim() !== '') ? String(v) : ''; } catch (_) { return ''; }
     };
-
-    // フッター用カラー変数を colors.css に登録（footer シートに値がある場合）
     try {
       const bg = getFooter('bg_color');
       const tx = getFooter('text_color');
@@ -623,41 +595,25 @@ const Build = {
         if (bg) CommonInfo.addColorVar('--pcol-footer-bg-color', String(bg));
         if (tx) CommonInfo.addColorVar('--pcol-footer-text-color', String(tx));
       }
-    } catch (e) {
-      // noop
-    }
-
-    // nav シートからナビHTML
+    } catch (_) {}
     let footerNavItems = [];
     let footerNavHtml = '';
-    try {
-      footerNavItems = this.getNavItemsFromSheet_();
-      footerNavHtml = this.buildNavLis_(footerNavItems);
-    } catch (e) { /* noop */ }
-
-    // footer サブナビ（ftsub_nav_1_url など）取得
+    try { footerNavItems = this.getNavItemsFromSheet_(); footerNavHtml = this.buildNavLis_(footerNavItems); } catch (_) {}
     let footerSubNavItems = [];
     let footerSubNavHtml = '';
-    try {
-      footerSubNavItems = this.getFooterSubNavItems_();
-      footerSubNavHtml = this.buildNavLis_(footerSubNavItems);
-    } catch (e) { /* noop */ }
-
-    // 表示制御フラグ（footer シート）: TRUE/1/yes/on などを真とみなす
+    try { footerSubNavItems = this.getFooterSubNavItems_(); footerSubNavHtml = this.buildNavLis_(footerSubNavItems); } catch (_) {}
     const truthy = (v) => {
       if (v == null) return false;
       if (typeof v === 'boolean') return v;
       if (typeof v === 'number') return v !== 0;
-      const s = String(v).trim().toLowerCase();
-      return s === 'true' || s === '1' || s === 'yes' || s === 'y' || s === 'on';
+      const s2 = String(v).trim().toLowerCase();
+      return s2 === 'true' || s2 === '1' || s2 === 'yes' || s2 === 'y' || s2 === 'on';
     };
     const mainNavShowRaw = getFooter('main_nav_show');
     const subNavShowRaw  = getFooter('sub_nav_show');
     const mainNavShow = truthy(mainNavShowRaw);
     const subNavShow  = truthy(subNavShowRaw);
-
     const replacements = {
-      // footer シートがあればそちらを優先
       logo_url: (function(){ const v = getFooter('logo_url'); return v || get('logo_url'); })(),
       company_name: (function(){ const v = getFooter('company_name'); return v || get('company_name'); })(),
       address: (function(){ const v = getFooter('address'); return v || get('address'); })(),
@@ -665,15 +621,10 @@ const Build = {
       footer_sub_nav: footerSubNavHtml,
       footer_nav_class: (!mainNavShow || footerNavItems.length === 0 ? 'hidden' : ''),
       footer_sub_nav_class: (!subNavShow || footerSubNavItems.length === 0 ? 'hidden' : ''),
-      // シート側は copyrights の可能性があるためフォールバック
       copyright: (function(){
-        // footer シート優先
-        const fv = getFooter('copyright');
-        if (fv) return fv;
-        const fvs = getFooter('copyrights');
-        if (fvs) return fvs;
-        const v = get('copyright');
-        if (v) return v;
+        const fv = getFooter('copyright'); if (fv) return fv;
+        const fvs = getFooter('copyrights'); if (fvs) return fvs;
+        const v = get('copyright'); if (v) return v;
         return get('copyrights');
       })(),
     };
