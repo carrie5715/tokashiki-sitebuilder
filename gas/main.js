@@ -5,15 +5,20 @@ var DEBUG_BUILD = false; // 納品用にデバッグ出力を無効化
  * スプレッドシートを開いた時にカスタムメニューを追加する
  */
 function onOpen() {
-  SpreadsheetApp.getUi()
-    .createMenu('サイト生成')
-    .addItem('ファイル出力', 'buildAll')
-    .addItem('出力をZIP作成（ダウンロード用）', 'zipOutput')
-    .addItem('出力ZIPの共有リンク生成', 'zipOutputWithLink')
-    .addSeparator()
-    .addItem('テンプレートID設定', 'setTemplateRootIdPrompt')
-    .addItem('テンプレートIDクリア', 'clearTemplateRootId')
-    .addToUi();
+  try {
+    var ui = SpreadsheetApp.getUi && SpreadsheetApp.getUi();
+    if (!ui) return; // UI コンテキストでない場合はメニュー生成をスキップ
+    ui.createMenu('サイト生成')
+      .addItem('ファイル出力', 'buildAll')
+      .addItem('出力をZIP作成（ダウンロード用）', 'zipOutput')
+      .addItem('出力ZIPの共有リンク生成', 'zipOutputWithLink')
+      .addSeparator()
+      .addItem('テンプレートID設定', 'setTemplateRootIdPrompt')
+      .addItem('テンプレートIDクリア', 'clearTemplateRootId')
+      .addToUi();
+  } catch (e) {
+    if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('onOpen UIメニュー生成スキップ: ' + e.message, 'onOpen');
+  }
 }
 
 /**
@@ -24,10 +29,7 @@ function buildAll () {
   const stTime = new Date().getTime();
   Utils.logToSheet('>>>>> 処理開始 >>>>>', 'buildAll');
 
-  // 全体処理開始前に Parameters をリセット
-  if (typeof CommonInfo !== 'undefined' && CommonInfo.resetParametersSheet) {
-    CommonInfo.resetParametersSheet();
-  }
+  // Parameters 廃止済み（旧リセット処理は不要）
 
   // 処理開始時に Utility シート（Parameters / Logs）を末尾配置 & タブ色保証
   try { if (typeof Utils !== 'undefined' && Utils.ensureUtilitySheets) { Utils.ensureUtilitySheets(); } } catch (e) {}
@@ -52,59 +54,58 @@ function buildAll () {
     Utils.logToSheet(`assets→output/img コピー失敗: ${e.message}`, 'buildAll');
   }
 
-  // 追加: 基本設定の取得と Parameters への追記
+  // 追加: 基本設定読み込み
   const common = CommonInfo.readAndRecordBasicSettings();
-  // Utils.logToSheet(`Parameters 追記: ${common.rows.length}件`, 'buildAll');
 
-  // 追加: meta の取得と Parameters への追記（カテゴリ=meta）
+  // 追加: meta 読み込み
   if (typeof MetaInfo !== 'undefined' && MetaInfo.readAndRecordMeta) {
     const m = MetaInfo.readAndRecordMeta();
     // Utils.logToSheet(`meta 追記: ${m.rows.length}件`, 'buildAll');
   }
 
-  // 追加: mv の取得と Parameters への追記（カテゴリ=mv）
+  // 追加: mv 読み込み
   if (typeof MvInfo !== 'undefined' && MvInfo.readAndRecordMv) {
     var mvRes = MvInfo.readAndRecordMv();
     // Utils.logToSheet(`mv 追記: ${mvRes.rows.length}件`, 'buildAll');
   }
 
-  // 追加: message の取得と Parameters への追記、JSON出力、色変数登録（旧 mission）
+  // 追加: message 読み込み + JSON出力 + 色変数登録（旧 mission）
   if (typeof MessageInfo !== 'undefined' && MessageInfo.readAndRecordMessage) {
     var messageRes = MessageInfo.readAndRecordMessage();
     // Utils.logToSheet(`message 追記: ${messageRes.rows.length}件 / slides=${messageRes.slides.length}`, 'buildAll');
   }
 
-  // 追加: service の取得と Parameters への追記、JSON出力
+  // 追加: service 読み込み + JSON出力
   if (typeof ServiceInfo !== 'undefined' && ServiceInfo.readAndRecordService) {
     var serviceRes = ServiceInfo.readAndRecordService();
     // Utils.logToSheet(`service 追記: ${serviceRes.rows.length}件 / items=${serviceRes.items.length}`, 'buildAll');
   }
 
-  // 追加: contact の取得と Parameters への追記（色変数登録含む）
+  // 追加: contact 読み込み（色変数登録含む）
   if (typeof ContactInfo !== 'undefined' && ContactInfo.readAndRecordContact) {
     var contactRes = ContactInfo.readAndRecordContact();
     // Utils.logToSheet(`contact 追記: ${contactRes.rows.length}件 / items=${contactRes.items.length}`, 'buildAll');
   }
 
-  // 追加: faq の取得と Parameters への追記、JSON出力
+  // 追加: faq 読み込み + JSON出力
   if (typeof FaqInfo !== 'undefined' && FaqInfo.readAndRecordFaq) {
     var faqRes = FaqInfo.readAndRecordFaq();
     // Utils.logToSheet(`faq 追記: ${faqRes.rows.length}件 / items=${faqRes.items.length}`, 'buildAll');
   }
 
-  // 追加: company の取得と Parameters への追記、JSON出力
+  // 追加: company 読み込み + JSON出力
   if (typeof CompanyInfo !== 'undefined' && CompanyInfo.readAndRecordCompany) {
     var companyRes = CompanyInfo.readAndRecordCompany();
     // Utils.logToSheet(`company 追記: ${companyRes.rows.length}件 / items=${companyRes.items.length}`, 'buildAll');
   }
 
-  // 追加: works の取得と Parameters への追記、JSON出力
+  // 追加: works 読み込み + JSON出力
   if (typeof WorksInfo !== 'undefined' && WorksInfo.readAndRecordWorks) {
     var worksRes = WorksInfo.readAndRecordWorks();
     // Utils.logToSheet(`works 追記: ${worksRes.rows.length}件 / items=${worksRes.items.length}`, 'buildAll');
   }
 
-  // 追加: footer の取得と Parameters への追記、色変数登録
+  // 追加: footer 読み込み + 色変数登録
   if (typeof FooterInfo !== 'undefined' && FooterInfo.readAndRecordFooter) {
     var footerRes = FooterInfo.readAndRecordFooter();
     // Utils.logToSheet(`footer 追記: ${footerRes.rows.length}件`, 'buildAll');

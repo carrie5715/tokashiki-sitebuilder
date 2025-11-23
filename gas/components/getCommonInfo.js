@@ -100,73 +100,11 @@ var CommonInfo = (function () {
     return '';
   }
 
-  // Parameters シートを Logs の手前に作成（存在すれば再利用）
-  function ensureParametersSheet_() {
-    const ss = SpreadsheetApp.getActive();
-    let sheet = ss.getSheetByName(PARAMETERS_SHEET_NAME);
-    if (sheet) return sheet;
-
-    const sheets = ss.getSheets();
-    let logsIndex = -1;
-    for (let i = 0; i < sheets.length; i++) {
-      if (sheets[i].getName() === LOGS_SHEET_NAME) {
-        logsIndex = i;
-        break;
-      }
-    }
-    // Logs があればその手前、なければ末尾へ
-    sheet = (logsIndex >= 0)
-      ? ss.insertSheet(PARAMETERS_SHEET_NAME, logsIndex)
-      : ss.insertSheet(PARAMETERS_SHEET_NAME);
-
-    // ヘッダ付与（空なら）
-    if (sheet.getLastRow() === 0) {
-      sheet.getRange(1, 1, 1, 4).setValues([['カテゴリ', 'キー', 'バリュー', 'ノート']]);
-      safeFreezeTopRow_(sheet);
-    }
-    return sheet;
-  }
-
-  // Parameters をリセット（ヘッダーは維持・なければ再作成）。位置は Logs の手前に維持。
-  function resetParametersSheet() {
-    const sh = ensureParametersSheet_();
-    const lastRow = sh.getLastRow();
-    const frozenRows = sh.getFrozenRows ? sh.getFrozenRows() : 1; // 通常1
-    const nonFrozenCount = Math.max(0, lastRow - frozenRows);
-
-    // Sheetsの制約: 「非固定の全行を削除」はエラーになるため、1行は残してクリアする
-    if (nonFrozenCount > 1) {
-      // 先に (frozen+2 〜 最終) を削除し、(frozen+1) は空行として残す
-      sh.deleteRows(frozenRows + 2, nonFrozenCount - 1);
-      sh.getRange(frozenRows + 1, 1, 1, 4).clearContent();
-    } else if (nonFrozenCount === 1) {
-      // 残っている1行は削除せず中身だけクリア
-      sh.getRange(frozenRows + 1, 1, 1, 4).clearContent();
-    }
-
-    // ヘッダーを再設定（万一欠けていても復旧）
-    const headerRange = sh.getRange(1, 1, 1, 4);
-    headerRange.setValues([[ 'カテゴリ', 'キー', 'バリュー', 'ノート' ]]);
-    safeFreezeTopRow_(sh);
-
-    if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-      // Utils.logToSheet('Parameters シートをリセットしました', 'CommonInfo');
-    }
-  }
-
-  // Parameters へ追記
-  function appendToParameters_(rows) {
-    if (!rows || rows.length === 0) return;
-    const sh = ensureParametersSheet_();
-    const start = Math.max(sh.getLastRow(), 1) + 1;
-    const values = rows.map(r => [r.category, r.key, r.value, r.note || '']);
-    sh.getRange(start, 1, values.length, 4).setValues(values);
-  }
+  // Parameters 関連機能 (ensure/reset/append) は完全廃止済み
 
   // 公開API: 読み込み + Parameters 追記 + 概要返却
   function readAndRecordBasicSettings() {
     const rows = readBasicSettings_();
-    appendToParameters_(rows);
 
     // 任意でログ
     if (typeof Utils !== 'undefined' && Utils.logToSheet) {
@@ -350,11 +288,10 @@ var CommonInfo = (function () {
     addBodyClass,
     resetBodyClasses,
     getBodyClassesString,
-    resetParametersSheet,
+    // reset/removeParametersSheet は廃止
     // 必要ならエクスポート
     readBasicSettings_: readBasicSettings_,
-    ensureParametersSheet_: ensureParametersSheet_,
-    appendToParameters_: appendToParameters_,
+    // ensureParametersSheet_, appendToParameters_ は廃止
     safeFreezeTopRow_: safeFreezeTopRow_,
     SITE_KEYS, COLOR_KEYS
   };

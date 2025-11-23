@@ -37,50 +37,11 @@ var MvInfo = (function () {
 		return rows;
 	}
 
-	// Parameters シート確保（CommonInfo があれば共用。なければフォールバックで作成）
-	function ensureParametersSheet_() {
-		if (typeof CommonInfo !== 'undefined' && CommonInfo.ensureParametersSheet_) {
-			return CommonInfo.ensureParametersSheet_();
-		}
-		const ss = SpreadsheetApp.getActive();
-		let sheet = ss.getSheetByName(PARAMETERS_SHEET_NAME);
-		if (sheet) return sheet;
-
-		const sheets = ss.getSheets();
-		let logsIndex = -1;
-		for (let i = 0; i < sheets.length; i++) {
-			if (sheets[i].getName() === LOGS_SHEET_NAME) { logsIndex = i; break; }
-		}
-		sheet = (logsIndex >= 0)
-			? ss.insertSheet(PARAMETERS_SHEET_NAME, logsIndex)
-			: ss.insertSheet(PARAMETERS_SHEET_NAME);
-
-		if (sheet.getLastRow() === 0) {
-			sheet.getRange(1, 1, 1, 4).setValues([[ 'カテゴリ', 'キー', 'バリュー', 'ノート' ]]);
-			sheet.setFrozenRows(1);
-		}
-		return sheet;
-	}
-
-	// Parameters へ追記
-	function appendToParameters_(rows) {
-		if (!rows || rows.length === 0) return;
-
-		// CommonInfo が持つ append を使えるならそれを使う（列揃えの一貫性）
-		if (typeof CommonInfo !== 'undefined' && CommonInfo.appendToParameters_) {
-			return CommonInfo.appendToParameters_(rows);
-		}
-
-		const sh = ensureParametersSheet_();
-		const start = Math.max(sh.getLastRow(), 1) + 1;
-		const values = rows.map(r => [r.category, r.key, r.value, r.note || '']);
-		sh.getRange(start, 1, values.length, 4).setValues(values);
-	}
+	// Parameters 関連機能は廃止済み
 
 	// 公開API: 読み込み + Parameters 追記 + 概要返却
 	function readAndRecordMv() {
 		const rows = readMv_();
-		appendToParameters_(rows);
 
 		if (typeof Utils !== 'undefined' && Utils.logToSheet) {
 			// Utils.logToSheet(`mv: ${Object.keys(mv).length}件`, 'MvInfo');
@@ -109,7 +70,6 @@ var MvInfo = (function () {
 		getAll,
 		// 内部API（必要なら利用）
 		readMv_: readMv_,
-		ensureParametersSheet_: ensureParametersSheet_,
-		appendToParameters_: appendToParameters_,
+		// ensureParametersSheet_, appendToParameters_ は廃止
 	};
 })();

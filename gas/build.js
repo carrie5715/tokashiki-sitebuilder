@@ -84,55 +84,50 @@ const Build = {
       dst.setContent(blob.getDataAsString());
       return dst.getId();
     } else {
-      const created = curDstFolder.createFile(blob);
-      return created.getId();
+      const newFile = curDstFolder.createFile(blob);
+      return newFile.getId();
     }
   },
 
   /**
-   * TEMPLATE_ROOT/css 内の全ファイルを output/css/ にコピー（同名があれば上書き）
-   * 注意: colors.css / variables.css は GAS 側生成のためスキップ
+   * TEMPLATE_ROOT/css 配下の全CSSファイルを output/css にコピー（同名は内容上書き）
    * @returns {number} コピー（新規+上書き）したファイル数
    */
   copyAllCssFromTemplate() {
     const rootId = Utils.getTemplateRootId_();
+    if (!rootId) throw new Error('テンプレートルートID未設定です。先に設定してください。');
     const root = DriveApp.getFolderById(rootId);
-
     const cssFolderIt = root.getFoldersByName('css');
     if (!cssFolderIt.hasNext()) {
       if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('TEMPLATE_ROOT/css が見つかりません', 'copyAllCssFromTemplate');
       return 0;
     }
-    const cssFolder = cssFolderIt.next();
-
+    const srcCssFolder = cssFolderIt.next();
     const outCssId = PropertiesService.getScriptProperties().getProperty(PROP_KEYS.OUTPUT_CSS_ID);
-    if (!outCssId) throw new Error('OUTPUT_CSS_ID 未設定。先に Build.checkDirectories() を呼んでください。');
-    const outCssFolder = DriveApp.getFolderById(outCssId);
-
-    const existing = {};
-    const outFiles = outCssFolder.getFiles();
-    while (outFiles.hasNext()) {
-      const f = outFiles.next();
-      existing[f.getName()] = f;
-    }
-
-    let copied = 0;
-    const it = cssFolder.getFiles();
-    while (it.hasNext()) {
-      const src = it.next();
-      const name = src.getName();
-      if (name === 'colors.css' || name === 'variables.css') continue; // 生成物スキップ
-      const blob = src.getBlob().setName(name);
-      if (existing[name]) {
-        existing[name].setContent(blob.getDataAsString());
+    if (!outCssId) throw new Error('OUTPUT_CSS_ID 未設定。Build.checkDirectories() を先に呼んでください。');
+    const dstFolder = DriveApp.getFolderById(outCssId);
+    let count = 0;
+    // 直下ファイルのみ（現在テンプレ構造にサブフォルダなし）
+    const files = srcCssFolder.getFiles();
+    while (files.hasNext()) {
+      const f = files.next();
+      const name = f.getName();
+      const blob = f.getBlob().setName(name);
+      const it = dstFolder.getFilesByName(name);
+      if (it.hasNext()) {
+        try {
+          const ex = it.next();
+          ex.setContent(blob.getDataAsString());
+        } catch (e) {
+          if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`CSS上書き失敗: ${name} - ${e.message}`, 'copyAllCssFromTemplate');
+        }
       } else {
-        outCssFolder.createFile(blob);
+        dstFolder.createFile(blob);
       }
-      copied++;
+      count++;
     }
-    return copied;
+    return count;
   },
-
   /**
    * assets/img 配下の全ファイル・フォルダを output/img に再帰コピー（同名は上書き）
    * @returns {number} コピー（新規作成+上書き）したファイル数
@@ -502,53 +497,24 @@ const Build = {
 
   /** header */
   getHeaderContents() {
-    // テンプレート取得
     const template = this.getTemplateFile('components', 'header');
-    // nav シートからナビHTMLを構築
-    let navHtml = '';
-    try {
-      const items = this.getNavItemsFromSheet_();
-      navHtml = this.buildNavLis_(items);
-    } catch (e) {
-      if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`ヘッダーナビ生成失敗: ${e.message}`, 'getHeaderContents');
+    // 分離済み HeaderInfo を優先
+    if (typeof HeaderInfo !== 'undefined' && typeof HeaderInfo.getTemplateReplacements === 'function') {
+      return this.applyTagReplacements(template, HeaderInfo.getTemplateReplacements());
     }
-
-    // 基本設定からロゴURL/お問い合わせURLを取得（siteInfos を優先、なければシート直読み）
+    // フォールバック: 旧処理
+    let navHtml = '';
+    try { const items = this.getNavItemsFromSheet_(); navHtml = this.buildNavLis_(items); } catch (e) { if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`ヘッダーナビ生成失敗: ${e.message}`, 'getHeaderContents'); }
     const s = (typeof siteInfos !== 'undefined') ? siteInfos : {};
-    const get = (k) => {
-      if (s && s[k] != null && String(s[k]).trim() !== '') return String(s[k]);
-      try { return String(Utils.getSheetValue('基本設定', k) || ''); } catch (_) { return ''; }
-    };
+    const get = (k) => { if (s && s[k] != null && String(s[k]).trim() !== '') return String(s[k]); try { return String(Utils.getSheetValue('基本設定', k) || ''); } catch (_) { return ''; } };
     const logoUrl = get('logo_url') || '/images/logo.png';
     const contactUrl = get('contact_url') || '';
-    // contact_is_external: 真なら _blank、偽なら _self
     const extRaw = get('contact_is_external');
-    const isExternal = (function(v){
-      if (v == null) return false;
-      if (typeof v === 'boolean') return v;
-      if (typeof v === 'number') return v !== 0;
-      const s = String(v).trim().toLowerCase();
-      return s === 'true' || s === '1' || s === 'yes' || s === 'y' || s === 'on';
-    })(extRaw);
+    const isExternal = (function(v){ if (v == null) return false; if (typeof v === 'boolean') return v; if (typeof v === 'number') return v !== 0; const s2 = String(v).trim().toLowerCase(); return ['true','1','yes','y','on'].includes(s2); })(extRaw);
     const contactTarget = isExternal ? '_blank' : '_self';
-
-    // contact シート由来のヘッダー内コンタクトリンク群を生成
     let headerContactHtml = '';
-    try {
-      const contactItems = this.getHeaderContactItemsFromContactSheet_();
-      headerContactHtml = this.buildHeaderContactLis_(contactItems);
-    } catch (e) {
-      if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`ヘッダー用contact生成失敗: ${e.message}`, 'getHeaderContents');
-    }
-
-    // プレースホルダ置換
-    return this.applyTagReplacements(template, {
-      header_nav: navHtml,
-      header_contact: headerContactHtml,
-      logo_url: logoUrl,
-      contact_url: contactUrl,
-      contact_is_external: contactTarget,
-    });
+    try { const contactItems = this.getHeaderContactItemsFromContactSheet_(); headerContactHtml = this.buildHeaderContactLis_(contactItems); } catch (e) { if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`ヘッダー用contact生成失敗: ${e.message}`, 'getHeaderContents'); }
+    return this.applyTagReplacements(template, { header_nav: navHtml, header_contact: headerContactHtml, logo_url: logoUrl, contact_url: contactUrl, contact_is_external: contactTarget });
   },
 
   /** footer */

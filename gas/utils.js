@@ -42,7 +42,8 @@ const Utils = {
   ensureUtilitySheets() {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const ORANGE = '#FFA500';
-    const sheetNames = ['Parameters', 'Logs'];
+    // const sheetNames = ['Parameters', 'Logs'];
+    const sheetNames = ['Logs'];
 
     sheetNames.forEach(name => {
       let sheet = ss.getSheetByName(name);

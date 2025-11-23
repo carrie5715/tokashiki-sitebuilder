@@ -33,42 +33,7 @@ var ServiceInfo = (function () {
     return rows;
   }
 
-  // Parameters シート確保（CommonInfo があれば共用。なければフォールバックで作成）
-  function ensureParametersSheet_() {
-    if (typeof CommonInfo !== 'undefined' && CommonInfo.ensureParametersSheet_) {
-      return CommonInfo.ensureParametersSheet_();
-    }
-    const ss = SpreadsheetApp.getActive();
-    let sheet = ss.getSheetByName(PARAMETERS_SHEET_NAME);
-    if (sheet) return sheet;
-
-    const sheets = ss.getSheets();
-    let logsIndex = -1;
-    for (let i = 0; i < sheets.length; i++) {
-      if (sheets[i].getName() === LOGS_SHEET_NAME) { logsIndex = i; break; }
-    }
-    sheet = (logsIndex >= 0)
-      ? ss.insertSheet(PARAMETERS_SHEET_NAME, logsIndex)
-      : ss.insertSheet(PARAMETERS_SHEET_NAME);
-
-    if (sheet.getLastRow() === 0) {
-      sheet.getRange(1, 1, 1, 4).setValues([[ 'カテゴリ', 'キー', 'バリュー', 'ノート' ]]);
-      sheet.setFrozenRows(1);
-    }
-    return sheet;
-  }
-
-  // Parameters へ追記
-  function appendToParameters_(rows) {
-    if (!rows || rows.length === 0) return;
-    if (typeof CommonInfo !== 'undefined' && CommonInfo.appendToParameters_) {
-      return CommonInfo.appendToParameters_(rows);
-    }
-    const sh = ensureParametersSheet_();
-    const start = Math.max(sh.getLastRow(), 1) + 1;
-    const values = rows.map(r => [r.category, r.key, r.value, r.note || '']);
-    sh.getRange(start, 1, values.length, 4).setValues(values);
-  }
+  // Parameters 関連機能は廃止済み
 
   // カンマ区切りタグから共通のIDマップを生成（出現順で service_tag_1.. を採番）
   function buildTagDict_(items) {
@@ -172,7 +137,6 @@ var ServiceInfo = (function () {
   // 公開API
   function readAndRecordService() {
     const rows = readService_();
-    appendToParameters_(rows);
 
     const items = parseItems_();
     writeServiceJson_(items);
@@ -202,8 +166,7 @@ var ServiceInfo = (function () {
     getAll,
     // 内部
     readService_: readService_,
-    appendToParameters_: appendToParameters_,
-    ensureParametersSheet_: ensureParametersSheet_,
+    // appendToParameters_, ensureParametersSheet_ は廃止
     parseItems_: parseItems_,
     writeServiceJson_: writeServiceJson_,
   };

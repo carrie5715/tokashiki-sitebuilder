@@ -32,40 +32,7 @@ var FaqInfo = (function () {
     return rows;
   }
 
-  function ensureParametersSheet_() {
-    if (typeof CommonInfo !== 'undefined' && CommonInfo.ensureParametersSheet_) {
-      return CommonInfo.ensureParametersSheet_();
-    }
-    const ss = SpreadsheetApp.getActive();
-    let sheet = ss.getSheetByName(PARAMETERS_SHEET_NAME);
-    if (sheet) return sheet;
-
-    const sheets = ss.getSheets();
-    let logsIndex = -1;
-    for (let i = 0; i < sheets.length; i++) {
-      if (sheets[i].getName() === LOGS_SHEET_NAME) { logsIndex = i; break; }
-    }
-    sheet = (logsIndex >= 0)
-      ? ss.insertSheet(PARAMETERS_SHEET_NAME, logsIndex)
-      : ss.insertSheet(PARAMETERS_SHEET_NAME);
-
-    if (sheet.getLastRow() === 0) {
-      sheet.getRange(1, 1, 1, 4).setValues([[ 'カテゴリ', 'キー', 'バリュー', 'ノート' ]]);
-      sheet.setFrozenRows(1);
-    }
-    return sheet;
-  }
-
-  function appendToParameters_(rows) {
-    if (!rows || rows.length === 0) return;
-    if (typeof CommonInfo !== 'undefined' && CommonInfo.appendToParameters_) {
-      return CommonInfo.appendToParameters_(rows);
-    }
-    const sh = ensureParametersSheet_();
-    const start = Math.max(sh.getLastRow(), 1) + 1;
-    const values = rows.map(r => [r.category, r.key, r.value, r.note || '']);
-    sh.getRange(start, 1, values.length, 4).setValues(values);
-  }
+  // Parameters 関連機能は廃止済み
 
   function parseFaqItems_() {
     const items = [];
@@ -113,7 +80,6 @@ var FaqInfo = (function () {
 
   function readAndRecordFaq() {
     const rows = readFaq_();
-    appendToParameters_(rows);
 
     // カラー変数登録
     try {
@@ -166,8 +132,7 @@ var FaqInfo = (function () {
     getAll,
     // internal
     readFaq_: readFaq_,
-    appendToParameters_: appendToParameters_,
-    ensureParametersSheet_: ensureParametersSheet_,
+    // appendToParameters_, ensureParametersSheet_ は廃止
     parseFaqItems_: parseFaqItems_,
     writeFaqJson_: writeFaqJson_,
   };

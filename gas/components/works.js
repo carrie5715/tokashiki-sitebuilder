@@ -33,42 +33,7 @@ var WorksInfo = (function () {
     return rows;
   }
 
-  // Parameters シート確保（CommonInfo があれば共用。なければフォールバックで作成）
-  function ensureParametersSheet_() {
-    if (typeof CommonInfo !== 'undefined' && CommonInfo.ensureParametersSheet_) {
-      return CommonInfo.ensureParametersSheet_();
-    }
-    const ss = SpreadsheetApp.getActive();
-    let sheet = ss.getSheetByName(PARAMETERS_SHEET_NAME);
-    if (sheet) return sheet;
-
-    const sheets = ss.getSheets();
-    let logsIndex = -1;
-    for (let i = 0; i < sheets.length; i++) {
-      if (sheets[i].getName() === LOGS_SHEET_NAME) { logsIndex = i; break; }
-    }
-    sheet = (logsIndex >= 0)
-      ? ss.insertSheet(PARAMETERS_SHEET_NAME, logsIndex)
-      : ss.insertSheet(PARAMETERS_SHEET_NAME);
-
-    if (sheet.getLastRow() === 0) {
-      sheet.getRange(1, 1, 1, 4).setValues([[ 'カテゴリ', 'キー', 'バリュー', 'ノート' ]]);
-      sheet.setFrozenRows(1);
-    }
-    return sheet;
-  }
-
-  // Parameters へ追記
-  function appendToParameters_(rows) {
-    if (!rows || rows.length === 0) return;
-    if (typeof CommonInfo !== 'undefined' && CommonInfo.appendToParameters_) {
-      return CommonInfo.appendToParameters_(rows);
-    }
-    const sh = ensureParametersSheet_();
-    const start = Math.max(sh.getLastRow(), 1) + 1;
-    const values = rows.map(r => [r.category, r.key, r.value, r.note || '']);
-    sh.getRange(start, 1, values.length, 4).setValues(values);
-  }
+  // Parameters 関連機能は廃止済み
 
   function buildTagDict_(items) {
     const dict = {}; // name -> id (works_tag_1..)
@@ -180,7 +145,6 @@ var WorksInfo = (function () {
   // 公開API
   function readAndRecordWorks() {
     const rows = readWorks_();
-    appendToParameters_(rows);
 
     // 新しいカラー変数（colors.css に出力）
     // 対象キーを列挙し、存在するものだけ CSS 変数へ: --pcol-works- + key ( _ -> - )
@@ -235,8 +199,7 @@ var WorksInfo = (function () {
     getAll,
     // internal
     readWorks_: readWorks_,
-    appendToParameters_: appendToParameters_,
-    ensureParametersSheet_: ensureParametersSheet_,
+    // appendToParameters_, ensureParametersSheet_ は廃止
     parseWorksItems_: parseWorksItems_,
     writeWorksJson_: writeWorksJson_,
   };

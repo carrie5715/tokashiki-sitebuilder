@@ -33,42 +33,7 @@ var CompanyInfo = (function () {
     return rows;
   }
 
-  // Parameters シート確保（CommonInfo があれば共用。なければフォールバックで作成）
-  function ensureParametersSheet_() {
-    if (typeof CommonInfo !== 'undefined' && CommonInfo.ensureParametersSheet_) {
-      return CommonInfo.ensureParametersSheet_();
-    }
-    const ss = SpreadsheetApp.getActive();
-    let sheet = ss.getSheetByName(PARAMETERS_SHEET_NAME);
-    if (sheet) return sheet;
-
-    const sheets = ss.getSheets();
-    let logsIndex = -1;
-    for (let i = 0; i < sheets.length; i++) {
-      if (sheets[i].getName() === LOGS_SHEET_NAME) { logsIndex = i; break; }
-    }
-    sheet = (logsIndex >= 0)
-      ? ss.insertSheet(PARAMETERS_SHEET_NAME, logsIndex)
-      : ss.insertSheet(PARAMETERS_SHEET_NAME);
-
-    if (sheet.getLastRow() === 0) {
-      sheet.getRange(1, 1, 1, 4).setValues([[ 'カテゴリ', 'キー', 'バリュー', 'ノート' ]]);
-      sheet.setFrozenRows(1);
-    }
-    return sheet;
-  }
-
-  // Parameters へ追記
-  function appendToParameters_(rows) {
-    if (!rows || rows.length === 0) return;
-    if (typeof CommonInfo !== 'undefined' && CommonInfo.appendToParameters_) {
-      return CommonInfo.appendToParameters_(rows);
-    }
-    const sh = ensureParametersSheet_();
-    const start = Math.max(sh.getLastRow(), 1) + 1;
-    const values = rows.map(r => [r.category, r.key, r.value, r.note || '']);
-    sh.getRange(start, 1, values.length, 4).setValues(values);
-  }
+  // Parameters 関連機能は廃止済み（ensure/append 削除）
 
   function parseCompanyItems_() {
     // company_section_1 .. company_section_6（将来拡張可）
@@ -138,7 +103,6 @@ var CompanyInfo = (function () {
   // 公開API
   function readAndRecordCompany() {
     const rows = readCompany_();
-    appendToParameters_(rows);
 
     // 追加: company セクションのカラー変数を colors.css に出力
     try {
@@ -182,8 +146,7 @@ var CompanyInfo = (function () {
     getAll,
     // internal for tests
     readCompany_: readCompany_,
-    appendToParameters_: appendToParameters_,
-    ensureParametersSheet_: ensureParametersSheet_,
+    // appendToParameters_, ensureParametersSheet_ は廃止
     parseCompanyItems_: parseCompanyItems_,
     writeCompanyJson_: writeCompanyJson_,
   };
