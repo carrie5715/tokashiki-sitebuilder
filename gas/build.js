@@ -17,6 +17,10 @@ const Build = {
     const outCss = Utils.getOrCreateSubFolder_(output, OUT_CSS);
     const outJs  = Utils.getOrCreateSubFolder_(output, OUT_JS);
     const outImg = Utils.getOrCreateSubFolder_(output, OUT_IMG);
+    // ルート直下 info フォルダとその配下
+    const infoRoot      = Utils.getOrCreateSubFolder_(parent, DIR_INFO);
+    const infoSnapshot  = Utils.getOrCreateSubFolder_(infoRoot, INFO_SNAPSHOT);
+    const infoLogs      = Utils.getOrCreateSubFolder_(infoRoot, INFO_LOGS);
 
     PropertiesService.getScriptProperties().setProperties({
       [PROP_KEYS.PARENT_ID]: parent.getId(),
@@ -26,12 +30,16 @@ const Build = {
       [PROP_KEYS.OUTPUT_CSS_ID]: outCss.getId(),
       [PROP_KEYS.OUTPUT_JS_ID]: outJs.getId(),
       [PROP_KEYS.OUTPUT_IMG_ID]: outImg.getId(),
+      [PROP_KEYS.INFO_ID]: infoRoot.getId(),
+      [PROP_KEYS.INFO_SNAPSHOT_ID]: infoSnapshot.getId(),
+      [PROP_KEYS.INFO_LOGS_ID]: infoLogs.getId(),
     }, true);
 
     return {
       parentId: parent.getId(),
       assets: { rootId: assets.getId(), imgId: assetsImg.getId() },
       output: { rootId: output.getId(), cssId: outCss.getId(), jsId: outJs.getId(), imgId: outImg.getId() },
+      info: { rootId: infoRoot.getId(), snapshotId: infoSnapshot.getId(), logsId: infoLogs.getId() },
     };
   },
 

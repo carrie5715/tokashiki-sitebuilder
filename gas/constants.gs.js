@@ -3,6 +3,7 @@
  ***********************/
 const DIR_ASSETS = 'assets';
 const DIR_OUTPUT = 'output';
+const DIR_INFO   = 'info';      // /info/
 
 // assets配下
 const ASSETS_IMG = 'img';
@@ -14,6 +15,9 @@ const OUT_CSS_COMPS  = 'components';  // /output/css/components/
 const OUT_JS         = 'js';
 const OUT_IMG        = 'img';
 const OUT_PAGES_HTML = 'pages';       // /output/pages/（HTML用）
+// ルート直下 info 系
+const INFO_SNAPSHOT  = 'snapshot';  // /info/snapshot/
+const INFO_LOGS      = 'logs';      // /info/logs/
 
 /***********************
  * プロパティキー
@@ -30,6 +34,9 @@ const PROP_KEYS = {
   OUTPUT_JS_ID:     'OUTPUT_JS_ID',
   OUTPUT_IMG_ID:    'OUTPUT_IMG_ID',
   OUTPUT_PAGES_ID:  'OUTPUT_PAGES_ID',
+  INFO_ID:          'INFO_ID',
+  INFO_SNAPSHOT_ID: 'INFO_SNAPSHOT_ID',
+  INFO_LOGS_ID:     'INFO_LOGS_ID',
 };
 
 
