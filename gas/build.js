@@ -205,6 +205,34 @@ const Build = {
   },
 
   /**
+   * /info/snapshot から最新の snapshot_*.json を読み込む
+   * @returns {Object|null} snapshotオブジェクト or null
+   */
+  loadLatestSnapshot() {
+    try {
+      const snapFolderId = PropertiesService.getScriptProperties().getProperty(PROP_KEYS.INFO_SNAPSHOT_ID);
+      if (!snapFolderId) return null;
+      const folder = DriveApp.getFolderById(snapFolderId);
+      const files = folder.getFiles();
+      let latestFile = null;
+      while (files.hasNext()) {
+        const f = files.next();
+        const name = f.getName();
+        if (!/^snapshot_.*\.json$/i.test(name)) continue;
+        if (!latestFile || f.getDateCreated().getTime() > latestFile.getDateCreated().getTime()) {
+          latestFile = f;
+        }
+      }
+      if (!latestFile) return null;
+      const content = latestFile.getBlob().getDataAsString('UTF-8');
+      return JSON.parse(content);
+    } catch (e) {
+      if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`snapshot読込失敗: ${e.message}`, 'loadLatestSnapshot');
+      return null;
+    }
+  },
+
+  /**
   * スクリプトタグを構築し、必須/条件付きのJSファイルを output/js に配置
 * @param {{mvOk:boolean, messageOk:boolean, serviceOk?:boolean, companyOk?:boolean, worksOk?:boolean}} flags
    * @returns {string} HTML の <script> タグ列

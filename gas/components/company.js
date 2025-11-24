@@ -10,11 +10,16 @@ var CompanyInfo = (function () {
 
   // 純粋な読み込み処理
   function read() {
-    const ss = SpreadsheetApp.getActive();
-    const sh = ss.getSheetByName(SHEET_NAME);
-    if (!sh) throw new Error('「company」シートが見つかりません。');
-
-    const values = sh.getDataRange().getValues();
+    const overrideRows = (typeof globalThis !== 'undefined' && globalThis.__snapshotOverrides && globalThis.__snapshotOverrides[SHEET_NAME]);
+    let values;
+    if (overrideRows) {
+      values = overrideRows;
+    } else {
+      const ss = SpreadsheetApp.getActive();
+      const sh = ss.getSheetByName(SHEET_NAME);
+      if (!sh) throw new Error('「company」シートが見つかりません。');
+      values = sh.getDataRange().getValues();
+    }
     if (!values || values.length === 0) return [];
 
     // 先頭行がヘッダーかどうか判定（A1=key かつ B1=value ならヘッダーとみなす）
@@ -106,6 +111,30 @@ var CompanyInfo = (function () {
 
   // 公開API
   function record() {
+    if ((!lastRows || lastRows.length === 0) && typeof globalThis !== 'undefined' && globalThis.__snapshotOverrides && globalThis.__snapshotOverrides[SHEET_NAME]) {
+      try {
+        const values = globalThis.__snapshotOverrides[SHEET_NAME];
+        if (values && values.length) {
+          const a1 = (values[0][0] != null ? String(values[0][0]).trim().toLowerCase() : '');
+          const b1 = (values[0][1] != null ? String(values[0][1]).trim().toLowerCase() : '');
+          const hasHeader = (a1 === 'key' && (b1 === 'value' || b1 === 'val' || b1 === '値'));
+          const startRow = hasHeader ? 1 : 0;
+          const rows = [];
+          company = {};
+          for (let r = startRow; r < values.length; r++) {
+            const key  = values[r][0] ? String(values[r][0]).trim() : '';
+            const val  = values[r][1] != null ? values[r][1] : '';
+            const note = values[r][2] != null ? String(values[r][2]) : '';
+            if (!key) continue;
+            company[key] = val;
+            rows.push({ category: 'company', key, value: val, note });
+          }
+          lastRows = rows.slice();
+        }
+      } catch (e) {
+        if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('company snapshot再構築失敗: ' + e.message, 'CompanyInfo.record');
+      }
+    }
     try {
       const bg = company['bg_color'];
       const tx = company['text_color'];

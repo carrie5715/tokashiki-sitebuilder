@@ -38,7 +38,7 @@ function sheetReadAll() {
 
   // 対象シート名（必要に応じて拡張）
   const sheetNames = [
-    'mv', 'message', 'service', 'contact', 'faq', 'company', 'works', 'footer', 'header', 'meta'
+    'mv', 'message', 'service', 'contact', 'faq', 'company', 'works', 'footer', 'header', 'meta', 'nav'
   ];
 
   const ss = SpreadsheetApp.getActive();
@@ -105,15 +105,44 @@ function buildAll() {
 
   const common = CommonInfo.readAndRecordBasicSettings();
 
-  if (typeof MetaInfo !== 'undefined' && MetaInfo.read && MetaInfo.record) { MetaInfo.read(); var metaRes = MetaInfo.record(); }
-  if (typeof MvInfo !== 'undefined' && MvInfo.read && MvInfo.record) { MvInfo.read(); var mvRes = MvInfo.record(); }
-  if (typeof MessageInfo !== 'undefined' && MessageInfo.read && MessageInfo.record) { MessageInfo.read(); var messageRes = MessageInfo.record(); }
-  if (typeof ServiceInfo !== 'undefined' && ServiceInfo.read && ServiceInfo.record) { ServiceInfo.read(); var serviceRes = ServiceInfo.record(); }
-  if (typeof ContactInfo !== 'undefined' && ContactInfo.read && ContactInfo.record) { ContactInfo.read(); var contactRes = ContactInfo.record(); }
-  if (typeof FaqInfo !== 'undefined' && FaqInfo.read && FaqInfo.record) { FaqInfo.read(); var faqRes = FaqInfo.record(); }
-  if (typeof CompanyInfo !== 'undefined' && CompanyInfo.read && CompanyInfo.record) { CompanyInfo.read(); var companyRes = CompanyInfo.record(); }
-  if (typeof WorksInfo !== 'undefined' && WorksInfo.read && WorksInfo.record) { WorksInfo.read(); var worksRes = WorksInfo.record(); }
-  if (typeof FooterInfo !== 'undefined' && FooterInfo.read && FooterInfo.record) { FooterInfo.read(); var footerRes = FooterInfo.record(); }
+  // 最新snapshot適用（存在すれば read() はシートアクセスせず rows を利用）
+  let snapshot = null;
+  try { snapshot = Build.loadLatestSnapshot(); } catch(_) {}
+  if (snapshot && snapshot.components) {
+    globalThis.__snapshotOverrides = {};
+    Object.keys(snapshot.components).forEach(name => {
+      const comp = snapshot.components[name];
+      if (comp && comp.rows) {
+        globalThis.__snapshotOverrides[name] = comp.rows;
+      }
+    });
+    Utils.logToSheet(`snapshot適用: ${Object.keys(snapshot.components).length}コンポ / ${snapshot.dateKey}`, 'buildAll');
+  } else {
+    Utils.logToSheet('snapshotなし: 通常readでシート参照', 'buildAll');
+  }
+
+  // スナップショット必須化: 無ければ中止
+  if (!snapshot) {
+    Utils.logToSheet('snapshot未検出のため処理中止。先に「シート読み取り」を実行してください。', 'buildAll');
+    SpreadsheetApp.getActive().toast('snapshotが存在しません。sheetReadAll を先に実行してください。', 'buildAll', 6);
+    return;
+  }
+
+  // recordのみ呼び出し（read() を呼ばず snapshot再構築ロジックを各 record が内包）
+  var metaRes   = (typeof MetaInfo !== 'undefined'   && MetaInfo.record)   ? MetaInfo.record()   : null;
+  var mvRes     = (typeof MvInfo !== 'undefined'     && MvInfo.record)     ? MvInfo.record()     : null;
+  var messageRes= (typeof MessageInfo !== 'undefined'&& MessageInfo.record)? MessageInfo.record(): null;
+  var serviceRes= (typeof ServiceInfo !== 'undefined'&& ServiceInfo.record)? ServiceInfo.record(): null;
+  var contactRes= (typeof ContactInfo !== 'undefined'&& ContactInfo.record)? ContactInfo.record(): null;
+  var faqRes    = (typeof FaqInfo !== 'undefined'    && FaqInfo.record)    ? FaqInfo.record()    : null;
+  var companyRes= (typeof CompanyInfo !== 'undefined'&& CompanyInfo.record)? CompanyInfo.record(): null;
+  var worksRes  = (typeof WorksInfo !== 'undefined'  && WorksInfo.record)  ? WorksInfo.record()  : null;
+  var footerRes = (typeof FooterInfo !== 'undefined' && FooterInfo.record) ? FooterInfo.record() : null;
+
+  // snapshot overrides 終了処理（後続の別関数影響を避けるためクリア）
+  if (globalThis.__snapshotOverrides) {
+    try { delete globalThis.__snapshotOverrides; } catch(_) {}
+  }
 
   const order = Build.getContentOrder();
   const mainHtml = Build.loadTemplates('top', order);

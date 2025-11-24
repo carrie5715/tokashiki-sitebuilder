@@ -154,6 +154,77 @@ var HeaderInfo = (function () {
   }
 
   function record() {
+    // snapshot経由で nav/contact を再構築（必要時）
+    if ((!header.navItems || header.navItems.length === 0) && typeof globalThis !== 'undefined' && globalThis.__snapshotOverrides && globalThis.__snapshotOverrides['nav']) {
+      try {
+        const values = globalThis.__snapshotOverrides['nav'];
+        if (values && values.length) {
+          const out = [];
+          for (let i = 1; i <= 300; i++) {
+            // nav_{i}_url / nav_{i}_label / nav_{i}_external を values から探索
+            let url = null, label = null, externalRaw = null;
+            for (let r = 0; r < values.length; r++) {
+              const k = values[r][0] != null ? String(values[r][0]).trim() : '';
+              if (k === `nav_${i}_url`) url = values[r][1];
+              if (k === `nav_${i}_label`) label = values[r][1];
+              if (k === `nav_${i}_external`) externalRaw = values[r][1];
+            }
+            const href = (url == null) ? '' : String(url).trim();
+            const text = (label == null) ? '' : String(label).trim();
+            if (!href || !text) continue;
+            const truthy = (v) => {
+              if (v == null) return false;
+              if (typeof v === 'boolean') return v;
+              if (typeof v === 'number') return v !== 0;
+              const s = String(v).trim().toLowerCase();
+              return ['true','1','yes','y','on'].includes(s);
+            };
+            out.push({ order: i, url: href, label: text, external: truthy(externalRaw) });
+          }
+          out.sort((a,b)=>a.order-b.order);
+          header.navItems = out;
+        }
+      } catch (e) {
+        if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('header snapshot(nav)再構築失敗: '+ e.message, 'HeaderInfo.record');
+      }
+    }
+    if ((!header.contactItems || header.contactItems.length === 0) && typeof globalThis !== 'undefined' && globalThis.__snapshotOverrides && globalThis.__snapshotOverrides['contact']) {
+      try {
+        const values = globalThis.__snapshotOverrides['contact'];
+        if (values && values.length) {
+          const a1 = (values[0][0] != null ? String(values[0][0]).trim().toLowerCase() : '');
+          const b1 = (values[0][1] != null ? String(values[0][1]).trim().toLowerCase() : '');
+          const hasHeader = (a1 === 'key' && (b1 === 'value' || b1 === 'val' || b1 === '値'));
+          const startRow = hasHeader ? 1 : 0;
+          const items = [];
+          for (let r = startRow; r < values.length; r++) {
+            const key = values[r][0] != null ? String(values[r][0]).trim() : '';
+            if (!/^item\d+$/i.test(key)) continue;
+            const rawVal = values[r][1] != null ? String(values[r][1]).trim() : '';
+            const meta = values[r][2] != null ? String(values[r][2]).trim() : '';
+            if (!rawVal && !meta) continue;
+            let ident = '';
+            let label = '';
+            if (meta && meta.includes(':')) {
+              const idx = meta.indexOf(':');
+              ident = meta.slice(0, idx).trim().toLowerCase();
+              label = meta.slice(idx + 1).trim();
+            } else {
+              ident = (meta || '').trim().toLowerCase();
+              label = '';
+            }
+            let href = rawVal;
+            if (ident === 'tel') href = `tel:${rawVal}`;
+            else if (ident === 'mail') href = `mailto:${rawVal}`;
+            const external = ['line','form','link'].includes(ident);
+            items.push({ order: items.length + 1, ident, url: href, label: (label || rawVal), external });
+          }
+          header.contactItems = items;
+        }
+      } catch (e) {
+        if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('header snapshot(contact)再構築失敗: '+ e.message, 'HeaderInfo.record');
+      }
+    }
     const ok = (header.navItems && header.navItems.length > 0) || (header.contactItems && header.contactItems.length > 0) || !!header.logo_url;
     return { header: JSON.parse(JSON.stringify(header)), rows: lastRows.slice(), ok };
   }

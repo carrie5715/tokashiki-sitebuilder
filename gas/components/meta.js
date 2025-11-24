@@ -11,11 +11,16 @@ var MetaInfo = (function () {
   // meta シートを読み込み、meta を更新し、Parameters へ投げる行データを返す
   // 純粋な読み込み処理
   function read() {
-    const ss = SpreadsheetApp.getActive();
-    const sh = ss.getSheetByName(META_SHEET_NAME);
-    if (!sh) throw new Error('「meta」シートが見つかりません。');
-
-    const values = sh.getDataRange().getValues();
+    const overrideRows = (typeof globalThis !== 'undefined' && globalThis.__snapshotOverrides && globalThis.__snapshotOverrides[META_SHEET_NAME]);
+    let values;
+    if (overrideRows) {
+      values = overrideRows;
+    } else {
+      const ss = SpreadsheetApp.getActive();
+      const sh = ss.getSheetByName(META_SHEET_NAME);
+      if (!sh) throw new Error('「meta」シートが見つかりません。');
+      values = sh.getDataRange().getValues();
+    }
     if (!values || values.length === 0) return [];
 
     // 先頭行がヘッダーかどうか判定（A1=key かつ B1=value ならヘッダーとみなす）
@@ -46,6 +51,30 @@ var MetaInfo = (function () {
 
   // 公開API: 読み込み + Parameters 追記 + 概要返却
   function record() {
+    if ((!lastRows || lastRows.length === 0) && typeof globalThis !== 'undefined' && globalThis.__snapshotOverrides && globalThis.__snapshotOverrides[META_SHEET_NAME]) {
+      try {
+        const values = globalThis.__snapshotOverrides[META_SHEET_NAME];
+        if (values && values.length) {
+          const a1 = (values[0][0] != null ? String(values[0][0]).trim().toLowerCase() : '');
+          const b1 = (values[0][1] != null ? String(values[0][1]).trim().toLowerCase() : '');
+          const hasHeader = (a1 === 'key' && (b1 === 'value' || b1 === 'val' || b1 === '値'));
+          const startRow = hasHeader ? 1 : 0;
+          const rows = [];
+          meta = {};
+          for (let r = startRow; r < values.length; r++) {
+            const key  = values[r][0] ? String(values[r][0]).trim() : '';
+            const val  = values[r][1] != null ? values[r][1] : '';
+            const note = values[r][2] != null ? String(values[r][2]) : '';
+            if (!key) continue;
+            meta[key] = val;
+            rows.push({ category: 'meta', key, value: val, note });
+          }
+          lastRows = rows.slice();
+        }
+      } catch (e) {
+        if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('meta snapshot再構築失敗: ' + e.message, 'MetaInfo.record');
+      }
+    }
     const ok = lastRows.length > 0;
     return { meta: JSON.parse(JSON.stringify(meta)), rows: lastRows.slice(), ok };
   }
