@@ -134,7 +134,15 @@ var MessageInfo = (function () {
         if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('message snapshot再構築失敗: ' + e.message, 'MessageInfo.record');
       }
     }
-    const slides = buildSlides_();
+    // 前倒しパース済みデータ（processed）があれば利用し buildSlides_ を省略
+    let slides;
+    if (typeof globalThis !== 'undefined' && globalThis.__processedSnapshot && globalThis.__processedSnapshot.message && globalThis.__processedSnapshot.message.data && globalThis.__processedSnapshot.message.data.slides) {
+      try {
+        slides = JSON.parse(JSON.stringify(globalThis.__processedSnapshot.message.data.slides));
+      } catch(_) { slides = buildSlides_(); }
+    } else {
+      slides = buildSlides_();
+    }
     writeMessageJson_(slides);
     const ok = (slides && slides.length > 0) || (lastRows && lastRows.length > 0);
     return { message: JSON.parse(JSON.stringify(message)), rows: lastRows.slice(), slides, ok };

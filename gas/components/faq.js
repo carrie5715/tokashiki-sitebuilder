@@ -118,7 +118,13 @@ var FaqInfo = (function () {
         });
       }
     } catch (_) {}
-    const items = parseFaqItems_();
+    // 前倒しパース済み items 利用（存在すれば parseFaqItems_ スキップ）
+    let items;
+    if (typeof globalThis !== 'undefined' && globalThis.__processedSnapshot && globalThis.__processedSnapshot.faq && globalThis.__processedSnapshot.faq.data && globalThis.__processedSnapshot.faq.data.items) {
+      try { items = JSON.parse(JSON.stringify(globalThis.__processedSnapshot.faq.data.items)); } catch(_) { items = parseFaqItems_(); }
+    } else {
+      items = parseFaqItems_();
+    }
     writeFaqJson_(items);
     const ok = (items && items.length > 0) || (lastRows && lastRows.length > 0);
     return { faq: JSON.parse(JSON.stringify(faq)), rows: lastRows.slice(), items, ok };

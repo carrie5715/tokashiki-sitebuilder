@@ -198,7 +198,13 @@ var WorksInfo = (function () {
         });
       }
     } catch (e) {}
-    const items = parseWorksItems_();
+    // 前倒しパース済み items 利用（存在すれば parseWorksItems_ スキップ）
+    let items;
+    if (typeof globalThis !== 'undefined' && globalThis.__processedSnapshot && globalThis.__processedSnapshot.works && globalThis.__processedSnapshot.works.data && globalThis.__processedSnapshot.works.data.items) {
+      try { items = JSON.parse(JSON.stringify(globalThis.__processedSnapshot.works.data.items)); } catch(_) { items = parseWorksItems_(); }
+    } else {
+      items = parseWorksItems_();
+    }
     writeWorksJson_(items);
     const ok = (items && items.length > 0) || (lastRows && lastRows.length > 0);
     return { works: JSON.parse(JSON.stringify(works)), rows: lastRows.slice(), items, ok };

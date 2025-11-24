@@ -85,6 +85,47 @@ function sheetReadAll() {
       if (infoObj && typeof infoObj.read === 'function') {
         const res = infoObj.read();
         if (res && res.ok) ok = !!res.ok;
+        // 前倒し詳細パース: message -> slides, service -> items
+        if (name === 'message' && infoObj && typeof infoObj.buildSlides_ === 'function') {
+          try {
+            const slides = infoObj.buildSlides_();
+            processed[name] = processed[name] || {};
+            processed[name].data = { slides: slides, slidesCount: slides.length };
+            processed[name].json = JSON.stringify(slides);
+          } catch (e2) {
+            Utils.logToSheet('processed message slides生成失敗: ' + e2.message, 'sheetReadAll');
+          }
+        }
+        if (name === 'service' && infoObj && typeof infoObj.parseItems_ === 'function') {
+          try {
+            const items = infoObj.parseItems_();
+            processed[name] = processed[name] || {};
+            processed[name].data = { items: items, itemsCount: items.length };
+            processed[name].json = JSON.stringify(items);
+          } catch (e3) {
+            Utils.logToSheet('processed service items生成失敗: ' + e3.message, 'sheetReadAll');
+          }
+        }
+        if (name === 'faq' && infoObj && typeof infoObj.parseFaqItems_ === 'function') {
+          try {
+            const items = infoObj.parseFaqItems_();
+            processed[name] = processed[name] || {};
+            processed[name].data = { items: items, itemsCount: items.length };
+            processed[name].json = JSON.stringify(items);
+          } catch (e4) {
+            Utils.logToSheet('processed faq items生成失敗: ' + e4.message, 'sheetReadAll');
+          }
+        }
+        if (name === 'works' && infoObj && typeof infoObj.parseWorksItems_ === 'function') {
+          try {
+            const items = infoObj.parseWorksItems_();
+            processed[name] = processed[name] || {};
+            processed[name].data = { items: items, itemsCount: items.length };
+            processed[name].json = JSON.stringify(items);
+          } catch (e5) {
+            Utils.logToSheet('processed works items生成失敗: ' + e5.message, 'sheetReadAll');
+          }
+        }
       } else {
         // read が無い場合は rows 有無で簡易判定
         ok = (components[name].rowCount > 0);
@@ -97,6 +138,13 @@ function sheetReadAll() {
       ok: ok,
       rows: { count: components[name].rowCount, cols: components[name].colCount }
     };
+    // 既に data/json を上書きしている場合は維持（上記で設定済みなら統合）
+    if (processed[name].data) {
+      processed[name].dataHash = (function(){
+        try { return Utilities.computeDigest(Utilities.DigestAlgorithm.MD5, JSON.stringify(processed[name].data))
+          .map(b => ('0'+(b & 0xFF).toString(16)).slice(-2)).join(''); } catch(_){ return 'data_hash_error'; }
+      })();
+    }
   });
   try { delete globalThis.__snapshotOverrides; } catch(_){ }
 
@@ -175,6 +223,7 @@ function buildAll() {
   // ===== processed 情報による差分スキップ =====
   const props = PropertiesService.getScriptProperties();
   const processed = (snapshot && snapshot.version >= 2 && snapshot.processed) ? snapshot.processed : null;
+  if (processed) { globalThis.__processedSnapshot = processed; }
   const DEPENDS = { header: ['nav','contact'] };
   const recordOrder = ['meta','mv','message','service','faq','company','works','contact','header','footer'];
   const results = {};
@@ -228,6 +277,9 @@ function buildAll() {
       }
     }
   });
+
+  // processed スナップショットのグローバル参照をクリア
+  if (globalThis.__processedSnapshot) { try { delete globalThis.__processedSnapshot; } catch(_){} }
 
   var mvRes      = results['mv']      || null;
   var messageRes = results['message'] || null;

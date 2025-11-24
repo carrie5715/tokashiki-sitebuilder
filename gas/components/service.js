@@ -169,7 +169,15 @@ var ServiceInfo = (function () {
         if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('service snapshot再構築失敗: ' + e.message, 'ServiceInfo.record');
       }
     }
-    const items = parseItems_();
+    // 前倒しパース済み items があれば利用
+    let items;
+    if (typeof globalThis !== 'undefined' && globalThis.__processedSnapshot && globalThis.__processedSnapshot.service && globalThis.__processedSnapshot.service.data && globalThis.__processedSnapshot.service.data.items) {
+      try {
+        items = JSON.parse(JSON.stringify(globalThis.__processedSnapshot.service.data.items));
+      } catch(_) { items = parseItems_(); }
+    } else {
+      items = parseItems_();
+    }
     writeServiceJson_(items);
     const ok = (items && items.length > 0) || (lastRows && lastRows.length > 0);
     return { service: JSON.parse(JSON.stringify(service)), rows: lastRows.slice(), items, ok };
