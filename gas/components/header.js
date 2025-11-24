@@ -1,8 +1,11 @@
 // header セクション用ロジック分離
-// グローバル参照用保持（他コンポーネントと同様パターン）
-var headerInfo = headerInfo || {};
+// グローバル保持（他コンポーネントと同様のパターン）
+var header = header || {};
+// 互換エイリアス（旧 headerInfo 参照があっても壊さない）
+var headerInfo = header;
 
 var HeaderInfo = (function () {
+    let lastRows = [];
   // 依存: siteInfos (CommonInfo.readAndRecordBasicSettings 実行後)、nav シート、contact シート
 
   // nav シートからヘッダーナビ項目取得 (nav_{n}_url / nav_{n}_label / nav_{n}_external)
@@ -128,47 +131,56 @@ var HeaderInfo = (function () {
     }).join('\n');
   }
 
-  function readAndRecordHeader() {
-    // siteInfos から基本値取得（存在しなければ空）
+  // 純粋な読み込み処理（グローバル header へ保存）
+  function read() {
     const s = (typeof siteInfos !== 'undefined') ? siteInfos : {};
     const get = (k) => (s && s[k] != null && String(s[k]).trim() !== '') ? String(s[k]).trim() : '';
-    const logoUrl = get('logo_url') || '/images/logo.png';
-    const contactUrl = get('contact_url') || '';
+    header.logo_url = get('logo_url') || '/images/logo.png';
+    header.contact_url = get('contact_url') || '';
     const extRaw = get('contact_is_external');
-    const isExternal = (function(v){
+    header.contact_is_external = (function(v){
       if (v == null) return false;
       if (typeof v === 'boolean') return v;
       if (typeof v === 'number') return v !== 0;
       const s2 = String(v).trim().toLowerCase();
       return ['true','1','yes','y','on'].includes(s2);
-    })(extRaw);
-    const navItems = readNavItems_();
-    const contactItems = readHeaderContactItems_();
-    return {
-      logo_url: logoUrl,
-      contact_url: contactUrl,
-      contact_is_external: isExternal ? '_blank' : '_self',
-      navItems, contactItems,
-      rows: [], // 他コンポーネントと形式合わせ（Parameters廃止済）
-      ok: navItems.length > 0 || contactItems.length > 0 || !!logoUrl
-    };
+    })(extRaw) ? '_blank' : '_self';
+    header.navItems = readNavItems_();
+    header.contactItems = readHeaderContactItems_();
+    // rows/ok を他コンポーネント形式に合わせた形で返却
+    const ok = (header.navItems && header.navItems.length > 0) || (header.contactItems && header.contactItems.length > 0) || !!header.logo_url;
+    lastRows = [];
+    return { header: JSON.parse(JSON.stringify(header)), rows: [], ok };
+  }
+
+  function record() {
+    const ok = (header.navItems && header.navItems.length > 0) || (header.contactItems && header.contactItems.length > 0) || !!header.logo_url;
+    return { header: JSON.parse(JSON.stringify(header)), rows: lastRows.slice(), ok };
   }
 
   function getTemplateReplacements() {
-    const data = readAndRecordHeader(); // 毎回取得（軽量なので許容）
+    // 必要なら事前読込
+    if (!header.navItems || !header.contactItems || !header.logo_url) {
+      read();
+    }
     return {
-      header_nav: buildNavLis_(data.navItems),
-      header_contact: buildHeaderContactLis_(data.contactItems),
-      logo_url: data.logo_url,
-      contact_url: data.contact_url,
-      contact_is_external: data.contact_is_external,
+      header_nav: buildNavLis_(header.navItems),
+      header_contact: buildHeaderContactLis_(header.contactItems),
+      logo_url: header.logo_url,
+      contact_url: header.contact_url,
+      contact_is_external: header.contact_is_external,
     };
   }
 
+  function getAll() {
+    return JSON.parse(JSON.stringify(header));
+  }
+
   return {
-    readAndRecordHeader,
+    read,
+    record,
     getTemplateReplacements,
-    // internal (テスト用)
+    getAll,
     readNavItems_: readNavItems_,
     readHeaderContactItems_: readHeaderContactItems_,
     buildNavLis_: buildNavLis_,

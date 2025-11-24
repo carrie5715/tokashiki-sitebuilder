@@ -6,8 +6,11 @@ var MetaInfo = (function () {
   const PARAMETERS_SHEET_NAME = 'Parameters';
   const LOGS_SHEET_NAME       = 'Logs';
 
+  let lastRows = [];
+
   // meta シートを読み込み、meta を更新し、Parameters へ投げる行データを返す
-  function readMeta_() {
+  // 純粋な読み込み処理
+  function read() {
     const ss = SpreadsheetApp.getActive();
     const sh = ss.getSheetByName(META_SHEET_NAME);
     if (!sh) throw new Error('「meta」シートが見つかりません。');
@@ -35,19 +38,16 @@ var MetaInfo = (function () {
       // Parameters へ渡す行（カテゴリは "meta" 固定）
       rows.push({ category: 'meta', key, value: val, note });
     }
+    lastRows = rows.slice();
     return rows;
   }
 
   // Parameters 関連機能は廃止済み
 
   // 公開API: 読み込み + Parameters 追記 + 概要返却
-  function readAndRecordMeta() {
-    const rows = readMeta_();
-
-    if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-      // Utils.logToSheet(`meta: ${Object.keys(meta).length}件`, 'MetaInfo');
-    }
-    return { meta: JSON.parse(JSON.stringify(meta)), rows };
+  function record() {
+    const ok = lastRows.length > 0;
+    return { meta: JSON.parse(JSON.stringify(meta)), rows: lastRows.slice(), ok };
   }
 
   // レイアウト置換用の代表メタ値を返す
@@ -117,10 +117,8 @@ var MetaInfo = (function () {
   }
 
   return {
-    readAndRecordMeta,
-    // エクスポート（必要に応じて）
-    readMeta_: readMeta_,
-    // ensureParametersSheet_, appendToParameters_ は廃止
+    read,
+    record,
     get: function(key) { return meta[key]; },
     getLayoutReplacements,
     getTemplateReplacements,

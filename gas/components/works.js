@@ -6,7 +6,10 @@ var WorksInfo = (function () {
   const PARAMETERS_SHEET_NAME = 'Parameters';
   const LOGS_SHEET_NAME       = 'Logs';
 
-  function readWorks_() {
+  let lastRows = [];
+
+  // 純粋な読み込み処理
+  function read() {
     const ss = SpreadsheetApp.getActive();
     const sh = ss.getSheetByName(SHEET_NAME);
     if (!sh) throw new Error('「works」シートが見つかりません。');
@@ -30,6 +33,7 @@ var WorksInfo = (function () {
       works[key] = val;
       rows.push({ category: 'works', key, value: val, note });
     }
+    lastRows = rows.slice();
     return rows;
   }
 
@@ -143,11 +147,7 @@ var WorksInfo = (function () {
   }
 
   // 公開API
-  function readAndRecordWorks() {
-    const rows = readWorks_();
-
-    // 新しいカラー変数（colors.css に出力）
-    // 対象キーを列挙し、存在するものだけ CSS 変数へ: --pcol-works- + key ( _ -> - )
+  function record() {
     try {
       const colorKeys = [
         'base_bg_color',
@@ -168,18 +168,11 @@ var WorksInfo = (function () {
           }
         });
       }
-    } catch (e) {
-      // noop
-    }
-
+    } catch (e) {}
     const items = parseWorksItems_();
     writeWorksJson_(items);
-
-    if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-      // Utils.logToSheet(`works: ${Object.keys(works).length}件`, 'WorksInfo');
-    }
-    const ok = (items && items.length > 0) || (rows && rows.length > 0);
-    return { works: JSON.parse(JSON.stringify(works)), rows, items, ok };
+    const ok = (items && items.length > 0) || (lastRows && lastRows.length > 0);
+    return { works: JSON.parse(JSON.stringify(works)), rows: lastRows.slice(), items, ok };
   }
 
   function getTemplateReplacements() {
@@ -194,12 +187,10 @@ var WorksInfo = (function () {
   }
 
   return {
-    readAndRecordWorks,
+    read,
+    record,
     getTemplateReplacements,
     getAll,
-    // internal
-    readWorks_: readWorks_,
-    // appendToParameters_, ensureParametersSheet_ は廃止
     parseWorksItems_: parseWorksItems_,
     writeWorksJson_: writeWorksJson_,
   };

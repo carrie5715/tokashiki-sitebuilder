@@ -253,7 +253,11 @@ const Build = {
       order.forEach((item) => {
         // Utils.logToSheet(`セクションID:[${item.id}]`, 'loadTemplates');
         if (item.id === 'mv') {
-          sectionString += this.getMvContents() + '\n';
+          try {
+            sectionString += MvInfo.getContents() + '\n';
+          } catch (e) {
+            if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`mv セクション生成失敗: ${e.message}`, 'loadTemplates');
+          }
         }
         if (item.id === 'message') {
           sectionString += this.getMessageContents() + '\n';
@@ -320,25 +324,7 @@ const Build = {
     return output;
   },
 
-  /** mv */
-  getMvContents() {
-    const template = this.getTemplateFile('components', 'mv');
-    // まず MvInfo（グローバルmvを元に整形したマップ）を優先し、
-    // なければ従来の Utils.getSheetValue にフォールバック。
-    let replacements = {};
-    if (typeof MvInfo !== 'undefined' && typeof MvInfo.getTemplateReplacements === 'function') {
-      replacements = MvInfo.getTemplateReplacements();
-    } else {
-      replacements = {
-        mv_catchphrase: Utils.getSheetValue('mv', 'catchphrase'),
-        mv_bg_image_url_pc: Utils.getSheetValue('mv', 'bg_image_url_pc'),
-        mv_bg_image_url_sp: Utils.getSheetValue('mv', 'bg_image_url_sp'),
-        mv_bg_image_alt: Utils.getSheetValue('mv', 'bg_image_alt'),
-      };
-    }
-
-    return this.applyTagReplacements(template, replacements);
-  },
+  // getMvContents は MvInfo.getContents へ完全移行済（削除）
 
   /** contact */
   getContactContents() {

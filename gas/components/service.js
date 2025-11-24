@@ -6,7 +6,10 @@ var ServiceInfo = (function () {
   const PARAMETERS_SHEET_NAME = 'Parameters';
   const LOGS_SHEET_NAME       = 'Logs';
 
-  function readService_() {
+  let lastRows = [];
+
+  // 純粋な読み込み処理
+  function read() {
     const ss = SpreadsheetApp.getActive();
     const sh = ss.getSheetByName(SHEET_NAME);
     if (!sh) throw new Error('「service」シートが見つかりません。');
@@ -30,6 +33,7 @@ var ServiceInfo = (function () {
       service[key] = val;
       rows.push({ category: 'service', key, value: val, note });
     }
+    lastRows = rows.slice();
     return rows;
   }
 
@@ -135,17 +139,11 @@ var ServiceInfo = (function () {
   }
 
   // 公開API
-  function readAndRecordService() {
-    const rows = readService_();
-
+  function record() {
     const items = parseItems_();
     writeServiceJson_(items);
-
-    if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-      // Utils.logToSheet(`service: ${Object.keys(service).length}件`, 'ServiceInfo');
-    }
-    const ok = (items && items.length > 0) || (rows && rows.length > 0);
-    return { service: JSON.parse(JSON.stringify(service)), rows, items, ok };
+    const ok = (items && items.length > 0) || (lastRows && lastRows.length > 0);
+    return { service: JSON.parse(JSON.stringify(service)), rows: lastRows.slice(), items, ok };
   }
 
   function getTemplateReplacements() {
@@ -161,12 +159,10 @@ var ServiceInfo = (function () {
   }
 
   return {
-    readAndRecordService,
+    read,
+    record,
     getTemplateReplacements,
     getAll,
-    // 内部
-    readService_: readService_,
-    // appendToParameters_, ensureParametersSheet_ は廃止
     parseItems_: parseItems_,
     writeServiceJson_: writeServiceJson_,
   };

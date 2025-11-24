@@ -4,9 +4,11 @@ var faq = faq || {};
 var FaqInfo = (function () {
   const SHEET_NAME = 'faq';
   const PARAMETERS_SHEET_NAME = 'Parameters';
-  const LOGS_SHEET_NAME = 'Logs';
+  const LOGS_SHEET_NAME       = 'Logs';
 
-  function readFaq_() {
+  let lastRows = [];
+
+  function read() {
     const ss = SpreadsheetApp.getActive();
     const sh = ss.getSheetByName(SHEET_NAME);
     if (!sh) throw new Error('「faq」シートが見つかりません。');
@@ -25,20 +27,17 @@ var FaqInfo = (function () {
       const val  = values[r][1] != null ? values[r][1] : '';
       const note = values[r][2] != null ? String(values[r][2]) : '';
       if (!key) continue;
-
       faq[key] = val;
       rows.push({ category: 'faq', key, value: val, note });
     }
+    lastRows = rows.slice();
     return rows;
   }
 
-  // Parameters 関連機能は廃止済み
-
   function parseFaqItems_() {
     const items = [];
-    const maxN = 500; // 十分多め
+    const maxN = 500;
     for (let i = 1; i <= maxN; i++) {
-      // シートキーは item1_q のような形式（item + 数字 + _q）
       const q = faq[`item${i}_q`];
       const a = faq[`item${i}_a`];
       const hasAny = [q, a].some(v => v != null && String(v).trim() !== '');
@@ -55,7 +54,6 @@ var FaqInfo = (function () {
       if (!outRootId) throw new Error('出力フォルダIDが不明です。Build.checkDirectories() 実行後に呼び出してください。');
       const outRoot = DriveApp.getFolderById(outRootId);
       const dataFolder = Utils.getOrCreateSubFolder_(outRoot, 'data');
-
       const json = JSON.stringify(items || [], null, 2);
       const filename = 'faq.json';
       const files = dataFolder.getFilesByName(filename);
@@ -66,10 +64,6 @@ var FaqInfo = (function () {
         const blob = Utilities.newBlob(json, 'application/json', filename);
         dataFolder.createFile(blob);
       }
-
-      if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-        // Utils.logToSheet(`faq.json を出力しました（${(items || []).length}件）`, 'FaqInfo');
-      }
     } catch (e) {
       if (typeof Utils !== 'undefined' && Utils.logToSheet) {
         Utils.logToSheet(`faq.json 出力エラー: ${e.message}`, 'FaqInfo');
@@ -78,10 +72,7 @@ var FaqInfo = (function () {
     }
   }
 
-  function readAndRecordFaq() {
-    const rows = readFaq_();
-
-    // カラー変数登録
+  function record() {
     try {
       if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
         const map = {
@@ -97,16 +88,11 @@ var FaqInfo = (function () {
           }
         });
       }
-    } catch (_) { /* noop */ }
-
+    } catch (_) {}
     const items = parseFaqItems_();
     writeFaqJson_(items);
-
-    if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-      // Utils.logToSheet(`faq: ${Object.keys(faq).length}件`, 'FaqInfo');
-    }
-    const ok = (items && items.length > 0) || (rows && rows.length > 0);
-    return { faq: JSON.parse(JSON.stringify(faq)), rows, items, ok };
+    const ok = (items && items.length > 0) || (lastRows && lastRows.length > 0);
+    return { faq: JSON.parse(JSON.stringify(faq)), rows: lastRows.slice(), items, ok };
   }
 
   function getTemplateReplacements() {
@@ -122,17 +108,13 @@ var FaqInfo = (function () {
     };
   }
 
-  function getAll() {
-    return JSON.parse(JSON.stringify(faq));
-  }
+  function getAll() { return JSON.parse(JSON.stringify(faq)); }
 
   return {
-    readAndRecordFaq,
+    read,
+    record,
     getTemplateReplacements,
     getAll,
-    // internal
-    readFaq_: readFaq_,
-    // appendToParameters_, ensureParametersSheet_ は廃止
     parseFaqItems_: parseFaqItems_,
     writeFaqJson_: writeFaqJson_,
   };

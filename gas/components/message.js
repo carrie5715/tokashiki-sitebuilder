@@ -6,7 +6,11 @@ var MessageInfo = (function () {
   const PARAMETERS_SHEET_NAME = 'Parameters';
   const LOGS_SHEET_NAME       = 'Logs';
 
-  function readMessage_() {
+  // 直近 read() の行キャッシュ
+  let lastRows = [];
+
+  // 純粋な読み込み処理 (シート→ message 反映)
+  function read() {
     const ss = SpreadsheetApp.getActive();
     const sh = ss.getSheetByName(SHEET_NAME);
     if (!sh) throw new Error('「message」シートが見つかりません。');
@@ -35,6 +39,7 @@ var MessageInfo = (function () {
         if (hd) CommonInfo.addColorVar('--pcol-message-heading-color', String(hd));
       }
     } catch (e) {}
+    lastRows = rows.slice();
     return rows;
   }
 
@@ -86,15 +91,11 @@ var MessageInfo = (function () {
     }
   }
 
-  function readAndRecordMessage() {
-    const rows = readMessage_();
+  function record() {
     const slides = buildSlides_();
     writeMessageJson_(slides);
-    if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-      // Utils.logToSheet(`message: ${Object.keys(message).length}件`, 'MessageInfo');
-    }
-    const ok = (slides && slides.length > 0) || (rows && rows.length > 0);
-    return { message: JSON.parse(JSON.stringify(message)), rows, slides, ok };
+    const ok = (slides && slides.length > 0) || (lastRows && lastRows.length > 0);
+    return { message: JSON.parse(JSON.stringify(message)), rows: lastRows.slice(), slides, ok };
   }
 
   function getTemplateReplacements() {
@@ -109,11 +110,10 @@ var MessageInfo = (function () {
   function getAll() { return JSON.parse(JSON.stringify(message)); }
 
   return {
-    readAndRecordMessage,
+    read,
+    record,
     getTemplateReplacements,
     getAll,
-    readMessage_: readMessage_,
-    // appendToParameters_, ensureParametersSheet_ は廃止
     buildSlides_: buildSlides_,
     writeMessageJson_: writeMessageJson_,
   };

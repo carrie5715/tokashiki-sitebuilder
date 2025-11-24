@@ -6,7 +6,10 @@ var FooterInfo = (function() {
   const PARAMETERS_SHEET_NAME = 'Parameters';
   const LOGS_SHEET_NAME = 'Logs';
 
-  function readFooter_() {
+  let lastRows = [];
+
+  // 純粋な読み込み処理
+  function read() {
     const ss = SpreadsheetApp.getActive();
     const sh = ss.getSheetByName(SHEET_NAME);
     if (!sh) return [];
@@ -27,14 +30,13 @@ var FooterInfo = (function() {
       footer[key] = val;
       rows.push({ category: 'footer', key, value: val, note });
     }
+    lastRows = rows.slice();
     return rows;
   }
 
   // Parameters 関連機能は廃止済み
 
-  function readAndRecordFooter() {
-    const rows = readFooter_();
-    // カラー変数登録
+  function record() {
     try {
       if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
         const bg = footer['bg_color'];
@@ -47,8 +49,8 @@ var FooterInfo = (function() {
         Utils.logToSheet(`footer 色変数登録失敗: ${e.message}`, 'FooterInfo');
       }
     }
-    const ok = rows.length > 0;
-    return { footer: JSON.parse(JSON.stringify(footer)), rows, ok };
+    const ok = lastRows.length > 0;
+    return { footer: JSON.parse(JSON.stringify(footer)), rows: lastRows.slice(), ok };
   }
 
   function getTemplateReplacements() {
@@ -74,11 +76,9 @@ var FooterInfo = (function() {
   function getAll() { return JSON.parse(JSON.stringify(footer)); }
 
   return {
-    readAndRecordFooter,
+    read,
+    record,
     getTemplateReplacements,
     getAll,
-    // internal
-    readFooter_: readFooter_,
-    // appendToParameters_, ensureParametersSheet_ は廃止
   };
 })();

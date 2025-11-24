@@ -6,8 +6,11 @@ var MvInfo = (function () {
 	const PARAMETERS_SHEET_NAME = 'Parameters';
 	const LOGS_SHEET_NAME       = 'Logs';
 
-	// mv シートを読み込み、mv を更新し、Parameters へ投げる行データを返す
-	function readMv_() {
+	// 直近 read() の行データ保持（record() で利用）
+	let lastRows = [];
+
+	// 純粋読み込み: シート→mv 更新 + 行配列返却
+	function read() {
 		const ss = SpreadsheetApp.getActive();
 		const sh = ss.getSheetByName(SHEET_NAME);
 		if (!sh) throw new Error('「mv」シートが見つかりません。');
@@ -34,20 +37,16 @@ var MvInfo = (function () {
 			// Parameters へ渡す行（カテゴリは "mv" 固定）
 			rows.push({ category: 'mv', key, value: val, note });
 		}
+		lastRows = rows.slice();
 		return rows;
 	}
 
 	// Parameters 関連機能は廃止済み
 
-	// 公開API: 読み込み + Parameters 追記 + 概要返却
-	function readAndRecordMv() {
-		const rows = readMv_();
-
-		if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-			// Utils.logToSheet(`mv: ${Object.keys(mv).length}件`, 'MvInfo');
-		}
+	// 副作用部（現在は行データ結果整形のみ）
+	function record() {
 		const ok = Object.keys(mv || {}).length > 0;
-		return { mv: JSON.parse(JSON.stringify(mv)), rows, ok };
+		return { mv: JSON.parse(JSON.stringify(mv)), rows: lastRows.slice(), ok };
 	}
 
 	// テンプレ置換用: mv_<key> 形式のキーに変換して返却
@@ -59,17 +58,47 @@ var MvInfo = (function () {
 		return out;
 	}
 
-	// 全メタを浅いコピーで取得
-	function getAll() {
-		return JSON.parse(JSON.stringify(mv));
+	function getAll() { return JSON.parse(JSON.stringify(mv)); }
+
+	function getContents() {
+		if (!Object.keys(mv).length) { try { read(); } catch (_) {} }
+		let template;
+		try {
+			if (typeof Build !== 'undefined' && Build.getTemplateFile) {
+				template = Build.getTemplateFile('components', 'mv');
+			} else {
+				template = getTemplateFileDirect_();
+			}
+		} catch (e) {
+			if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`mv テンプレ取得失敗: ${e.message}`, 'MvInfo');
+			return '';
+		}
+		const replacements = getTemplateReplacements();
+		try {
+			if (typeof Build !== 'undefined' && Build.applyTagReplacements) {
+				return Build.applyTagReplacements(template, replacements);
+			}
+		} catch (_) {}
+		return template.replace(/<\?=\s*([a-zA-Z0-9_]+)\s*\?>/g, function(m, k){ return (k in replacements) ? String(replacements[k]) : m; });
+	}
+
+	function getTemplateFileDirect_() {
+		const rootId = Utils.getTemplateRootId_ && Utils.getTemplateRootId_();
+		if (!rootId) throw new Error('テンプレートルートID未設定');
+		const root = DriveApp.getFolderById(rootId);
+		const compIt = root.getFoldersByName('components');
+		if (!compIt.hasNext()) throw new Error('components フォルダが見つかりません');
+		const comp = compIt.next();
+		const files = comp.getFilesByName('mv.template.html');
+		if (!files.hasNext()) throw new Error('mv.template.html が見つかりません');
+		return files.next().getBlob().getDataAsString('UTF-8');
 	}
 
 	return {
-		readAndRecordMv,
+		read,
+		record,
 		getTemplateReplacements,
 		getAll,
-		// 内部API（必要なら利用）
-		readMv_: readMv_,
-		// ensureParametersSheet_, appendToParameters_ は廃止
+		getContents,
 	};
 })();

@@ -44,7 +44,8 @@ var CommonInfo = (function () {
   ];
 
   // 基本設定シートを読み込み、siteInfos/colors を更新し、行データを返す
-  function readBasicSettings_() {
+  // 純粋な読み込み処理
+  function read() {
     const ss = SpreadsheetApp.getActive();
     const sh = ss.getSheetByName(BASIC_SHEET_NAME);
     if (!sh) throw new Error('「基本設定」シートが見つかりません。');
@@ -104,7 +105,7 @@ var CommonInfo = (function () {
 
   // 公開API: 読み込み + Parameters 追記 + 概要返却
   function readAndRecordBasicSettings() {
-    const rows = readBasicSettings_();
+    const rows = read();
 
     // 任意でログ
     if (typeof Utils !== 'undefined' && Utils.logToSheet) {
@@ -280,6 +281,7 @@ var CommonInfo = (function () {
 
   return {
     readAndRecordBasicSettings,
+    read,
     toCssVariables,
     writeColorsCss,
     writeVariablesCss,
@@ -290,7 +292,7 @@ var CommonInfo = (function () {
     getBodyClassesString,
     // reset/removeParametersSheet は廃止
     // 必要ならエクスポート
-    readBasicSettings_: readBasicSettings_,
+    readBasicSettings_: read,
     // ensureParametersSheet_, appendToParameters_ は廃止
     safeFreezeTopRow_: safeFreezeTopRow_,
     SITE_KEYS, COLOR_KEYS

@@ -7,7 +7,10 @@ var ContactInfo = (function () {
   const PARAMETERS_SHEET_NAME = 'Parameters';
   const LOGS_SHEET_NAME = 'Logs';
 
-  function readContact_() {
+  let lastRows = [];
+
+  // 純粋な読み込み処理
+  function read() {
     const ss = SpreadsheetApp.getActive();
     const sh = ss.getSheetByName(SHEET_NAME);
     if (!sh) throw new Error('「contact」シートが見つかりません。');
@@ -29,6 +32,7 @@ var ContactInfo = (function () {
       contact[key] = val;
       rows.push({ category: 'contact', key, value: val, note });
     }
+    lastRows = rows.slice();
     return rows;
   }
 
@@ -103,10 +107,7 @@ var ContactInfo = (function () {
     return html;
   }
 
-  function readAndRecordContact() {
-    const rows = readContact_();
-
-    // カラー変数登録
+  function record() {
     try {
       if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
         const colorKeys = [ 'background', 'card_bg_color', 'card_text_color' ];
@@ -123,10 +124,9 @@ var ContactInfo = (function () {
         Utils.logToSheet(`contact 色変数登録失敗: ${e.message}`, 'ContactInfo');
       }
     }
-
     const items = parseContactItems_();
-    const ok = (items && items.length > 0) || (rows && rows.length > 0);
-    return { contact: JSON.parse(JSON.stringify(contact)), rows, items, ok };
+    const ok = (items && items.length > 0) || (lastRows && lastRows.length > 0);
+    return { contact: JSON.parse(JSON.stringify(contact)), rows: lastRows.slice(), items, ok };
   }
 
   function getTemplateReplacements() {
@@ -150,12 +150,10 @@ var ContactInfo = (function () {
   }
 
   return {
-    readAndRecordContact,
+    read,
+    record,
     getTemplateReplacements,
     getAll,
-    // internal
-    readContact_: readContact_,
-    // appendToParameters_, ensureParametersSheet_ は廃止
     parseContactItems_: parseContactItems_,
     buildItemsHtml_: buildItemsHtml_,
   };

@@ -6,7 +6,10 @@ var CompanyInfo = (function () {
   const PARAMETERS_SHEET_NAME = 'Parameters';
   const LOGS_SHEET_NAME       = 'Logs';
 
-  function readCompany_() {
+  let lastRows = [];
+
+  // 純粋な読み込み処理
+  function read() {
     const ss = SpreadsheetApp.getActive();
     const sh = ss.getSheetByName(SHEET_NAME);
     if (!sh) throw new Error('「company」シートが見つかりません。');
@@ -30,6 +33,7 @@ var CompanyInfo = (function () {
       company[key] = val;
       rows.push({ category: 'company', key, value: val, note });
     }
+    lastRows = rows.slice();
     return rows;
   }
 
@@ -101,10 +105,7 @@ var CompanyInfo = (function () {
   }
 
   // 公開API
-  function readAndRecordCompany() {
-    const rows = readCompany_();
-
-    // 追加: company セクションのカラー変数を colors.css に出力
+  function record() {
     try {
       const bg = company['bg_color'];
       const tx = company['text_color'];
@@ -114,18 +115,11 @@ var CompanyInfo = (function () {
         if (tx) CommonInfo.addColorVar('--pcol-company-text-color', String(tx));
         if (hd) CommonInfo.addColorVar('--pcol-company-heading-color', String(hd));
       }
-    } catch (e) {
-      // noop（色指定がなくても続行）
-    }
-
+    } catch (e) {}
     const items = parseCompanyItems_();
     writeCompanyJson_(items);
-
-    if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-      // Utils.logToSheet(`company: ${Object.keys(company).length}件`, 'CompanyInfo');
-    }
-    const ok = (items && items.length > 0) || (rows && rows.length > 0);
-    return { company: JSON.parse(JSON.stringify(company)), rows, items, ok };
+    const ok = (items && items.length > 0) || (lastRows && lastRows.length > 0);
+    return { company: JSON.parse(JSON.stringify(company)), rows: lastRows.slice(), items, ok };
   }
 
   function getTemplateReplacements() {
@@ -141,12 +135,10 @@ var CompanyInfo = (function () {
   }
 
   return {
-    readAndRecordCompany,
+    read,
+    record,
     getTemplateReplacements,
     getAll,
-    // internal for tests
-    readCompany_: readCompany_,
-    // appendToParameters_, ensureParametersSheet_ は廃止
     parseCompanyItems_: parseCompanyItems_,
     writeCompanyJson_: writeCompanyJson_,
   };
