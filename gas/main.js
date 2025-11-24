@@ -6,6 +6,7 @@ function onOpen() {
     var ui = SpreadsheetApp.getUi && SpreadsheetApp.getUi();
     if (!ui) return;
     ui.createMenu('サイト生成')
+      .addItem('シート読み取り', 'sheetReadAll')
       .addItem('ファイル出力', 'buildAll')
       .addItem('出力をZIP作成（ダウンロード用）', 'zipOutput')
       .addItem('出力ZIPの共有リンク生成', 'zipOutputWithLink')
@@ -17,6 +18,77 @@ function onOpen() {
     if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('onOpen UIメニュー生成スキップ: ' + e.message, 'onOpen');
   }
 }
+
+function sheetReadAll() {
+  const stTime = new Date().getTime();
+  Utils.logToSheet('>>>>> シート読み取り開始 >>>>>', 'sheetReadAll');
+  // 出力用フォルダID取得（info/snapshot）
+  let ids;
+  try {
+    ids = Build.checkDirectories();
+  } catch (e) {
+    Utils.logToSheet('フォルダ確認失敗: ' + e.message, 'sheetReadAll');
+    throw e;
+  }
+  const snapshotFolderId = ids && ids.info && ids.info.snapshotId;
+  if (!snapshotFolderId) {
+    Utils.logToSheet('snapshot保存先(info/snapshot)取得失敗', 'sheetReadAll');
+    throw new Error('snapshotフォルダなし');
+  }
+
+  // 対象シート名（必要に応じて拡張）
+  const sheetNames = [
+    'mv', 'message', 'service', 'contact', 'faq', 'company', 'works', 'footer', 'header', 'meta'
+  ];
+
+  const ss = SpreadsheetApp.getActive();
+  const components = {};
+  sheetNames.forEach(name => {
+    try {
+      const sh = ss.getSheetByName(name);
+      if (!sh) return;
+      const values = sh.getDataRange().getValues();
+      components[name] = {
+        sheetName: name,
+        rows: values,
+        rowCount: values.length,
+        colCount: values.length ? values[0].length : 0
+      };
+    } catch (e) {
+      Utils.logToSheet(`シート取得失敗: ${name} - ${e.message}`, 'sheetReadAll');
+    }
+  });
+
+  // スナップショット構造
+  const now = new Date();
+  const dateStr = Utilities.formatDate(now, Session.getScriptTimeZone(), 'yyyyMMdd-HHmmss');
+  const timestamp = now.getTime();
+  const snapshot = {
+    version: 1,
+    generatedAt: now.toISOString(),
+    dateKey: dateStr,
+    timestamp: timestamp,
+    spreadsheetId: ss.getId(),
+    components: components
+  };
+
+  // ファイル名提案: prefix = 'snapshot_' → snapshot_YYYYMMDD-HHmmss-<timestamp>.json
+  const fileName = `snapshot_${dateStr}-${timestamp}.json`;
+  try {
+    const folder = DriveApp.getFolderById(snapshotFolderId);
+    const blob = Utilities.newBlob(JSON.stringify(snapshot, null, 2), 'application/json', fileName);
+    folder.createFile(blob);
+    Utils.logToSheet(`snapshot保存: info/snapshot/${fileName}`, 'sheetReadAll');
+  } catch (e) {
+    Utils.logToSheet('snapshot保存失敗: ' + e.message, 'sheetReadAll');
+    throw e;
+  }
+
+  const edTime = new Date().getTime();
+  const elapSec = ((edTime - stTime) / 1000).toFixed(2);
+  Utils.logToSheet(`##### シート読み取り全て完了 処理時間: ${elapSec} 秒 #####`, 'sheetReadAll');
+}
+
 
 function buildAll() {
   const stTime = new Date().getTime();
