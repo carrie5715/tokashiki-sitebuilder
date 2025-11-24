@@ -59,17 +59,59 @@ function sheetReadAll() {
     }
   });
 
-  // スナップショット構造
+  // ===== 前倒しパース (processed) 生成 =====
+  // rows ハッシュ + ok 判定のみ（軽量）。後続最適化で拡張予定。
+  const computeHash = function(name, rows) {
+    try {
+      const flat = JSON.stringify(rows || []);
+      const digest = Utilities.computeDigest(Utilities.DigestAlgorithm.MD5, flat);
+      return digest.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+    } catch(e) { return 'hash_error_'+name; }
+  };
+  // 依存順序: contact -> header （header は nav/contact に依存）
+  const ORDER_FOR_PROCESSED = ['mv','message','service','faq','company','works','contact','header','footer','meta','nav'];
+  globalThis.__snapshotOverrides = {};
+  Object.keys(components).forEach(k => { globalThis.__snapshotOverrides[k] = components[k].rows; });
+  // CommonInfo の基本設定読込（header 等が参照）
+  try { if (typeof CommonInfo !== 'undefined' && CommonInfo.readAndRecordBasicSettings) { CommonInfo.readAndRecordBasicSettings(); } } catch(_){ }
+  const processed = {};
+  ORDER_FOR_PROCESSED.forEach(name => {
+    if (!components[name]) return;
+    let ok = false;
+    // 各 Info.read() があれば呼び出し（シートアクセスは snapshotOverrides により回避される想定）
+    try {
+      const infoName = name.charAt(0).toUpperCase() + name.slice(1) + 'Info';
+      const infoObj = globalThis[infoName];
+      if (infoObj && typeof infoObj.read === 'function') {
+        const res = infoObj.read();
+        if (res && res.ok) ok = !!res.ok;
+      } else {
+        // read が無い場合は rows 有無で簡易判定
+        ok = (components[name].rowCount > 0);
+      }
+    } catch(e) {
+      Utils.logToSheet('processed read失敗: '+name+' - '+e.message, 'sheetReadAll');
+    }
+    processed[name] = {
+      hash: computeHash(name, components[name].rows),
+      ok: ok,
+      rows: { count: components[name].rowCount, cols: components[name].colCount }
+    };
+  });
+  try { delete globalThis.__snapshotOverrides; } catch(_){ }
+
+  // スナップショット構造（version=2 へ）
   const now = new Date();
   const dateStr = Utilities.formatDate(now, Session.getScriptTimeZone(), 'yyyyMMdd-HHmmss');
   const timestamp = now.getTime();
   const snapshot = {
-    version: 1,
+    version: 2,
     generatedAt: now.toISOString(),
     dateKey: dateStr,
     timestamp: timestamp,
     spreadsheetId: ss.getId(),
-    components: components
+    components: components,
+    processed: processed
   };
 
   // ファイル名提案: prefix = 'snapshot_' → snapshot_YYYYMMDD-HHmmss-<timestamp>.json
@@ -107,6 +149,7 @@ function buildAll() {
 
   // 最新snapshot適用（存在すれば read() はシートアクセスせず rows を利用）
   let snapshot = null;
+  const ssSt = new Date().getTime();
   try { snapshot = Build.loadLatestSnapshot(); } catch(_) {}
   if (snapshot && snapshot.components) {
     globalThis.__snapshotOverrides = {};
@@ -116,7 +159,8 @@ function buildAll() {
         globalThis.__snapshotOverrides[name] = comp.rows;
       }
     });
-    Utils.logToSheet(`snapshot適用: ${Object.keys(snapshot.components).length}コンポ / ${snapshot.dateKey}`, 'buildAll');
+    const ssEd = new Date().getTime();
+    Utils.logToSheet(`snapshot適用: ${Object.keys(snapshot.components).length}コンポ / ${snapshot.dateKey} 処理時間: ${((ssEd - ssSt) / 1000).toFixed(2)} 秒`, 'buildAll');
   } else {
     Utils.logToSheet('snapshotなし: 通常readでシート参照', 'buildAll');
   }
@@ -128,16 +172,69 @@ function buildAll() {
     return;
   }
 
-  // recordのみ呼び出し（read() を呼ばず snapshot再構築ロジックを各 record が内包）
-  var metaRes   = (typeof MetaInfo !== 'undefined'   && MetaInfo.record)   ? MetaInfo.record()   : null;
-  var mvRes     = (typeof MvInfo !== 'undefined'     && MvInfo.record)     ? MvInfo.record()     : null;
-  var messageRes= (typeof MessageInfo !== 'undefined'&& MessageInfo.record)? MessageInfo.record(): null;
-  var serviceRes= (typeof ServiceInfo !== 'undefined'&& ServiceInfo.record)? ServiceInfo.record(): null;
-  var contactRes= (typeof ContactInfo !== 'undefined'&& ContactInfo.record)? ContactInfo.record(): null;
-  var faqRes    = (typeof FaqInfo !== 'undefined'    && FaqInfo.record)    ? FaqInfo.record()    : null;
-  var companyRes= (typeof CompanyInfo !== 'undefined'&& CompanyInfo.record)? CompanyInfo.record(): null;
-  var worksRes  = (typeof WorksInfo !== 'undefined'  && WorksInfo.record)  ? WorksInfo.record()  : null;
-  var footerRes = (typeof FooterInfo !== 'undefined' && FooterInfo.record) ? FooterInfo.record() : null;
+  // ===== processed 情報による差分スキップ =====
+  const props = PropertiesService.getScriptProperties();
+  const processed = (snapshot && snapshot.version >= 2 && snapshot.processed) ? snapshot.processed : null;
+  const DEPENDS = { header: ['nav','contact'] };
+  const recordOrder = ['meta','mv','message','service','faq','company','works','contact','header','footer'];
+  const results = {};
+  recordOrder.forEach(name => {
+    const infoName = name.charAt(0).toUpperCase() + name.slice(1) + 'Info';
+    const infoObj = globalThis[infoName];
+    const hasRecord = infoObj && typeof infoObj.record === 'function';
+    let doRecord = true;
+    if (processed && processed[name]) {
+      // 依存コンポのハッシュ差分考慮
+      const selfHash = processed[name].hash;
+      const prevHash = props.getProperty('COMP_HASH_'+name);
+      let depsChanged = false;
+      if (DEPENDS[name]) {
+        depsChanged = DEPENDS[name].some(dep => {
+          const depHash = processed[dep] ? processed[dep].hash : 'missing';
+          const prevDepHash = props.getProperty('COMP_HASH_'+dep);
+          return depHash !== prevDepHash;
+        });
+      }
+      if (prevHash && selfHash === prevHash && !depsChanged) {
+        doRecord = false; // 差分なし＆依存差分なし → スキップ
+      }
+    }
+    // const stCmp = new Date().getTime();
+    if (hasRecord && doRecord) {
+      try {
+        results[name] = infoObj.record();
+        // ハッシュ更新
+        if (processed && processed[name]) {
+          props.setProperty('COMP_HASH_'+name, processed[name].hash);
+        }
+        // const edCmp = new Date().getTime();
+        // Utils.logToSheet(`record完了: ${name} (${((edCmp-stCmp)/1000).toFixed(2)}s)`, 'buildAll');
+      } catch(e) {
+        Utils.logToSheet(`record失敗: ${name} - ${e.message}`, 'buildAll');
+        results[name] = { ok:false };
+      }
+    } else if (processed && processed[name]) {
+      // スキップ: ok フラグのみ利用
+      results[name] = { ok: processed[name].ok, skipped: true };
+      Utils.logToSheet(`recordスキップ: ${name}`, 'buildAll');
+    } else if (hasRecord) {
+      // processed無し → 互換モードで実行
+      try {
+        results[name] = infoObj.record();
+        Utils.logToSheet(`互換record: ${name}`, 'buildAll');
+      } catch(e) {
+        Utils.logToSheet(`互換record失敗: ${name} - ${e.message}`, 'buildAll');
+        results[name] = { ok:false };
+      }
+    }
+  });
+
+  var mvRes      = results['mv']      || null;
+  var messageRes = results['message'] || null;
+  var serviceRes = results['service'] || null;
+  var faqRes     = results['faq']     || null;
+  var companyRes = results['company'] || null;
+  var worksRes   = results['works']   || null;
 
   // snapshot overrides 終了処理（後続の別関数影響を避けるためクリア）
   if (globalThis.__snapshotOverrides) {
