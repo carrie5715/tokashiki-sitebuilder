@@ -36,7 +36,9 @@ var CommonInfo = (function () {
     // 追加: フッター用
     'copyright', 'copyrights',
     // 追加: フォント系（クラス付与に使用）
-    'base_font'
+    'base_font',
+    // 追加: サイト表示パターン（bodyクラス生成）
+    'sitepat_font_size', 'sitepat_line_height', 'sitepat_letter_spacing'
   ];
   const COLOR_KEYS = [
     'theme_color', 'base_color1', 'base_color2', 'base_color3',
@@ -71,6 +73,17 @@ var CommonInfo = (function () {
           const cls = mapBaseFontToClass_(val);
           if (cls) addBodyClass(cls);
         }
+        // sitepat_* の場合は正規化して body クラス追加
+        if (key === 'sitepat_font_size') {
+          const nv = normalizeSitePatternValue_(val);
+          if (nv) addBodyClass('sitepat-fs-' + nv);
+        } else if (key === 'sitepat_line_height') {
+          const nv = normalizeSitePatternValue_(val);
+          if (nv) addBodyClass('sitepat-lh-' + nv);
+        } else if (key === 'sitepat_letter_spacing') {
+          const nv = normalizeSitePatternValue_(val);
+          if (nv) addBodyClass('sitepat-ls-' + nv);
+        }
       } else if (COLOR_KEYS.indexOf(key) >= 0) {
         colors[key] = val;
         category = 'colors';
@@ -80,6 +93,18 @@ var CommonInfo = (function () {
         category = 'variables';
       } else if (key === 'base_font_bold_weight') {
         addCssVar('--base-font-bold-weight', String(val).trim());
+        category = 'variables';
+      } else if (key === 'base_font_size') {
+        // 追加: フォントサイズ
+        addCssVar('--base-font-size', String(val).trim());
+        category = 'variables';
+      } else if (key === 'base_line_height') {
+        // 追加: 行間
+        addCssVar('--base-line-height', String(val).trim());
+        category = 'variables';
+      } else if (key === 'base_letter_spacing') {
+        // 追加: 字間
+        addCssVar('--base-letter-spacing', String(val).trim());
         category = 'variables';
       } else {
         // 対象外はスキップ（必要なら 'others' に積む）
@@ -99,6 +124,13 @@ var CommonInfo = (function () {
     if (s === '丸ゴシック') return 'rounded';
     // 不明値は何もしない
     return '';
+  }
+
+  // sitepat_* 系値の正規化（英数字/ハイフン/アンダースコア以外をハイフンに置換＋小文字化）
+  function normalizeSitePatternValue_(v) {
+    const s = String(v || '').trim();
+    if (!s) return '';
+    return s.toLowerCase().replace(/[^a-z0-9_-]+/g, '-');
   }
 
   // Parameters 関連機能 (ensure/reset/append) は完全廃止済み
