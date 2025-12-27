@@ -1,12 +1,20 @@
 @use '../common/mixins' as *;
 
+
+:root {
+  --bold: var(--base-font-bold-weight, 700);
+}
+
 html {
   color: var(--font-color-main); // シートから当てようと思ったけどいったんしない
 }
 
 body {
   background: var(--col-white); // シートから当てようと思ったけどいったんしない
+  font-size: var(--base-font-size, 14px);
+  line-height: var(--base-line-height, 1.6);
   font-weight: var(--base-font-weight, 400);
+  
 }
 
 a {
@@ -15,7 +23,7 @@ a {
 }
 
 strong {
-  font-weight: var(--bold-font-weight, 700);
+  font-weight: var(--bold, 700);
   color: var(--pcol-base-color-2, var(--col-blue));
 }
 

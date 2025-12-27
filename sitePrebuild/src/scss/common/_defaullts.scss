@@ -4,7 +4,7 @@ html {
   // font-size: 62.5%;
   // font-size: 12px;
   font-size: 2.667vw;
-  font-family: var(--font-noto-sans);
+  // font-family: var(--font-noto-sans);
   line-height: 1.6;
   word-break: break-word;
   -webkit-font-smoothing: antialiased;
@@ -12,9 +12,11 @@ html {
   color: var(--font-color-main);
 }
 
+/*
 body {
-  font-size: 1.4rem;
+  font-size: 14px // 1.4rem; // pixelベースに
 }
+*/
 
 * {
   box-sizing: border-box;
