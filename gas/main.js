@@ -7,6 +7,7 @@ function onOpen() {
     if (!ui) return;
     ui.createMenu('サイト生成')
       .addItem('シート読み取り', 'sheetReadAll')
+      .addItem('スタイル変数出力', 'exportStyleVariablesMenu')
       .addItem('ファイル出力', 'buildAll')
       .addItem('出力をZIP作成（ダウンロード用）', 'zipOutput')
       .addItem('出力ZIPの共有リンク生成', 'zipOutputWithLink')
@@ -314,9 +315,8 @@ function buildAll() {
   if (typeof CommonInfo !== 'undefined' && CommonInfo.writeColorsCss) {
     try { CommonInfo.writeColorsCss(ids.output.cssId); } catch (e) { Utils.logToSheet(`colors.css 出力失敗: ${e.message}`, 'buildAll'); }
   }
-  if (typeof CommonInfo !== 'undefined' && CommonInfo.writeVariablesCss) {
-    try { CommonInfo.writeVariablesCss(ids.output.cssId); } catch (e) { Utils.logToSheet(`variables.css 出力失敗: ${e.message}`, 'buildAll'); }
-  }
+  // variables.css 出力は StyleVariables へ委譲（CommonInfo側でも委譲済みのため、どちらでも可）
+  // variables.css の出力は新メニュー「スタイル変数出力」で実行する運用へ変更
 
   const edTime = new Date().getTime();
   const elapSec = ((edTime - stTime) / 1000).toFixed(2);
@@ -376,4 +376,36 @@ function clearTemplateRootId() {
   PropertiesService.getScriptProperties().deleteProperty('TEMPLATE_ROOT_ID');
   Utils.logToSheet('TEMPLATE_ROOT_ID をクリア', 'clearTemplateRootId');
   SpreadsheetApp.getActive().toast('テンプレートIDをクリアしました', 'clearTemplateRootId', 3);
+}
+
+// 新メニュー: スタイル変数出力（base + theme_styles）
+function exportStyleVariablesMenu() {
+  try {
+    const stTime = new Date().getTime();
+    const ids = Build.checkDirectories();
+    const cssFolderId = ids && ids.output && ids.output.cssId;
+    if (!cssFolderId) throw new Error('CSS 出力フォルダIDが不明です');
+    // 基本設定を読込（cssVars を初期化）
+    try { if (typeof CommonInfo !== 'undefined' && CommonInfo.readAndRecordBasicSettings) { CommonInfo.readAndRecordBasicSettings(); } } catch (_e) {}
+    // 1) base（CommonInfo/既存の cssVars）を variables.css へ出力
+    if (typeof StyleVariables !== 'undefined' && StyleVariables.writeVariablesCss) {
+      StyleVariables.writeVariablesCss(cssFolderId);
+    } else if (typeof CommonInfo !== 'undefined' && CommonInfo.writeVariablesCss) {
+      CommonInfo.writeVariablesCss(cssFolderId);
+    }
+    // 2) theme_styles シート由来の変数を追加出力
+    if (typeof StyleVariables !== 'undefined' && StyleVariables.exportThemeStylesVariables) {
+      StyleVariables.exportThemeStylesVariables(cssFolderId);
+    }
+    SpreadsheetApp.getActive().toast('スタイル変数を出力しました', 'exportStyleVariablesMenu', 3);
+    const edTime = new Date().getTime();
+    const elapSec = ((edTime - stTime) / 1000).toFixed(2);
+    if (typeof Utils !== 'undefined' && Utils.logToSheet) {
+      Utils.logToSheet(`##### スタイル変数出力処理全て完了 処理時間: ${elapSec} 秒 #####`, 'exportStyleVariablesMenu');
+    }
+  } catch (e) {
+    Utils.logToSheet('スタイル変数出力エラー: ' + e.message, 'exportStyleVariablesMenu');
+    SpreadsheetApp.getActive().toast('スタイル変数出力に失敗しました', 'exportStyleVariablesMenu', 4);
+    throw e;
+  }
 }
