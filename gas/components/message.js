@@ -39,10 +39,12 @@ var MessageInfo = (function () {
       const bg = message['bg_color'];
       const tx = message['text_color'];
       const hd = message['heading_color'];
+      const cc = message['core_color'];
       if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
         if (bg) CommonInfo.addColorVar('--pcol-message-bg-color', String(bg));
         if (tx) CommonInfo.addColorVar('--pcol-message-text-color', String(tx));
         if (hd) CommonInfo.addColorVar('--pcol-message-heading-color', String(hd));
+        if (cc) CommonInfo.addColorVar('--pcol-message-core-color', String(cc));
       }
     } catch (e) {}
     lastRows = rows.slice();
@@ -123,10 +125,12 @@ var MessageInfo = (function () {
             const bg = message['bg_color'];
             const tx = message['text_color'];
             const hd = message['heading_color'];
+            const cc = message['core_color'];
             if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
               if (bg) CommonInfo.addColorVar('--pcol-message-bg-color', String(bg));
               if (tx) CommonInfo.addColorVar('--pcol-message-text-color', String(tx));
               if (hd) CommonInfo.addColorVar('--pcol-message-heading-color', String(hd));
+              if (cc) CommonInfo.addColorVar('--pcol-message-core-color', String(cc));
             }
           } catch (_) {}
         }
@@ -149,12 +153,26 @@ var MessageInfo = (function () {
   }
 
   function getTemplateReplacements() {
-    const br = (s) => String(s == null ? '' : s).replace(/\r\n|\r|\n/g, '<br>');
-    return {
-      section_title_en: br(message['section_title_en']),
-      message_heading_text: br(message['heading_text']),
-      message_intro_text: br(message['intro_text']),
-    };
+      const h2SubText = Utils.br(message['h2_sub']);
+      const head = Utils.br(message['core_head']);
+      const text = Utils.br(message['core_text']);
+      let core_messages = '';
+      if (head || text) {
+        const parts = [];
+        if (head) parts.push(`<h3>${head}</h3>`);
+        if (text) parts.push(`<p>${text}</p>`);
+        core_messages = `<div class="core-messages">\n${parts.join('\n')}\n</div>`;
+      }
+
+      return {
+        bg_title: Utils.br(message['bg_title']),
+        h2_sub: h2SubText ? `<span>${h2SubText}</span>` : '',
+        h2_main: Utils.br(message['h2_main']),
+        section_lead: Utils.br(message['section_lead']),
+        core_head: head,
+        core_text: text,
+        core_messages,
+      };
   }
 
   function getAll() { return JSON.parse(JSON.stringify(message)); }

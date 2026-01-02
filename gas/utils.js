@@ -63,6 +63,15 @@ const Utils = {
   },
 
   /**
+   * 改行を <br> に変換し、前後の空白を除去
+   * @param {string|any} s - 対象文字列
+   * @return {string} 整形済み文字列
+   */
+  br(s) {
+    return String(s ?? '').trim().replace(/\r\n|\r|\n/g, '<br>');
+  },
+
+  /**
    * 親フォルダ取得（スプレッドシートが入ってるフォルダ）
    */
   getParentFolder_() {
