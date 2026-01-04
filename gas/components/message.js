@@ -160,7 +160,7 @@ var MessageInfo = (function () {
       if (head || text) {
         const parts = [];
         if (head) parts.push(`<h3>${head}</h3>`);
-        if (text) parts.push(`<div>${text}</div>`);
+        if (text) parts.push(`<div class="core-text">${text}</div>`);
         core_messages = `<div class="core-messages">\n${parts.join('\n')}\n</div>`;
       }
 
