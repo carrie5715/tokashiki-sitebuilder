@@ -4,9 +4,9 @@
   width: 100%;
   background: var(--pcol-message-bg-color, var(--col-blue));
   color: var(--pcol-message-text-color, var(--col-white));
-  strong { color: var(--pcol-message-text-color, var(--col-white)); }
-
-
+  strong {
+    color: var(--pcol-message-text-color, var(--col-white));
+  }
 
   .container {
     max-width: 1000px;
@@ -125,5 +125,9 @@
       }
     }
   }
-  .message-swiper { margin-top: 24px; position: relative; padding-bottom: 24px; }
+  .message-swiper {
+    margin-top: 24px;
+    position: relative;
+    padding-bottom: 24px;
+  }
 }
