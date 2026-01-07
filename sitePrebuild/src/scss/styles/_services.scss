@@ -15,6 +15,21 @@
     text-align: center;
     padding-bottom: 3.2vw;
     position: relative;
+
+    $sp-fs: var(--service-h2-sp-fs);
+    $sp-fw: var(--service-h2-sp-fw);
+    $sp-lh: var(--service-h2-sp-lh);
+    $sp-ls: var(--service-h2-sp-ls);
+    font-size: $sp-fs;
+    font-weight: $sp-fw;
+    line-height: $sp-lh;
+    letter-spacing: $sp-ls;
+    @include pc {
+      font-size: var(--service-h2-pc-fs, $sp-fs);
+      font-weight: var(--service-h2-pc-fw, $sp-fw);
+      line-height: var(--service-h2-pc-lh, $sp-lh);
+      letter-spacing: var(--service-h2-pc-ls, $sp-ls);
+    }
     &::after {
       content: '';
       display: block;
@@ -26,19 +41,47 @@
       left: 0;
       right: 0;
       margin: auto;
-      position: absolute
+      position: absolute;
     }
 
     .subtitle {
       display: none;
+
+      $sp-fs: var(--service-h2-sub-sp-fs);
+      $sp-fw: var(--service-h2-sub-sp-fw);
+      $sp-lh: var(--service-h2-sub-sp-lh);
+      $sp-ls: var(--service-h2-sub-sp-ls);
+      font-size: $sp-fs;
+      font-weight: $sp-fw;
+      line-height: $sp-lh;
+      letter-spacing: $sp-ls;
+      @include pc {
+        font-size: var(--service-h2-sub-pc-fs, $sp-fs);
+        font-weight: var(--service-h2-sub-pc-fw, $sp-fw);
+        line-height: var(--service-h2-sub-pc-lh, $sp-lh);
+        letter-spacing: var(--service-h2-sub-pc-ls, $sp-ls);
+      }
     }
   }
 
   .intro {
     text-align: center;
-    font-size: 1.4rem;
     padding: 4vw;
     margin-bottom: 4.8vw;
+    $sp-fs: var(--service-section-lead-sp-fs);
+    $sp-fw: var(--service-section-lead-sp-fw);
+    $sp-lh: var(--service-section-lead-sp-lh);
+    $sp-ls: var(--service-section-lead-sp-ls);
+    font-size: $sp-fs;
+    font-weight: $sp-fw;
+    line-height: $sp-lh;
+    letter-spacing: $sp-ls;
+    @include pc {
+      font-size: var(--service-section-lead-pc-fs, $sp-fs);
+      font-weight: var(--service-section-lead-pc-fw, $sp-fw);
+      line-height: var(--service-section-lead-pc-lh, $sp-lh);
+      letter-spacing: var(--service-section-lead-pc-ls, $sp-ls);
+    }
   }
 
   .services-list {
@@ -67,23 +110,111 @@
           display: block;
         }
         .ja {
-          font-size: 1.6rem;
-          font-weight: 400;
+          $sp-fs: var(--service-title-sp-fs);
+          $sp-fw: var(--service-title-sp-fw);
+          $sp-lh: var(--service-title-sp-lh);
+          $sp-ls: var(--service-title-sp-ls);
+          font-size: $sp-fs;
+          font-weight: $sp-fw;
+          line-height: $sp-lh;
+          letter-spacing: $sp-ls;
+          @include pc {
+            font-size: var(--service-title-pc-fs, $sp-fs);
+            font-weight: var(--service-title-pc-fw, $sp-fw);
+            line-height: var(--service-title-pc-lh, $sp-lh);
+            letter-spacing: var(--service-title-pc-ls, $sp-ls);
+          }
         }
         .en {
-          font-size: 1.4rem;
-          font-weight: 400;
           color: var(--pcol-base-color-2, var(--col-blue));
+          $sp-fs: var(--service-title-sub-sp-fs);
+          $sp-fw: var(--service-title-sub-sp-fw);
+          $sp-lh: var(--service-title-sub-sp-lh);
+          $sp-ls: var(--service-title-sub-sp-ls);
+          font-size: $sp-fs;
+          font-weight: $sp-fw;
+          line-height: $sp-lh;
+          letter-spacing: $sp-ls;
+          @include pc {
+            font-size: var(--service-title-sub-pc-fs, $sp-fs);
+            font-weight: var(--service-title-sub-pc-fw, $sp-fw);
+            line-height: var(--service-title-sub-pc-lh, $sp-lh);
+            letter-spacing: var(--service-title-sub-pc-ls, $sp-ls);
+          }
         }
       }
       .service-desc {
         margin-top: 2vw;
-        font-size: 1.4rem;
+        $sp-fs: var(--service-description-sp-fs);
+        $sp-fw: var(--service-description-sp-fw);
+        $sp-lh: var(--service-description-sp-lh);
+        $sp-ls: var(--service-description-sp-ls);
+        font-size: $sp-fs;
+        font-weight: $sp-fw;
+        line-height: $sp-lh;
+        letter-spacing: $sp-ls;
+        @include pc {
+          font-size: var(--service-description-pc-fs, $sp-fs);
+          font-weight: var(--service-description-pc-fw, $sp-fw);
+          line-height: var(--service-description-pc-lh, $sp-lh);
+          letter-spacing: var(--service-description-pc-ls, $sp-ls);
+        }
+      }
+      .service-tags {
+        .tag {
+          $sp-fs: var(--service-tag-sp-fs);
+          $sp-fw: var(--service-tag-sp-fw);
+          $sp-lh: var(--service-tag-sp-lh);
+          $sp-ls: var(--service-tag-sp-ls);
+          font-size: $sp-fs;
+          font-weight: $sp-fw;
+          line-height: $sp-lh;
+          letter-spacing: $sp-ls;
+          @include pc {
+            font-size: var(--service-tag-pc-fs, $sp-fs);
+            font-weight: var(--service-tag-pc-fw, $sp-fw);
+            line-height: var(--service-tag-pc-lh, $sp-lh);
+            letter-spacing: var(--service-tag-pc-ls, $sp-ls);
+          }
+        }
       }
       .service-more {
         display: flex;
         justify-content: center;
         padding-top: 4vw;
+
+        $sp-fs: var(--service-btn-sp-fs);
+        $sp-fw: var(--service-btn-sp-fw);
+        $sp-lh: var(--service-btn-sp-lh);
+        $sp-ls: var(--service-btn-sp-ls);
+        font-size: $sp-fs;
+        font-weight: $sp-fw;
+        line-height: $sp-lh;
+        letter-spacing: $sp-ls;
+        @include pc {
+          font-size: var(--service-btn-pc-fs, $sp-fs);
+          font-weight: var(--service-btn-pc-fw, $sp-fw);
+          line-height: var(--service-btn-pc-lh, $sp-lh);
+          letter-spacing: var(--service-btn-pc-ls, $sp-ls);
+        }
+      }
+      .notice-area {
+        .notice {
+          $sp-fs: var(--service-notice-sp-fs);
+          $sp-fw: var(--service-notice-sp-fw);
+          $sp-lh: var(--service-notice-sp-lh);
+          $sp-ls: var(--service-notice-sp-ls);
+          font-size: $sp-fs;
+          font-weight: $sp-fw;
+          line-height: $sp-lh;
+          letter-spacing: $sp-ls;
+          @include pc {
+            font-size: var(--service-notice-pc-fs, $sp-fs);
+            font-weight: var(--service-notice-pc-fw, $sp-fw);
+            line-height: var(--service-notice-pc-lh, $sp-lh);
+            letter-spacing: var(--service-notice-pc-ls, $sp-ls);
+          }
+        }
       }
     }
   }
