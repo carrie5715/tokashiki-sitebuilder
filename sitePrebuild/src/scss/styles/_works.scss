@@ -23,22 +23,63 @@
   }
 
   h2 {
-    font-weight: 400;
-    font-size: 2.6rem;
     text-align: center;
     padding-bottom: 3.2vw;
     position: relative;
+    $sp-fs: var(--works-h2-sp-fs);
+    $sp-fw: var(--works-h2-sp-fw);
+    $sp-lh: var(--works-h2-sp-lh);
+    $sp-ls: var(--works-h2-sp-ls);
+    font-size: $sp-fs;
+    font-weight: $sp-fw;
+    line-height: $sp-lh;
+    letter-spacing: $sp-ls;
+    @include pc {
+      font-size: var(--works-h2-pc-fs, $sp-fs);
+      font-weight: var(--works-h2-pc-fw, $sp-fw);
+      line-height: var(--works-h2-pc-lh, $sp-lh);
+      letter-spacing: var(--works-h2-pc-ls, $sp-ls);
+    }
+
+    span {
+      $sp-fs: var(--works-h2-sub-sp-fs);
+      $sp-fw: var(--works-h2-sub-sp-fw);
+      $sp-lh: var(--works-h2-sub-sp-lh);
+      $sp-ls: var(--works-h2-sub-sp-ls);
+      font-size: $sp-fs;
+      font-weight: $sp-fw;
+      line-height: $sp-lh;
+      letter-spacing: $sp-ls;
+      @include pc {
+        font-size: var(--works-h2-sub-pc-fs, $sp-fs);
+        font-weight: var(--works-h2-sub-pc-fw, $sp-fw);
+        line-height: var(--works-h2-sub-pc-lh, $sp-lh);
+        letter-spacing: var(--works-h2-sub-pc-ls, $sp-ls);
+      }
+    }
   }
 
   .intro {
     display: block;
-    font-size: 1.4rem;
     text-align: center;
     margin-bottom: 4vw;
-    line-height: 2;
     padding: 0 4vw;
-  }
 
+    $sp-fs: var(--works-section-lead-sp-fs);
+    $sp-fw: var(--works-section-lead-sp-fw);
+    $sp-lh: var(--works-section-lead-sp-lh);
+    $sp-ls: var(--works-section-lead-sp-ls);
+    font-size: $sp-fs;
+    font-weight: $sp-fw;
+    line-height: $sp-lh;
+    letter-spacing: $sp-ls;
+    @include pc {
+      font-size: var(--works-section-lead-pc-fs, $sp-fs);
+      font-weight: var(--works-section-lead-pc-fw, $sp-fw);
+      line-height: var(--works-section-lead-pc-lh, $sp-lh);
+      letter-spacing: var(--works-section-lead-pc-ls, $sp-ls);
+    }
+  }
 
   .works-swiper {
     margin-top: 24px;
@@ -77,15 +118,44 @@
         width: 100%;
         border-radius: 12vw;
         overflow: hidden;
-        img { width: 100%; }
+        img {
+          width: 100%;
+        }
       }
 
       .work-title {
-        color: var(--pcol-base-color-2, #326FF9);
-        font-weight: 700;
-        font-size: clamp(16px, 2.2vw, 20px);
-        line-height: 1.6;
+        color: var(--pcol-base-color-2, #326ff9);
         margin-top: 8px;
+        $sp-fs: var(--works-slider-title-sp-fs);
+        $sp-fw: var(--works-slider-title-sp-fw);
+        $sp-lh: var(--works-slider-title-sp-lh);
+        $sp-ls: var(--works-slider-title-sp-ls);
+        font-size: $sp-fs;
+        font-weight: $sp-fw;
+        line-height: $sp-lh;
+        letter-spacing: $sp-ls;
+        @include pc {
+          font-size: var(--works-slider-title-pc-fs, $sp-fs);
+          font-weight: var(--works-slider-title-pc-fw, $sp-fw);
+          line-height: var(--works-slider-title-pc-lh, $sp-lh);
+          letter-spacing: var(--works-slider-title-pc-ls, $sp-ls);
+        }
+        span {
+          $sp-fs: var(--works-slider-title-sub-sp-fs);
+          $sp-fw: var(--works-slider-title-sub-sp-fw);
+          $sp-lh: var(--works-slider-title-sub-sp-lh);
+          $sp-ls: var(--works-slider-title-sub-sp-ls);
+          font-size: $sp-fs;
+          font-weight: $sp-fw;
+          line-height: $sp-lh;
+          letter-spacing: $sp-ls;
+          @include pc {
+            font-size: var(--works-slider-title-sub-pc-fs, $sp-fs);
+            font-weight: var(--works-slider-title-sub-pc-fw, $sp-fw);
+            line-height: var(--works-slider-title-sub-pc-lh, $sp-lh);
+            letter-spacing: var(--works-slider-title-sub-pc-ls, $sp-ls);
+          }
+        }
       }
 
       .work-tags {
@@ -97,13 +167,39 @@
         .tag {
           color: $base-tag-text;
           background: $base-tag-bg;
+          $sp-fs: var(--works-slider-tag-sp-fs);
+          $sp-fw: var(--works-slider-tag-sp-fw);
+          $sp-lh: var(--works-slider-tag-sp-lh);
+          $sp-ls: var(--works-slider-tag-sp-ls);
+          font-size: $sp-fs;
+          font-weight: $sp-fw;
+          line-height: $sp-lh;
+          letter-spacing: $sp-ls;
+          @include pc {
+            font-size: var(--works-slider-tag-pc-fs, $sp-fs);
+            font-weight: var(--works-slider-tag-pc-fw, $sp-fw);
+            line-height: var(--works-slider-tag-pc-lh, $sp-lh);
+            letter-spacing: var(--works-slider-tag-pc-ls, $sp-ls);
+          }
         }
       }
 
       .work-desc {
         margin-top: 12px;
-        font-size: 14px;
-        line-height: 1.9;
+        $sp-fs: var(--works-slider-description-sp-fs);
+        $sp-fw: var(--works-slider-description-sp-fw);
+        $sp-lh: var(--works-slider-description-sp-lh);
+        $sp-ls: var(--works-slider-description-sp-ls);
+        font-size: $sp-fs;
+        font-weight: $sp-fw;
+        line-height: $sp-lh;
+        letter-spacing: $sp-ls;
+        @include pc {
+          font-size: var(--works-slider-description-pc-fs, $sp-fs);
+          font-weight: var(--works-slider-description-pc-fw, $sp-fw);
+          line-height: var(--works-slider-description-pc-lh, $sp-lh);
+          letter-spacing: var(--works-slider-description-pc-ls, $sp-ls);
+        }
       }
 
       .work-more {
@@ -114,11 +210,24 @@
           align-items: center;
           justify-content: center;
           gap: 6px;
-          background: var(--pcol-base-color-2, #326FF9);
+          background: var(--pcol-base-color-2, #326ff9);
           color: #fff;
           border-radius: 9999px;
           padding: 10px 16px;
-          font-weight: 700;
+          $sp-fs: var(--works-slider-btn-sp-fs);
+          $sp-fw: var(--works-slider-btn-sp-fw);
+          $sp-lh: var(--works-slider-btn-sp-lh);
+          $sp-ls: var(--works-slider-btn-sp-ls);
+          font-size: $sp-fs;
+          font-weight: $sp-fw;
+          line-height: $sp-lh;
+          letter-spacing: $sp-ls;
+          @include pc {
+            font-size: var(--works-slider-btn-pc-fs, $sp-fs);
+            font-weight: var(--works-slider-btn-pc-fw, $sp-fw);
+            line-height: var(--works-slider-btn-pc-lh, $sp-lh);
+            letter-spacing: var(--works-slider-btn-pc-ls, $sp-ls);
+          }
         }
 
         .btn-more:hover {
