@@ -7,6 +7,7 @@
     "sass:build": "sass src/scss/common.scss:public/css/common.css src/scss/styles.scss:public/css/styles.css",
     "dev": "npm run sass:dev & vite",
     "build": "npm run sass:build && node scripts/build_templates.js",
+    "style:dev": "chokidar 'src/scss/**/*.scss' -c \"node scripts/run_direct_locked.js\" -t 500 --initial",
     "direct": "npm run build && node scripts/direct_copy.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
