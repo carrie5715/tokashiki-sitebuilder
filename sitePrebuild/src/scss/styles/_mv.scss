@@ -4,8 +4,12 @@
 #mv {
   position: relative;
   overflow: hidden;
-  padding: 32px 14px 8px;
-  
+  padding: 90px 0 0;
+
+  @include pc {
+    padding: 144px 0 0;
+  }
+
   $sep: 70%;
   background: linear-gradient(
     to bottom,
@@ -15,11 +19,17 @@
     var(--pcol-base-color-2, var(--col-blue)) 100%
   );
 
-
-
+  .mv-base-contents {
+    position: relative;
+    z-index: 1;
+    @include pc {
+      max-width: 1360px;
+      margin: auto;
+    }
+  }
 
   .mv-bg-image {
-    margin-top: 16px;
+    margin: 16px auto 0;
     inset: 0;
     z-index: 0;
     width: 100%;
@@ -27,6 +37,12 @@
     overflow: hidden;
     position: relative;
     border-radius: 16px;
+    max-width: 1360px;
+
+    @include pc {
+      aspect-ratio: 136/70;
+    }
+
     img {
       width: auto;
       height: 100%;
@@ -35,13 +51,14 @@
       top: 0;
       left: 50%;
       transform: translateX(-50%);
+      @include pc {
+        height: auto;
+        width: 100%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
     }
-
-  }
-
-  .mv-base-contents {
-    position: relative;
-    z-index: 1;
   }
 
   .container {
@@ -69,7 +86,9 @@
   }
 
   .lead {
-    margin-top: 16px; line-height: 1.8; color: #555; 
+    margin-top: 16px;
+    line-height: 1.8;
+    color: #555;
     font-size: var(--mv-h1-sub-sp-fs, 1.6rem);
     font-weight: var(--mv-h1-sub-sp-fw, 400);
     line-height: var(--mv-h1-sub-sp-lh, 1.5);
