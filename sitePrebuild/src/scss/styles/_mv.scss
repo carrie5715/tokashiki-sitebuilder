@@ -6,10 +6,6 @@
   overflow: hidden;
   padding: 90px 0 0;
 
-  @include pc {
-    padding: 144px 0 0;
-  }
-
   $sep: 70%;
   background: linear-gradient(
     to bottom,
@@ -18,6 +14,10 @@
     var(--pcol-base-color-2, var(--col-blue)) $sep,
     var(--pcol-base-color-2, var(--col-blue)) 100%
   );
+
+  @include pc {
+    padding: 144px 0 0;
+  }
 
   .mv-base-contents {
     position: relative;
