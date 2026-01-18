@@ -1,0 +1,111 @@
+@use '../common/mixins' as *;
+
+#message {
+  .container {
+    .upper-block {
+      .bg-title {
+        $sp-fs: var(--message-bg-title-sp-fs);
+        $sp-fw: var(--message-bg-title-sp-fw);
+        $sp-lh: var(--message-bg-title-sp-lh);
+        $sp-ls: var(--message-bg-title-sp-ls);
+        font-size: $sp-fs;
+        font-weight: $sp-fw;
+        line-height: $sp-lh;
+        letter-spacing: $sp-ls;
+        @include pc {
+          font-size: var(--message-bg-title-pc-fs, $sp-fs);
+          font-weight: var(--message-bg-title-pc-fw, $sp-fw);
+          line-height: var(--message-bg-title-pc-lh, $sp-lh);
+          letter-spacing: var(--message-bg-title-pc-ls, $sp-ls);
+        }
+      }
+
+      h2 {
+        $sp-fs: var(--message-h2-main-sp-fs);
+        $sp-fw: var(--message-h2-main-sp-fw);
+        $sp-lh: var(--message-h2-main-sp-lh);
+        $sp-ls: var(--message-h2-main-sp-ls);
+        font-size: $sp-fs;
+        font-weight: $sp-fw;
+        line-height: $sp-lh;
+        letter-spacing: $sp-ls;
+        @include pc {
+          font-size: var(--message-h2-main-pc-fs, $sp-fs);
+          font-weight: var(--message-h2-main-pc-fw, $sp-fw);
+          line-height: var(--message-h2-main-pc-lh, $sp-lh);
+          letter-spacing: var(--message-h2-main-pc-ls, $sp-ls);
+        }
+
+        span {
+          $sp-fs: var(--message-h2-sub-sp-fs);
+          $sp-fw: var(--message-h2-sub-sp-fw);
+          $sp-lh: var(--message-h2-sub-sp-lh);
+          $sp-ls: var(--message-h2-sub-sp-ls);
+          font-size: $sp-fs;
+          font-weight: $sp-fw;
+          line-height: $sp-lh;
+          letter-spacing: $sp-ls;
+          @include pc {
+            font-size: var(--message-h2-sub-pc-fs, $sp-fs);
+            font-weight: var(--message-h2-sub-pc-fw, $sp-fw);
+            line-height: var(--message-h2-sub-pc-lh, $sp-lh);
+            letter-spacing: var(--message-h2-sub-pc-ls, $sp-ls);
+          }
+        }
+      }
+
+      .section-lead {
+        $sp-fs: var(--message-section-lead-sp-fs, 6.8vw);
+        $sp-fw: var(--message-section-lead-sp-fw, 900);
+        $sp-lh: var(--message-section-lead-sp-lh, 1);
+        $sp-ls: var(--message-section-lead-sp-ls, 0.8);
+        font-size: $sp-fs;
+        font-weight: $sp-fw;
+        line-height: $sp-lh;
+        letter-spacing: $sp-ls;
+        @include pc {
+          font-size: var(--message-section-lead-pc-fs, $sp-fs);
+          font-weight: var(--message-section-lead-pc-fw, $sp-fw);
+          line-height: var(--message-section-lead-pc-lh, $sp-lh);
+          letter-spacing: var(--message-section-lead-pc-ls, $sp-ls);
+        }
+      }
+
+      .core-messages {
+        h3 {
+          $sp-fs: var(--message-core-head-sp-fs);
+          $sp-fw: var(--message-core-head-sp-fw);
+          $sp-lh: var(--message-core-head-sp-lh);
+          $sp-ls: var(--message-core-head-sp-ls);
+          font-size: $sp-fs;
+          font-weight: $sp-fw;
+          line-height: $sp-lh;
+          letter-spacing: $sp-ls;
+          @include pc {
+            font-size: var(--message-core-head-pc-fs, $sp-fs);
+            font-weight: var(--message-core-head-pc-fw, $sp-fw);
+            line-height: var(--message-core-head-pc-lh, $sp-lh);
+            letter-spacing: var(--message-core-head-pc-ls, $sp-ls);
+          }
+        }
+
+        .core-text {
+          $sp-fs: var(--message-core-text-sp-fs);
+          $sp-fw: var(--message-core-text-sp-fw);
+          $sp-lh: var(--message-core-text-sp-lh);
+          $sp-ls: var(--message-core-text-sp-ls);
+          font-size: $sp-fs;
+          font-weight: $sp-fw;
+          line-height: $sp-lh;
+          letter-spacing: $sp-ls;
+          @include pc {
+            font-size: var(--message-core-text-pc-fs, $sp-fs);
+            font-weight: var(--message-core-text-pc-fw, $sp-fw);
+            line-height: var(--message-core-text-pc-lh, $sp-lh);
+            letter-spacing: var(--message-core-text-pc-ls, $sp-ls);
+          }
+        }
+      }
+    }
+  }
+}
