@@ -1,10 +1,10 @@
 <!-- SectionTitle: メッセージ (旧ミッション) -->
 <section id="message" data-component-name="message" x-data="messageComponent">
+  <div class="bg-title" data-marquee-data="<?= bg_title ?>"></div>
   <div class="container">
-    <p class="bg-title"><?= bg_title ?></p>
     <div class="upper-block">
-      <h2><?= h2_sub ?><?= h2_main ?></h2>
-      <div class="section-lead"><?= section_lead ?></div>
+      <?= h2_block ?>
+      <?= section_lead_block ?>
       <?= core_messages ?>
     </div>
     <div class="lower-block">

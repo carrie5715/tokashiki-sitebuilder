@@ -36,15 +36,17 @@ var MessageInfo = (function () {
       rows.push({ category: 'message', key, value: val, note });
     }
     try {
-      const bg = message['bg_color'];
-      const tx = message['text_color'];
-      const hd = message['heading_color'];
-      const cc = message['core_color'];
+      const bg  = message['bg_color'];
+      const tx  = message['text_color'];
+      const hd  = message['heading_color'];
+      const chc = message['core_head_color'];
+      const ctc = message['core_text_color'];
       if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
-        if (bg) CommonInfo.addColorVar('--pcol-message-bg-color', String(bg));
-        if (tx) CommonInfo.addColorVar('--pcol-message-text-color', String(tx));
-        if (hd) CommonInfo.addColorVar('--pcol-message-heading-color', String(hd));
-        if (cc) CommonInfo.addColorVar('--pcol-message-core-color', String(cc));
+        if (bg)  CommonInfo.addColorVar('--pcol-message-bg-color', String(bg));
+        if (tx)  CommonInfo.addColorVar('--pcol-message-text-color', String(tx));
+        if (hd)  CommonInfo.addColorVar('--pcol-message-heading-color', String(hd));
+        if (chc) CommonInfo.addColorVar('--pcol-message-core-head-color', String(chc));
+        if (ctc) CommonInfo.addColorVar('--pcol-message-core-text-color', String(ctc));
       }
     } catch (e) {}
     lastRows = rows.slice();
@@ -122,15 +124,17 @@ var MessageInfo = (function () {
           lastRows = rows.slice();
           // 色変数の再登録
           try {
-            const bg = message['bg_color'];
-            const tx = message['text_color'];
-            const hd = message['heading_color'];
-            const cc = message['core_color'];
+            const bg  = message['bg_color'];
+            const tx  = message['text_color'];
+            const hd  = message['heading_color'];
+            const chc = message['core_head_color'];
+            const ctc = message['core_text_color'];
             if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
-              if (bg) CommonInfo.addColorVar('--pcol-message-bg-color', String(bg));
-              if (tx) CommonInfo.addColorVar('--pcol-message-text-color', String(tx));
-              if (hd) CommonInfo.addColorVar('--pcol-message-heading-color', String(hd));
-              if (cc) CommonInfo.addColorVar('--pcol-message-core-color', String(cc));
+              if (bg)  CommonInfo.addColorVar('--pcol-message-bg-color', String(bg));
+              if (tx)  CommonInfo.addColorVar('--pcol-message-text-color', String(tx));
+              if (hd)  CommonInfo.addColorVar('--pcol-message-heading-color', String(hd));
+              if (chc) CommonInfo.addColorVar('--pcol-message-core-head-color', String(chc));
+              if (ctc) CommonInfo.addColorVar('--pcol-message-core-text-color', String(ctc));
             }
           } catch (_) {}
         }
@@ -154,6 +158,20 @@ var MessageInfo = (function () {
 
   function getTemplateReplacements() {
       const h2SubText = Utils.br(message['h2_sub']);
+      const h2MainText = Utils.br(message['h2_main']);
+      const hasH2 = !!(h2SubText || h2MainText);
+      let h2_block = '';
+      if (hasH2) {
+        const subHtml = h2SubText ? `<span>${h2SubText}</span>` : '';
+        h2_block = `<h2>${subHtml}${h2MainText || ''}</h2>`;
+      }
+
+      const sectionLead = Utils.br(message['section_lead']);
+      let section_lead_block = '';
+      if (sectionLead) {
+        section_lead_block = `<div class="section-lead">${sectionLead}</div>`;
+      }
+
       const head = Utils.br(message['core_head']);
       const text = Utils.br(message['core_text']);
       let core_messages = '';
@@ -166,9 +184,12 @@ var MessageInfo = (function () {
 
       return {
         bg_title: Utils.br(message['bg_title']),
+        // 互換用: 既存の置換キーも残す
         h2_sub: h2SubText ? `<span>${h2SubText}</span>` : '',
-        h2_main: Utils.br(message['h2_main']),
-        section_lead: Utils.br(message['section_lead']),
+        h2_main: h2MainText,
+        h2_block,
+        section_lead: sectionLead,
+        section_lead_block,
         core_head: head,
         core_text: text,
         core_messages,

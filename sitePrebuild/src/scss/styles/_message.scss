@@ -15,6 +15,9 @@
     .upper-block {
       position: relative;
       padding-top: 80px;
+      @include pc {
+        padding-top: 30px;
+      }
 
       .bg-title {
         display: block;
@@ -24,6 +27,7 @@
         top: 0;
         left: 50%;
         transform: translateX(-50%);
+        border: 1px solid red;
       }
       h2 {
         font-weight: 400;
@@ -41,15 +45,21 @@
       }
       .section-lead {
         margin-top: 6vw;
+        @include pc {
+          margin-top: 30px;
+        }
       }
       .core-messages {
-        color: var(--pcol-message-core-color, var(--pcol-base-color-3));
         padding: 48px 16px 0;
-
         h3 {
+          color: var(--pcol-message-core-head-color, var(--pcol-base-color-3));
         }
         .core-text {
           margin-top: 48px;
+          color: var(
+            --pcol-message-core-text-color,
+            var(--pcol-message-text-color, var(--pcol-base-color-3))
+          );
         }
       }
     }
