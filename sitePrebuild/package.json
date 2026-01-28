@@ -7,7 +7,7 @@
     "sass:build": "sass src/scss/common.scss:public/css/common.css src/scss/styles.scss:public/css/styles.css",
     "dev": "npm run sass:dev & vite",
     "build": "npm run sass:build && node scripts/build_templates.js",
-    "style:dev": "chokidar 'src/scss/**/*.scss' 'public/css/**/*.css' -c \"node scripts/run_direct_locked.js\" -t 500 --initial",
+    "style:dev": "chokidar 'src/scss/**/*.scss' -c \"node scripts/run_direct_locked.js\" -t 500 --initial",
     "watch:js": "chokidar 'public/js/**/*.js' -c \"node scripts/run_direct_locked.js\" -t 500 --initial",
     "watch:templates": "chokidar 'src/components/**/*' 'src/layout/**/*' 'src/pages/**/*' -c \"node scripts/run_direct_locked.js\" -t 500 --initial",
     "preview": "npm run style:dev & npm run watch:js & npm run watch:templates",
