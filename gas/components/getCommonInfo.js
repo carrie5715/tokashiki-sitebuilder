@@ -73,6 +73,21 @@ var CommonInfo = (function () {
           const cls = mapBaseFontToClass_(val);
           if (cls) addBodyClass(cls);
         }
+        // template の値から角丸用のベース半径変数を決定
+        if (key === 'template') {
+          const t = String(val || '').trim().toLowerCase();
+          let radius = '';
+          if (t === 'multi') {
+            radius = '16px';
+          } else if (t === 'round') {
+            radius = '32px';
+          } else if (t === 'square') {
+            radius = '0';
+          }
+          if (radius) {
+            addCssVar('--base-radius-m', radius);
+          }
+        }
         // sitepat_* の場合は正規化して body クラス追加
         if (key === 'sitepat_font_size') {
           const nv = normalizeSitePatternValue_(val);

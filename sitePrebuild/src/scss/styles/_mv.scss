@@ -36,7 +36,7 @@
     aspect-ratio: 7/10;
     overflow: hidden;
     position: relative;
-    border-radius: 16px;
+    border-radius: var(--base-radius-m, 16px);
     max-width: 1360px;
 
     @include pc {

@@ -68,5 +68,10 @@
     margin-top: 24px;
     position: relative;
     padding-bottom: 24px;
+    figure {
+      img {
+        border-radius: var(--base-radius-m, 16px);
+      }
+    }
   }
 }
