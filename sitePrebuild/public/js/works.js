@@ -23,7 +23,7 @@ addEventListener('alpine:init', () => {
       if (this.swiper?.destroy) this.swiper.destroy(true, true);
 
       this.swiper = new Swiper(this.$refs.container, {
-        loop: false,
+        loop: true,
         spaceBetween: 24,
         slidesPerView: 1.4, // モバイルで少し見切れ
         centeredSlides: true,
@@ -31,8 +31,9 @@ addEventListener('alpine:init', () => {
         navigation: { nextEl: this.$refs.next, prevEl: this.$refs.prev },
         breakpoints: {
           640:  { slidesPerView: 2, spaceBetween: 24 },
-          960:  { slidesPerView: 3, spaceBetween: 28 },
-          1200: { slidesPerView: 4, spaceBetween: 32 }
+          // PC では端までカードを詰めるため中央寄せを解除
+          960:  { slidesPerView: 3, spaceBetween: 28, centeredSlides: false },
+          1200: { slidesPerView: 4, spaceBetween: 32, centeredSlides: false }
         },
         observer: true,
         observeParents: true
