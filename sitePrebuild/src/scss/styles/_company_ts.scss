@@ -1,0 +1,112 @@
+@use '../common/mixins' as *;
+
+#company {
+  .container {
+    .section-title {
+      $sp-fs: var(--company-bg-title-sp-fs);
+      $sp-fw: var(--company-bg-title-sp-fw);
+      $sp-lh: var(--company-bg-title-sp-lh);
+      $sp-ls: var(--company-bg-title-sp-ls);
+      font-size: $sp-fs;
+      font-weight: $sp-fw;
+      line-height: $sp-lh;
+      letter-spacing: $sp-ls;
+      @include pc {
+        font-size: var(--company-bg-title-pc-fs, $sp-fs);
+        font-weight: var(--company-bg-title-pc-fw, $sp-fw);
+        line-height: var(--company-bg-title-pc-lh, $sp-lh);
+        letter-spacing: var(--company-bg-title-pc-ls, $sp-ls);
+      }
+    }
+
+    h2 {
+      $sp-fs: var(--company-h2-sp-fs);
+      $sp-fw: var(--company-h2-sp-fw);
+      $sp-lh: var(--company-h2-sp-lh);
+      $sp-ls: var(--company-h2-sp-ls);
+      font-size: $sp-fs;
+      font-weight: $sp-fw;
+      line-height: $sp-lh;
+      letter-spacing: $sp-ls;
+      @include pc {
+        font-size: var(--company-h2-pc-fs, $sp-fs);
+        font-weight: var(--company-h2-pc-fw, $sp-fw);
+        line-height: var(--company-h2-pc-lh, $sp-lh);
+        letter-spacing: var(--company-h2-pc-ls, $sp-ls);
+      }
+
+      span {
+        $sp-fs: var(--company-h2-sub-sp-fs);
+        $sp-fw: var(--company-h2-sub-sp-fw);
+        $sp-lh: var(--company-h2-sub-sp-lh);
+        $sp-ls: var(--company-h2-sub-sp-ls);
+        font-size: $sp-fs;
+        font-weight: $sp-fw;
+        line-height: $sp-lh;
+        letter-spacing: $sp-ls;
+        @include pc {
+          font-size: var(--company-h2-sub-pc-fs, $sp-fs);
+          font-weight: var(--company-h2-sub-pc-fw, $sp-fw);
+          line-height: var(--company-h2-sub-pc-lh, $sp-lh);
+          letter-spacing: var(--company-h2-sub-pc-ls, $sp-ls);
+        }
+      }
+    }
+
+    .section-lead {
+      $sp-fs: var(--company-section-lead-sp-fs);
+      $sp-fw: var(--company-section-lead-sp-fw);
+      $sp-lh: var(--company-section-lead-sp-lh);
+      $sp-ls: var(--company-section-lead-sp-ls);
+      font-size: $sp-fs;
+      font-weight: $sp-fw;
+      line-height: $sp-lh;
+      letter-spacing: $sp-ls;
+      @include pc {
+        font-size: var(--company-section-lead-pc-fs, $sp-fs);
+        font-weight: var(--company-section-lead-pc-fw, $sp-fw);
+        line-height: var(--company-section-lead-pc-lh, $sp-lh);
+        letter-spacing: var(--company-section-lead-pc-ls, $sp-ls);
+      }
+    }
+
+    .company-wrap {
+      .infos {
+        .info-item {
+          .title {
+            $sp-fs: var(--company-item-label-sp-fs);
+            $sp-fw: var(--company-item-label-sp-fw);
+            $sp-lh: var(--company-item-label-sp-lh);
+            $sp-ls: var(--company-item-label-sp-ls);
+            font-size: $sp-fs;
+            font-weight: $sp-fw;
+            line-height: $sp-lh;
+            letter-spacing: $sp-ls;
+            @include pc {
+              font-size: var(--company-item-label-pc-fs, $sp-fs);
+              font-weight: var(--company-item-label-pc-fw, $sp-fw);
+              line-height: var(--company-item-label-pc-lh, $sp-lh);
+              letter-spacing: var(--company-item-label-pc-ls, $sp-ls);
+            }
+          }
+          .value {
+            $sp-fs: var(--company-item-value-sp-fs);
+            $sp-fw: var(--company-item-value-sp-fw);
+            $sp-lh: var(--company-item-value-sp-lh);
+            $sp-ls: var(--company-item-value-sp-ls);
+            font-size: $sp-fs;
+            font-weight: $sp-fw;
+            line-height: $sp-lh;
+            letter-spacing: $sp-ls;
+            @include pc {
+              font-size: var(--company-item-value-pc-fs, $sp-fs);
+              font-weight: var(--company-item-value-pc-fw, $sp-fw);
+              line-height: var(--company-item-value-pc-lh, $sp-lh);
+              letter-spacing: var(--company-item-value-pc-ls, $sp-ls);
+            }
+          }
+        }
+      }
+    }
+  }
+}
