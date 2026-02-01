@@ -14,9 +14,10 @@ const Build = {
     const assetsImg = Utils.getOrCreateSubFolder_(assets, ASSETS_IMG);
 
     const output = Utils.getOrCreateSubFolder_(parent, DIR_OUTPUT);
-    const outCss = Utils.getOrCreateSubFolder_(output, OUT_CSS);
-    const outJs  = Utils.getOrCreateSubFolder_(output, OUT_JS);
-    const outImg = Utils.getOrCreateSubFolder_(output, OUT_IMG);
+    const outCss       = Utils.getOrCreateSubFolder_(output, OUT_CSS);
+    const outExtendCss = Utils.getOrCreateSubFolder_(output, OUT_EXTEND_CSS);
+    const outJs        = Utils.getOrCreateSubFolder_(output, OUT_JS);
+    const outImg       = Utils.getOrCreateSubFolder_(output, OUT_IMG);
     // ルート直下 info フォルダとその配下
     const infoRoot      = Utils.getOrCreateSubFolder_(parent, DIR_INFO);
     const infoSnapshot  = Utils.getOrCreateSubFolder_(infoRoot, INFO_SNAPSHOT);
@@ -28,6 +29,7 @@ const Build = {
       [PROP_KEYS.ASSETS_IMG_ID]: assetsImg.getId(),
       [PROP_KEYS.OUTPUT_ID]: output.getId(),
       [PROP_KEYS.OUTPUT_CSS_ID]: outCss.getId(),
+      [PROP_KEYS.OUTPUT_EXTEND_CSS_ID]: outExtendCss.getId(),
       [PROP_KEYS.OUTPUT_JS_ID]: outJs.getId(),
       [PROP_KEYS.OUTPUT_IMG_ID]: outImg.getId(),
       [PROP_KEYS.INFO_ID]: infoRoot.getId(),
@@ -38,7 +40,7 @@ const Build = {
     return {
       parentId: parent.getId(),
       assets: { rootId: assets.getId(), imgId: assetsImg.getId() },
-      output: { rootId: output.getId(), cssId: outCss.getId(), jsId: outJs.getId(), imgId: outImg.getId() },
+      output: { rootId: output.getId(), cssId: outCss.getId(), extendCssId: outExtendCss.getId(), jsId: outJs.getId(), imgId: outImg.getId() },
       info: { rootId: infoRoot.getId(), snapshotId: infoSnapshot.getId(), logsId: infoLogs.getId() },
     };
   },
@@ -134,6 +136,30 @@ const Build = {
       }
       count++;
     }
+    return count;
+  },
+
+  /**
+   * TEMPLATE_ROOT/extend-css 配下を output/extend-css に再帰コピー（同名は上書き）
+   * デザイン用の追加CSS群をそのまま出力側に反映するための処理
+   * @returns {number} コピー（新規作成+上書き）したファイル数
+   */
+  copyExtendCssFromTemplate() {
+    const rootId = Utils.getTemplateRootId_();
+    if (!rootId) throw new Error('テンプレートルートID未設定です。先に設定してください。');
+    const root = DriveApp.getFolderById(rootId);
+    const extendFolderIt = root.getFoldersByName('extend-css');
+    if (!extendFolderIt.hasNext()) {
+      if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('TEMPLATE_ROOT/extend-css が見つかりません', 'copyExtendCssFromTemplate');
+      return 0;
+    }
+    const srcExtendFolder = extendFolderIt.next();
+
+    const outExtendCssId = PropertiesService.getScriptProperties().getProperty(PROP_KEYS.OUTPUT_EXTEND_CSS_ID);
+    if (!outExtendCssId) throw new Error('OUTPUT_EXTEND_CSS_ID 未設定。Build.checkDirectories() を先に呼んでください。');
+    const dstFolder = DriveApp.getFolderById(outExtendCssId);
+
+    const count = this.copyFolderContents_(srcExtendFolder, dstFolder);
     return count;
   },
   /**

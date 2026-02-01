@@ -11,8 +11,33 @@
       <?= description ?>
       <!-- <p class="description">テキストテキストテキスト<br>テキストテキストテキスト。</p> -->
 
+      <?= tel_box ?>
+      <!--
+      <div class="tel-box">
+        <p class="tel-number"><a href="tel:TEL値">
+          <i class="fa-solid fa-phone"></i>
+          <span>TEL値</span>
+        </a></p>
+        <p class="tel-message">TELメッセージ値</p>  <- tel_mess が空ならこの行ごと出さない
+      </div>
+      --> 
+
+
       <div class="contact-wrap">
         <div class="items-list">
+
+          <?= form_item ?>
+          <!-- 
+          <div class="item type-form">
+            <a href="form_url">
+              <span class="item-body">
+                <span class="sub">form_sub</span>
+                <span class="main">form_mess</span>
+              </span>
+            </a>
+          </div>
+          --> 
+
           <?= items ?>
           <!--
           <div class="item type-tel">

@@ -192,6 +192,7 @@ function buildAll() {
   Utils.logToSheet('出力準備OK（フォルダ確認・作成完了）', 'buildAll');
 
   try { Build.copyAllCssFromTemplate(); } catch (e) { Utils.logToSheet(`テンプレCSSコピー失敗: ${e.message}`, 'buildAll'); }
+  try { Build.copyExtendCssFromTemplate(); } catch (e) { Utils.logToSheet(`extend-css コピー失敗: ${e.message}`, 'buildAll'); }
   try { Build.copyAssetsToOutputImg(); } catch (e) { Utils.logToSheet(`assets→output/img コピー失敗: ${e.message}`, 'buildAll'); }
 
   const common = CommonInfo.readAndRecordBasicSettings();

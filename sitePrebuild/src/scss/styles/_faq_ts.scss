@@ -1,0 +1,135 @@
+@use '../common/mixins' as *;
+
+#faq {
+  width: 100%;
+  background: #f7f8fa; // 淡いグレー
+
+  .container {
+    max-width: 1000px;
+    margin-inline: auto;
+    padding: 56px 24px;
+  }
+  .section-title {
+    $sp-fs: var(--faq-h2-sub-sp-fs);
+    $sp-fw: var(--faq-h2-sub-sp-fw);
+    $sp-lh: var(--faq-h2-sub-sp-lh);
+    $sp-ls: var(--faq-h2-sub-sp-ls);
+    font-size: $sp-fs;
+    font-weight: $sp-fw;
+    line-height: $sp-lh;
+    letter-spacing: $sp-ls;
+    @include pc {
+      font-size: var(--faq-h2-sub-pc-fs, $sp-fs);
+      font-weight: var(--faq-h2-sub-pc-fw, $sp-fw);
+      line-height: var(--faq-h2-sub-pc-lh, $sp-lh);
+      letter-spacing: var(--faq-h2-sub-pc-ls, $sp-ls);
+    }
+  }
+  h2 {
+    $sp-fs: var(--faq-h2-sp-fs);
+    $sp-fw: var(--faq-h2-sp-fw);
+    $sp-lh: var(--faq-h2-sp-lh);
+    $sp-ls: var(--faq-h2-sp-ls);
+    font-size: $sp-fs;
+    font-weight: $sp-fw;
+    line-height: $sp-lh;
+    letter-spacing: $sp-ls;
+    @include pc {
+      font-size: var(--faq-h2-pc-fs, $sp-fs);
+      font-weight: var(--faq-h2-pc-fw, $sp-fw);
+      line-height: var(--faq-h2-pc-lh, $sp-lh);
+      letter-spacing: var(--faq-h2-pc-ls, $sp-ls);
+    }
+  }
+  .description {
+    $sp-fs: var(--faq-section-lead-sp-fs);
+    $sp-fw: var(--faq-section-lead-sp-fw);
+    $sp-lh: var(--faq-section-lead-sp-lh);
+    $sp-ls: var(--faq-section-lead-sp-ls);
+    font-size: $sp-fs;
+    font-weight: $sp-fw;
+    line-height: $sp-lh;
+    letter-spacing: $sp-ls;
+    @include pc {
+      font-size: var(--faq-section-lead-pc-fs, $sp-fs);
+      font-weight: var(--faq-section-lead-pc-fw, $sp-fw);
+      line-height: var(--faq-section-lead-pc-lh, $sp-lh);
+      letter-spacing: var(--faq-section-lead-pc-ls, $sp-ls);
+    }
+  }
+
+  .faq-wrap {
+    margin-top: 24px;
+    display: grid;
+    gap: 20px;
+  }
+  .faq-item {
+    .q {
+      $sp-fs: var(--faq-q-sp-fs);
+      $sp-fw: var(--faq-q-sp-fw);
+      $sp-lh: var(--faq-q-sp-lh);
+      $sp-ls: var(--faq-q-sp-ls);
+      font-size: $sp-fs;
+      font-weight: $sp-fw;
+      line-height: $sp-lh;
+      letter-spacing: $sp-ls;
+      @include pc {
+        font-size: var(--faq-q-pc-fs, $sp-fs);
+        font-weight: var(--faq-q-pc-fw, $sp-fw);
+        line-height: var(--faq-q-pc-lh, $sp-lh);
+        letter-spacing: var(--faq-q-pc-ls, $sp-ls);
+      }
+      &::before {
+        $sp-fs: var(--faq-q-label-sp-fs);
+        $sp-fw: var(--faq-q-label-sp-fw);
+        $sp-lh: var(--faq-q-label-sp-lh);
+        $sp-ls: var(--faq-q-label-sp-ls);
+        font-size: $sp-fs;
+        font-weight: $sp-fw;
+        line-height: $sp-lh;
+        letter-spacing: $sp-ls;
+        @include pc {
+          font-size: var(--faq-q-label-pc-fs, $sp-fs);
+          font-weight: var(--faq-q-label-pc-fw, $sp-fw);
+          line-height: var(--faq-q-label-pc-lh, $sp-lh);
+          letter-spacing: var(--faq-q-label-pc-ls, $sp-ls);
+        }
+      }
+    }
+    .a-block {
+      .a {
+        $sp-fs: var(--faq-a-sp-fs);
+        $sp-fw: var(--faq-a-sp-fw);
+        $sp-lh: var(--faq-a-sp-lh);
+        $sp-ls: var(--faq-a-sp-ls);
+        font-size: $sp-fs;
+        font-weight: $sp-fw;
+        line-height: $sp-lh;
+        letter-spacing: $sp-ls;
+        @include pc {
+          font-size: var(--faq-a-pc-fs, $sp-fs);
+          font-weight: var(--faq-a-pc-fw, $sp-fw);
+          line-height: var(--faq-a-pc-lh, $sp-lh);
+          letter-spacing: var(--faq-a-pc-ls, $sp-ls);
+        }
+        &::before {
+          // q-labelを流用
+          $sp-fs: var(--faq-q-label-sp-fs);
+          $sp-fw: var(--faq-q-label-sp-fw);
+          $sp-lh: var(--faq-q-label-sp-lh);
+          $sp-ls: var(--faq-q-label-sp-ls);
+          font-size: $sp-fs;
+          font-weight: $sp-fw;
+          line-height: $sp-lh;
+          letter-spacing: $sp-ls;
+          @include pc {
+            font-size: var(--faq-q-label-pc-fs, $sp-fs);
+            font-weight: var(--faq-q-label-pc-fw, $sp-fw);
+            line-height: var(--faq-q-label-pc-lh, $sp-lh);
+            letter-spacing: var(--faq-q-label-pc-ls, $sp-ls);
+          }
+        }
+      }
+    }
+  }
+}

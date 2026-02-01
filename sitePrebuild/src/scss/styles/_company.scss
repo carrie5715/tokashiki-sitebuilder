@@ -98,11 +98,11 @@
     margin-top: 6vw;
     width: 100%;
     border-radius: 2vw;
+    overflow: hidden;
     @include pc {
       margin-top: 24px;
       border-radius: 8px;
     }
-    overflow: hidden;
     iframe {
       width: 100%;
       max-width: 100%;

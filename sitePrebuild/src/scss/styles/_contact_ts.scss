@@ -1,0 +1,137 @@
+@use '../common/mixins' as *;
+
+#contact {
+  .container {
+    .card-body {
+      h2 {
+        $sp-fs: var(--contact-h2-sp-fs);
+        $sp-fw: var(--contact-h2-sp-fw);
+        $sp-lh: var(--contact-h2-sp-lh);
+        $sp-ls: var(--contact-h2-sp-ls);
+        font-size: $sp-fs;
+        font-weight: $sp-fw;
+        line-height: $sp-lh;
+        letter-spacing: $sp-ls;
+        @include pc {
+          font-size: var(--contact-h2-pc-fs, $sp-fs);
+          font-weight: var(--contact-h2-pc-fw, $sp-fw);
+          line-height: var(--contact-h2-pc-lh, $sp-lh);
+          letter-spacing: var(--contact-h2-pc-ls, $sp-ls);
+        }
+      }
+      .message {
+        $sp-fs: var(--contact-lead-sp-fs);
+        $sp-fw: var(--contact-lead-sp-fw);
+        $sp-lh: var(--contact-lead-sp-lh);
+        $sp-ls: var(--contact-lead-sp-ls);
+        font-size: $sp-fs;
+        font-weight: $sp-fw;
+        line-height: $sp-lh;
+        letter-spacing: $sp-ls;
+        @include pc {
+          font-size: var(--contact-lead-pc-fs, $sp-fs);
+          font-weight: var(--contact-lead-pc-fw, $sp-fw);
+          line-height: var(--contact-lead-pc-lh, $sp-lh);
+          letter-spacing: var(--contact-lead-pc-ls, $sp-ls);
+        }
+      }
+      .description {
+        /*
+        $sp-fs: var(--contact-h2-sp-fs);
+        $sp-fw: var(--contact-h2-sp-fw);
+        $sp-lh: var(--contact-h2-sp-lh);
+        $sp-ls: var(--contact-h2-sp-ls);
+        font-size: $sp-fs;
+        font-weight: $sp-fw;
+        line-height: $sp-lh;
+        letter-spacing: $sp-ls;
+        @include pc {
+          font-size: var(--contact-h2-pc-fs, $sp-fs);
+          font-weight: var(--contact-h2-pc-fw, $sp-fw);
+          line-height: var(--contact-h2-pc-lh, $sp-lh);
+          letter-spacing: var(--contact-h2-pc-ls, $sp-ls);
+        }
+        */
+      }
+
+      .tel-box {
+        .tel-number {
+          $sp-fs: var(--contact-tel-number-sp-fs);
+          $sp-fw: var(--contact-tel-number-sp-fw);
+          $sp-lh: var(--contact-tel-number-sp-lh);
+          $sp-ls: var(--contact-tel-number-sp-ls);
+          font-size: $sp-fs;
+          font-weight: $sp-fw;
+          line-height: $sp-lh;
+          letter-spacing: $sp-ls;
+          @include pc {
+            font-size: var(--contact-tel-number-pc-fs, $sp-fs);
+            font-weight: var(--contact-tel-number-pc-fw, $sp-fw);
+            line-height: var(--contact-tel-number-pc-lh, $sp-lh);
+            letter-spacing: var(--contact-tel-number-pc-ls, $sp-ls);
+          }
+        }
+        .tel-message {
+          $sp-fs: var(--contact-tel-message-sp-fs);
+          $sp-fw: var(--contact-tel-message-sp-fw);
+          $sp-lh: var(--contact-tel-message-sp-lh);
+          $sp-ls: var(--contact-tel-message-sp-ls);
+          font-size: $sp-fs;
+          font-weight: $sp-fw;
+          line-height: $sp-lh;
+          letter-spacing: $sp-ls;
+          @include pc {
+            font-size: var(--contact-tel-message-pc-fs, $sp-fs);
+            font-weight: var(--contact-tel-message-pc-fw, $sp-fw);
+            line-height: var(--contact-tel-message-pc-lh, $sp-lh);
+            letter-spacing: var(--contact-tel-message-pc-ls, $sp-ls);
+          }
+        }
+      }
+
+      .items-list {
+        .item {
+          a {
+            $sp-fs: var(--contact-cta-sp-fs);
+            $sp-fw: var(--contact-cta-sp-fw);
+            $sp-lh: var(--contact-cta-sp-lh);
+            $sp-ls: var(--contact-cta-sp-ls);
+            font-size: $sp-fs;
+            font-weight: $sp-fw;
+            line-height: $sp-lh;
+            letter-spacing: $sp-ls;
+            @include pc {
+              font-size: var(--contact-cta-pc-fs, $sp-fs);
+              font-weight: var(--contact-cta-pc-fw, $sp-fw);
+              line-height: var(--contact-cta-pc-lh, $sp-lh);
+              letter-spacing: var(--contact-cta-pc-ls, $sp-ls);
+            }
+          }
+
+          &.type-form {
+            .item-body {
+              .sub {
+                $sp-fs: var(--contact-cta-note-sp-fs);
+                $sp-fw: var(--contact-cta-note-sp-fw);
+                $sp-lh: var(--contact-cta-note-sp-lh);
+                $sp-ls: var(--contact-cta-note-sp-ls);
+                font-size: $sp-fs;
+                font-weight: $sp-fw;
+                line-height: $sp-lh;
+                letter-spacing: $sp-ls;
+                @include pc {
+                  font-size: var(--contact-cta-note-pc-fs, $sp-fs);
+                  font-weight: var(--contact-cta-note-pc-fw, $sp-fw);
+                  line-height: var(--contact-cta-note-pc-lh, $sp-lh);
+                  letter-spacing: var(--contact-cta-note-pc-ls, $sp-ls);
+                }
+              }
+              .main {
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

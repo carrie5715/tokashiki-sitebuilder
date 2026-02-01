@@ -139,7 +139,13 @@ var ContactInfo = (function () {
     }
     try {
       if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
-        const colorKeys = [ 'background', 'card_bg_color', 'card_text_color' ];
+        const colorKeys = [
+          'background',
+          'card_bg_color',
+          'card_text_color',
+          'card_item_bg_color',
+          'card_item_text_color',
+        ];
         colorKeys.forEach(k => {
           const v = contact[k];
           if (v != null && String(v).trim() !== '') {
@@ -162,14 +168,51 @@ var ContactInfo = (function () {
     const title = String(contact['title'] || '').trim();
     const message = String(contact['message'] || '').trim();
     const description = String(contact['description'] || '').trim();
+    const tel = String(contact['tel'] || '').trim();
+    const telMess = String(contact['tel_mess'] || '').trim();
+    const formUrl = String(contact['form_url'] || '').trim();
+    const formMess = String(contact['form_mess'] || '').trim();
+    const formSub = String(contact['form_sub'] || '').trim();
     const titleHtml = title ? `<h2>${title}</h2>` : '';
     const messageHtml = message ? `<p class="message">${message}</p>` : '';
     const descriptionHtml = description ? `<p class="description">${description}</p>` : '';
+    let telBoxHtml = '';
+    if (tel) {
+      const safeTel = tel;
+      const safeTelMess = telMess;
+      telBoxHtml = [
+        '<div class="tel-box">',
+        `  <p class="tel-number"><a href="tel:${safeTel}">`,
+        '    <i class="fa-solid fa-phone"></i>',
+        `    <span>${safeTel}</span>`,
+        '  </a></p>',
+        safeTelMess ? `  <p class="tel-message">${safeTelMess}</p>` : '',
+        '</div>'
+      ].filter(Boolean).join('\n');
+    }
+    let formItemHtml = '';
+    if (formUrl) {
+      const safeUrl = formUrl;
+      const safeSub = formSub;
+      const safeMess = formMess;
+      formItemHtml = [
+        '<div class="item type-form">',
+        `  <a href="${safeUrl}">`,
+        '    <span class="item-body">',
+        safeSub ? `      <span class="sub">${safeSub}</span>` : '',
+        safeMess ? `      <span class="main">${safeMess}</span>` : '',
+        '    </span>',
+        '  </a>',
+        '</div>'
+      ].filter(Boolean).join('\n');
+    }
     const itemsHtml = buildItemsHtml_();
     return {
       title: titleHtml,
       message: messageHtml,
       description: descriptionHtml,
+      tel_box: telBoxHtml,
+      form_item: formItemHtml,
       items: itemsHtml,
     };
   }

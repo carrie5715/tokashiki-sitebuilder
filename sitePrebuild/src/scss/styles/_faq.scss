@@ -9,6 +9,36 @@
     margin-inline: auto;
     padding: 56px 24px;
   }
+  .section-title {
+    text-align: center;
+  }
+  h2 {
+    text-align: center;
+  }
+  .description {
+    text-align: center;
+  }
 
-  .faq-wrap { margin-top: 24px; display: grid; gap: 20px; }
+  .faq-wrap {
+    margin-top: 24px;
+    display: grid;
+    gap: 20px;
+  }
+  .faq-item {
+    padding: 16px;
+    background: var(--pcol-base-white, var(--col-white));
+    border-radius: var(--base-radius-m, 0);
+    .q {
+      &::before {
+        content: 'Q.';
+        display: inline-block;
+        font-weight: 700;
+        margin-right: 8px;
+      }
+    }
+    .a-block {
+      .a {
+      }
+    }
+  }
 }

@@ -6,12 +6,13 @@ const path = require('path');
   const TB_ROOT = path.resolve(ROOT, '..', 'templateBase', 'drive_resources');
 
   const targets = [
-    { label: 'css',  src: path.join(ROOT, 'public', 'css'),      dest: path.join(TB_ROOT, 'css') },
-    { label: 'img',  src: path.join(ROOT, 'public', 'img'),      dest: path.join(TB_ROOT, 'img') },
-    { label: 'js',   src: path.join(ROOT, 'public', 'js'),       dest: path.join(TB_ROOT, 'js') },
-    { label: 'comp', src: path.join(ROOT, 'src', 'components'),  dest: path.join(TB_ROOT, 'components') },
-    { label: 'lay',  src: path.join(ROOT, 'src', 'layout'),      dest: path.join(TB_ROOT, 'layout') },
-    { label: 'page', src: path.join(ROOT, 'src', 'pages'),       dest: path.join(TB_ROOT, 'pages') },
+    { label: 'css',        src: path.join(ROOT, 'public', 'css'),        dest: path.join(TB_ROOT, 'css') },
+    { label: 'extend-css', src: path.join(ROOT, 'public', 'extend-css'), dest: path.join(TB_ROOT, 'extend-css') },
+    { label: 'img',        src: path.join(ROOT, 'public', 'img'),        dest: path.join(TB_ROOT, 'img') },
+    { label: 'js',         src: path.join(ROOT, 'public', 'js'),         dest: path.join(TB_ROOT, 'js') },
+    { label: 'comp',       src: path.join(ROOT, 'src', 'components'),    dest: path.join(TB_ROOT, 'components') },
+    { label: 'lay',        src: path.join(ROOT, 'src', 'layout'),        dest: path.join(TB_ROOT, 'layout') },
+    { label: 'page',       src: path.join(ROOT, 'src', 'pages'),         dest: path.join(TB_ROOT, 'pages') },
   ];
 
   for (const t of targets) {

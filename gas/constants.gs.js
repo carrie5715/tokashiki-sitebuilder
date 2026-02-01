@@ -10,6 +10,7 @@ const ASSETS_IMG = 'img';
 
 // output配下
 const OUT_CSS        = 'css';
+const OUT_EXTEND_CSS = 'extend-css';
 const OUT_CSS_PAGES  = 'pages';       // /output/css/pages/
 const OUT_CSS_COMPS  = 'components';  // /output/css/components/
 const OUT_JS         = 'js';
@@ -28,6 +29,7 @@ const PROP_KEYS = {
   ASSETS_IMG_ID:    'ASSETS_IMG_ID',
   OUTPUT_ID:        'OUTPUT_ID',
   OUTPUT_CSS_ID:    'OUTPUT_CSS_ID',
+  OUTPUT_EXTEND_CSS_ID: 'OUTPUT_EXTEND_CSS_ID',
   TEMPLATE_ROOT_ID: 'TEMPLATE_ROOT_ID',
   OUTPUT_CSS_PAGES_ID: 'OUTPUT_CSS_PAGES_ID',
   OUTPUT_CSS_COMPS_ID: 'OUTPUT_CSS_COMPS_ID',
