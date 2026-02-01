@@ -88,20 +88,63 @@ var FooterInfo = (function() {
   function getTemplateReplacements() {
     // base fields
     const logoUrl = String(footer['logo_url'] || '').trim();
-    const companyName = String(footer['company_name'] || '').trim();
-    const address = String(footer['address'] || '').trim();
+
+    // company_name / address は「基本設定」シート優先（siteInfos）
+    let companyName = '';
+    let address = '';
+    if (typeof siteInfos !== 'undefined' && siteInfos) {
+      companyName = String(siteInfos['company_name'] || '').trim();
+      address = String(siteInfos['address'] || '').trim();
+    }
+    if (!companyName) companyName = String(footer['company_name'] || '').trim();
+    if (!address) address = String(footer['address'] || '').trim();
     const mainNavShow = String(footer['main_nav_show'] || '').trim();
     const subNavShow  = String(footer['sub_nav_show'] || '').trim();
-    // copyright variants
-    let cp = String(footer['copyright'] || '').trim();
-    if (!cp) cp = String(footer['copyrights'] || '').trim();
+
+    // SNS リンク（基本設定シート優先、無ければ footer シート）
+    let xUrl = '';
+    let igUrl = '';
+    let fbUrl = '';
+    if (typeof siteInfos !== 'undefined' && siteInfos) {
+      xUrl = String(siteInfos['x'] || '').trim();
+      igUrl = String(siteInfos['instagram'] || '').trim();
+      fbUrl = String(siteInfos['facebook'] || '').trim();
+    }
+    if (!xUrl) xUrl = String(footer['x'] || '').trim();
+    if (!igUrl) igUrl = String(footer['instagram'] || '').trim();
+    if (!fbUrl) fbUrl = String(footer['facebook'] || '').trim();
+
+    let snsLinksHtml = '';
+    const snsChunks = [];
+    if (xUrl) {
+      snsChunks.push(`  <a class="sns-x" href="${xUrl}" target="_blank" rel="noopener noreferrer"><\/a>`);
+    }
+    if (igUrl) {
+      snsChunks.push(`  <a class="sns-instagram" href="${igUrl}" target="_blank" rel="noopener noreferrer"><\/a>`);
+    }
+    if (fbUrl) {
+      snsChunks.push(`  <a class="sns-facebook" href="${fbUrl}" target="_blank" rel="noopener noreferrer"><\/a>`);
+    }
+    if (snsChunks.length > 0) {
+      snsLinksHtml = ['<div class="sns-links">', snsChunks.join('\n'), '<\/div>'].join('\n');
+    }
+
+    // copyrights は「基本設定」シート優先（siteInfos）、無ければ footer シート
+    let cp = '';
+    if (typeof siteInfos !== 'undefined' && siteInfos) {
+      cp = String((siteInfos['copyrights'] || siteInfos['copyright'] || '')).trim();
+    }
+    if (!cp) {
+      cp = String((footer['copyrights'] || footer['copyright'] || '')).trim();
+    }
     return {
       logo_url: logoUrl,
       company_name: companyName,
       address: address,
       main_nav_show: mainNavShow,
       sub_nav_show: subNavShow,
-      copyright: cp,
+      sns_links: snsLinksHtml,
+      copyrights: cp,
     };
   }
 

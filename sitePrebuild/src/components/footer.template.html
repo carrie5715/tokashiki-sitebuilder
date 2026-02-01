@@ -4,22 +4,36 @@
     <div class="upper-block">
       <img src="<?= logo_url ?>" alt="Footer Image" class="logo">
       <h4><?= company_name ?></h4>
-      <p><?= address ?></p>
     </div>
-    <div class="lower-block">
-      <div class="main-list <?= footer_nav_class ?>">
-        <ul class="footer-nav">
-          <!-- <li><a @click.prevent="onItemClick" href="#message">メッセージ</a></li> -->
-          <?= footer_nav ?>
-        </ul>
+    <div class="info-wrap">
+      <div class="address-block">
+        <p><?= address ?></p>
       </div>
-      <div class="sub-list <?= footer_sub_nav_class ?>">
-        <ul class="footer-nav">
-          <!-- <li><a @click.prevent="onItemClick" href="#message">メッセージ</a></li> -->
-          <?= footer_sub_nav ?>
-        </ul>
+      <div class="lower-block">
+        <div class="main-list <?= footer_nav_class ?>">
+          <ul class="footer-nav">
+            <!-- <li><a @click.prevent="onItemClick" href="#message">メッセージ</a></li> -->
+            <?= footer_nav ?>
+          </ul>
+        </div>
+        <div class="sub-list <?= footer_sub_nav_class ?>">
+          <ul class="footer-nav">
+            <!-- <li><a @click.prevent="onItemClick" href="#message">メッセージ</a></li> -->
+            <?= footer_sub_nav ?>
+          </ul>
+        </div>
       </div>
     </div>
-    <p class="copyright"><?= copyright ?></p>
+    
+    <?= sns_links ?>
+    <!--
+    <div class="sns-links">
+      <a class="sns-x" href="<?= x ?>" target="_blank"></a>
+      <a class="sns-instagram" href="<?= instagram ?>" target="_blank"></a>
+      <a class="sns-facebook" href="<?= facebook ?>" target="_blank"></a>
+    </div>
+    -->
+
+    <p class="copyrights"><?= copyrights ?></p>
   </div>
 </footer>

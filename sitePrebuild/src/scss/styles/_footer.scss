@@ -1,36 +1,45 @@
 @use '../common/mixins' as *;
+@use '../common/variables' as *;
 
 footer {
   width: 100%;
-  background: var(--pcol-base-white, var(--col-white));
-  padding-top: 2vw;
+  margin-top: 16px;
+  $rad: var(--base-radius-m, 16px);
+  border-radius: $rad $rad 0 0;
 
   $base-bg: var(--pcol-footer-bg-color, var(--pcol-base-color-2, var(--col-blue)));
   $base-text: var(--pcol-footer-text-color, var(--pcol-base-white, var(--col-white)));
+  background: $base-bg;
 
   .container {
     width: 100%;
-    max-width: 1000px;
+    max-width: 1200px;
+    margin: auto;
     color: $base-text;
-    background: $base-bg;
-    border-radius: 4vw 4vw 0 0;
+    padding: 40px 28px;
   }
 
   .upper-block {
     display: flex;
     flex-direction: column;
-    padding: 8vw 4vw 8vw;
+    gap: 20px;
 
     img {
       width: 30vw;
       height: auto;
+      @include pc {
+        width: 150px;
+      }
     }
 
     h4 {
-      margin: 0;
+      margin-top: 0;
       font-size: 1.8rem;
       line-height: 1.4;
       font-weight: 700;
+      @include pc {
+        font-size: 20px;
+      }
     }
 
     p {
@@ -39,17 +48,88 @@ footer {
       line-height: 1.7;
     }
   }
+  .info-wrap {
+    display: flex;
+    margin-top: 20px;
+    flex-direction: column;
+    gap: 40px;
+    @include pc {
+      flex-direction: row;
+      justify-content: space-between;
+      gap: 0;
+    }
+  }
   .lower-block {
+    line-height: 1.5;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    @include pc {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .footer-nav {
+      @include pc {
+        display: flex;
+        justify-content: flex-end;
+        gap: 24px;
+        li {
+          display: inline-block;
+        }
+      }
+    }
+
     a {
       color: $base-text;
+      font-size: 1.2rem;
+      @include pc {
+        font-size: 14px;
+        font-weight: bold;
+      }
+    }
+  }
+  .sns-links {
+    padding: 32px 0 16px;
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    @include pc {
+      justify-content: flex-end;
+    }
+    a {
+      display: inline-block;
+      color: $base-text;
+      font-size: 2.4rem;
+      @include pc {
+        font-size: 32px;
+      }
+
+      &::after {
+        display: inline-block;
+        font-family: $fontawesome-brands;
+        font-weight: 400;
+      }
+      &.sns-x::after {
+        content: '\e61b';
+      }
+      &.sns-instagram::after {
+        content: '\f16d';
+      }
+      &.sns-facebook::after {
+        content: '\f09a';
+      }
     }
   }
 
-  .copyright {
+  .copyrights {
     margin: 0;
     padding: 4vw 2vw 8vw;
     border-top: 1px solid rgba(0, 0, 0, 0.06);
     font-size: 1.2rem;
     text-align: center;
+    color: $base-text;
+    @include pc {
+      font-size: 12px;
+    }
   }
 }

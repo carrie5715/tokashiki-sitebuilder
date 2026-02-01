@@ -33,6 +33,8 @@ var CommonInfo = (function () {
   // 保存対象キー
   const SITE_KEYS = [
     'company_name', 'address', 'template', 'top_url', 'logo_url', 'contact_url', 'contact_is_external',
+    // 追加: SNS 用リンク
+    'x', 'instagram', 'facebook',
     // 追加: フッター用
     'copyright', 'copyrights',
     // 追加: フォント系（クラス付与に使用）
