@@ -6,7 +6,7 @@ addEventListener('alpine:init', () => {
     error: null,
     async init() {
       try {
-        const res = await fetch('/data/works.json', { cache: 'no-store' });
+        const res = await fetch('data/works.json', { cache: 'no-store' });
         if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
         const data = await res.json();
         this.items = Array.isArray(data) ? data : [];

@@ -5,7 +5,7 @@ document.addEventListener('alpine:init', () => {
     error: null,
     async init() {
       try {
-        const res = await fetch('/data/faq.json', { cache: 'no-store' });
+        const res = await fetch('data/faq.json', { cache: 'no-store' });
         if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
         this.items = await res.json();
       } catch (e) {

@@ -4,14 +4,27 @@
   width: 100%;
   background: var(--pcol-message-bg-color, var(--col-blue));
   color: var(--pcol-message-text-color, var(--col-white));
+  position: relative;
   strong {
     color: var(--pcol-message-text-color, var(--col-white));
+  }
+
+  .bg-title {
+    display: block;
+    color: var(--pcol-message-heading-color, var(--pcol-base-color-3));
+    white-space: nowrap;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   .container {
     max-width: 1000px;
     margin-inline: auto;
     text-align: center;
+    position: relative;
+    z-index: 10;
     .upper-block {
       position: relative;
       padding-top: 80px;
@@ -19,16 +32,6 @@
         padding-top: 30px;
       }
 
-      .bg-title {
-        display: block;
-        color: var(--pcol-message-heading-color, var(--pcol-base-color-3));
-        white-space: nowrap;
-        position: absolute;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        border: 1px solid red;
-      }
       h2 {
         font-weight: 400;
         line-height: 2;

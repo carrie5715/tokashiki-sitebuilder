@@ -1,25 +1,24 @@
 @use '../common/mixins' as *;
 
 #message {
+  .bg-title {
+    $sp-fs: var(--message-bg-title-sp-fs);
+    $sp-fw: var(--message-bg-title-sp-fw);
+    $sp-lh: var(--message-bg-title-sp-lh);
+    $sp-ls: var(--message-bg-title-sp-ls);
+    font-size: $sp-fs;
+    font-weight: $sp-fw;
+    line-height: $sp-lh;
+    letter-spacing: $sp-ls;
+    @include pc {
+      font-size: var(--message-bg-title-pc-fs, $sp-fs);
+      font-weight: var(--message-bg-title-pc-fw, $sp-fw);
+      line-height: var(--message-bg-title-pc-lh, $sp-lh);
+      letter-spacing: var(--message-bg-title-pc-ls, $sp-ls);
+    }
+  }
   .container {
     .upper-block {
-      .bg-title {
-        $sp-fs: var(--message-bg-title-sp-fs);
-        $sp-fw: var(--message-bg-title-sp-fw);
-        $sp-lh: var(--message-bg-title-sp-lh);
-        $sp-ls: var(--message-bg-title-sp-ls);
-        font-size: $sp-fs;
-        font-weight: $sp-fw;
-        line-height: $sp-lh;
-        letter-spacing: $sp-ls;
-        @include pc {
-          font-size: var(--message-bg-title-pc-fs, $sp-fs);
-          font-weight: var(--message-bg-title-pc-fw, $sp-fw);
-          line-height: var(--message-bg-title-pc-lh, $sp-lh);
-          letter-spacing: var(--message-bg-title-pc-ls, $sp-ls);
-        }
-      }
-
       h2 {
         $sp-fs: var(--message-h2-main-sp-fs);
         $sp-fw: var(--message-h2-main-sp-fw);

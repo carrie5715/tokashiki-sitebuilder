@@ -95,3 +95,21 @@ br {
     opacity: 0.8;
   }
 }
+
+.bg-title {
+  overflow: hidden;
+  width: 100%;
+}
+.bg-title .marquee-track {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: bg-marquee 40s linear infinite;
+}
+@keyframes bg-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
