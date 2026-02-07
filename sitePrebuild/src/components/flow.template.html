@@ -1,0 +1,40 @@
+<section id="flow" data-component-name="flow" x-data="flowComponent" class="<?= flow_classes ?>">
+  <div class="container">
+    <p class="title-sub"><?= h2_sub ?></p>
+    <h2><?= h2 ?></h2>
+    <?= section_lead ?>
+    <!-- <p class="section_lead">テキストテキストテキスト</p> -->
+
+    <div class="flow-swiper">
+      <div class="swiper" x-ref="container" x-show="items && items.length">
+        <div class="swiper-wrapper">
+          <template x-for="(item, idx) in items" :key="'flow-item-' + idx">
+            <div class="swiper-slide">
+              <div class="flow-card">
+                <div class="flow-card-wrap">
+                  <div class="step-head">
+                    <span>STEP</span>
+                    <span class="num" x-text="(idx + 1).toString().padStart(2, '0')"></span>
+                  </div>
+                  <div class="image-wrap">
+                    <figure class="step-image">
+                      <img :src="item.image" :alt="item.head || ''">
+                    </figure>
+                  </div>
+                  <div class="step-body">
+                    <p class="head-sub" x-text="item.head_sub"></p>
+                    <h3 x-text="item.head"></h3>
+                    <div class="step-text" x-html="item.text"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+        <div class="swiper-button-prev" x-ref="prev"></div>
+        <div class="swiper-button-next" x-ref="next"></div>
+      </div>
+      <div class="swiper-pagination" x-ref="pager"></div>
+    </div>
+  </div>
+</section>

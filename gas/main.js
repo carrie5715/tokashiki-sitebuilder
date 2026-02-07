@@ -39,7 +39,7 @@ function sheetReadAll() {
 
   // 対象シート名（必要に応じて拡張）
   const sheetNames = [
-    'mv', 'message', 'service', 'contact', 'faq', 'company', 'works', 'footer', 'header', 'meta', 'nav'
+    'mv', 'message', 'service', 'contact', 'faq', 'company', 'works', 'flow', 'footer', 'header', 'meta', 'nav'
   ];
 
   const ss = SpreadsheetApp.getActive();
@@ -70,7 +70,7 @@ function sheetReadAll() {
     } catch(e) { return 'hash_error_'+name; }
   };
   // 依存順序: contact -> header （header は nav/contact に依存）
-  const ORDER_FOR_PROCESSED = ['mv','message','service','faq','company','works','contact','header','footer','meta','nav'];
+  const ORDER_FOR_PROCESSED = ['mv','message','service','faq','company','works','flow','contact','header','footer','meta','nav'];
   globalThis.__snapshotOverrides = {};
   Object.keys(components).forEach(k => { globalThis.__snapshotOverrides[k] = components[k].rows; });
   // CommonInfo の基本設定読込（header 等が参照）
@@ -125,6 +125,16 @@ function sheetReadAll() {
             processed[name].json = JSON.stringify(items);
           } catch (e5) {
             Utils.logToSheet('processed works items生成失敗: ' + e5.message, 'sheetReadAll');
+          }
+        }
+        if (name === 'flow' && infoObj && typeof infoObj.parseFlowItems_ === 'function') {
+          try {
+            const items = infoObj.parseFlowItems_();
+            processed[name] = processed[name] || {};
+            processed[name].data = { items: items, itemsCount: items.length };
+            processed[name].json = JSON.stringify(items);
+          } catch (e6) {
+            Utils.logToSheet('processed flow items生成失敗: ' + e6.message, 'sheetReadAll');
           }
         }
       } else {
@@ -227,7 +237,7 @@ function buildAll() {
   const processed = (snapshot && snapshot.version >= 2 && snapshot.processed) ? snapshot.processed : null;
   if (processed) { globalThis.__processedSnapshot = processed; }
   const DEPENDS = { header: ['nav','contact'] };
-  const recordOrder = ['meta','mv','message','service','faq','company','works','contact','header','footer'];
+  const recordOrder = ['meta','mv','message','service','faq','company','works','flow','contact','header','footer'];
   const results = {};
   recordOrder.forEach(name => {
     const infoName = name.charAt(0).toUpperCase() + name.slice(1) + 'Info';
@@ -289,6 +299,7 @@ function buildAll() {
   var faqRes     = results['faq']     || null;
   var companyRes = results['company'] || null;
   var worksRes   = results['works']   || null;
+  var flowRes    = results['flow']    || null;
 
   // snapshot overrides 終了処理（後続の別関数影響を避けるためクリア）
   if (globalThis.__snapshotOverrides) {
@@ -304,7 +315,8 @@ function buildAll() {
   var companyOk = !!(companyRes && companyRes.ok);
   var faqOk = !!(faqRes && faqRes.ok);
   var worksOk = !!(worksRes && worksRes.ok);
-  const scriptsTag = Build.buildScriptsTag({ mvOk, messageOk, serviceOk, faqOk, companyOk, worksOk });
+  var flowOk = !!(flowRes && flowRes.ok);
+  const scriptsTag = Build.buildScriptsTag({ mvOk, messageOk, serviceOk, faqOk, companyOk, worksOk, flowOk });
   const mainWithScripts = Build.applyTagReplacements(mainHtml, { scripts: scriptsTag });
 
   const finalHtml = (typeof Build.stripHtmlCommentsExceptSectionTitle_ === 'function')

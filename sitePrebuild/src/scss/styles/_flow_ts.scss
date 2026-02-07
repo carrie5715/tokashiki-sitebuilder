@@ -1,0 +1,146 @@
+@use '../common/mixins' as *;
+
+#flow {
+  .title-sub {
+    $sp-fs: var(--flow-h2-sub-sp-fs);
+    $sp-fw: var(--flow-h2-sub-sp-fw);
+    $sp-lh: var(--flow-h2-sub-sp-lh);
+    $sp-ls: var(--flow-h2-sub-sp-ls);
+    font-size: $sp-fs;
+    font-weight: $sp-fw;
+    line-height: $sp-lh;
+    letter-spacing: $sp-ls;
+    @include pc {
+      font-size: var(--flow-h2-sub-pc-fs, $sp-fs);
+      font-weight: var(--flow-h2-sub-pc-fw, $sp-fw);
+      line-height: var(--flow-h2-sub-pc-lh, $sp-lh);
+      letter-spacing: var(--flow-h2-sub-pc-ls, $sp-ls);
+    }
+  }
+
+  h2 {
+    $sp-fs: var(--flow-h2-sp-fs);
+    $sp-fw: var(--flow-h2-sp-fw);
+    $sp-lh: var(--flow-h2-sp-lh);
+    $sp-ls: var(--flow-h2-sp-ls);
+    font-size: $sp-fs;
+    font-weight: $sp-fw;
+    line-height: $sp-lh;
+    letter-spacing: $sp-ls;
+    @include pc {
+      font-size: var(--flow-h2-pc-fs, $sp-fs);
+      font-weight: var(--flow-h2-pc-fw, $sp-fw);
+      line-height: var(--flow-h2-pc-lh, $sp-lh);
+      letter-spacing: var(--flow-h2-pc-ls, $sp-ls);
+    }
+  }
+
+  .section-lead {
+    $sp-fs: var(--flow-section-lead-sp-fs);
+    $sp-fw: var(--flow-section-lead-sp-fw);
+    $sp-lh: var(--flow-section-lead-sp-lh);
+    $sp-ls: var(--flow-section-lead-sp-ls);
+    font-size: $sp-fs;
+    font-weight: $sp-fw;
+    line-height: $sp-lh;
+    letter-spacing: $sp-ls;
+    @include pc {
+      font-size: var(--flow-section-lead-pc-fs, $sp-fs);
+      font-weight: var(--flow-section-lead-pc-fw, $sp-fw);
+      line-height: var(--flow-section-lead-pc-lh, $sp-lh);
+      letter-spacing: var(--flow-section-lead-pc-ls, $sp-ls);
+    }
+  }
+
+  .flow-swiper {
+    .flow-card {
+      .flow-card-wrap {
+        .step-head {
+          span {
+            $sp-fs: var(--flow-step-label-sp-fs);
+            $sp-fw: var(--flow-step-label-sp-fw);
+            $sp-lh: var(--flow-step-label-sp-lh);
+            $sp-ls: var(--flow-step-label-sp-ls);
+            font-size: $sp-fs;
+            font-weight: $sp-fw;
+            line-height: $sp-lh;
+            letter-spacing: $sp-ls;
+            @include pc {
+              font-size: var(--flow-step-label-pc-fs, $sp-fs);
+              font-weight: var(--flow-step-label-pc-fw, $sp-fw);
+              line-height: var(--flow-step-label-pc-lh, $sp-lh);
+              letter-spacing: var(--flow-step-label-pc-ls, $sp-ls);
+            }
+
+            &.num {
+              $sp-fs: var(--flow-step-number-sp-fs);
+              $sp-fw: var(--flow-step-number-sp-fw);
+              $sp-lh: var(--flow-step-number-sp-lh);
+              $sp-ls: var(--flow-step-number-sp-ls);
+              font-size: $sp-fs;
+              font-weight: $sp-fw;
+              line-height: $sp-lh;
+              letter-spacing: $sp-ls;
+              @include pc {
+                font-size: var(--flow-step-number-pc-fs, $sp-fs);
+                font-weight: var(--flow-step-number-pc-fw, $sp-fw);
+                line-height: var(--flow-step-number-pc-lh, $sp-lh);
+                letter-spacing: var(--flow-step-number-pc-ls, $sp-ls);
+              }
+            }
+          }
+        }
+        .step-body {
+          .head-sub {
+            $sp-fs: var(--flow-step-title-sub-sp-fs);
+            $sp-fw: var(--flow-step-title-sub-sp-fw);
+            $sp-lh: var(--flow-step-title-sub-sp-lh);
+            $sp-ls: var(--flow-step-title-sub-sp-ls);
+            font-size: $sp-fs;
+            font-weight: $sp-fw;
+            line-height: $sp-lh;
+            letter-spacing: $sp-ls;
+            @include pc {
+              font-size: var(--flow-step-title-sub-pc-fs, $sp-fs);
+              font-weight: var(--flow-step-title-sub-pc-fw, $sp-fw);
+              line-height: var(--flow-step-title-sub-pc-lh, $sp-lh);
+              letter-spacing: var(--flow-step-title-sub-pc-ls, $sp-ls);
+            }
+          }
+          h3 {
+            $sp-fs: var(--flow-step-title-sp-fs);
+            $sp-fw: var(--flow-step-title-sp-fw);
+            $sp-lh: var(--flow-step-title-sp-lh);
+            $sp-ls: var(--flow-step-title-sp-ls);
+            font-size: $sp-fs;
+            font-weight: $sp-fw;
+            line-height: $sp-lh;
+            letter-spacing: $sp-ls;
+            @include pc {
+              font-size: var(--flow-step-title-pc-fs, $sp-fs);
+              font-weight: var(--flow-step-title-pc-fw, $sp-fw);
+              line-height: var(--flow-step-title-pc-lh, $sp-lh);
+              letter-spacing: var(--flow-step-title-pc-ls, $sp-ls);
+            }
+          }
+          .step-text {
+            $sp-fs: var(--flow-step-body-sp-fs);
+            $sp-fw: var(--flow-step-body-sp-fw);
+            $sp-lh: var(--flow-step-body-sp-lh);
+            $sp-ls: var(--flow-step-body-sp-ls);
+            font-size: $sp-fs;
+            font-weight: $sp-fw;
+            line-height: $sp-lh;
+            letter-spacing: $sp-ls;
+            @include pc {
+              font-size: var(--flow-step-body-pc-fs, $sp-fs);
+              font-weight: var(--flow-step-body-pc-fw, $sp-fw);
+              line-height: var(--flow-step-body-pc-lh, $sp-lh);
+              letter-spacing: var(--flow-step-body-pc-ls, $sp-ls);
+            }
+          }
+        }
+      }
+    }
+  }
+}

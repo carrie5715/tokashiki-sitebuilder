@@ -1,0 +1,115 @@
+@use '../common/mixins' as *;
+
+#flow {
+  $bg-color: var(--pcol-flow-bg-color, var(--pcol-base-white, --col-white));
+  $text-color: var(--pcol-flow-text-color, var(--pcol-base-black, --col-black));
+  $accent-color: var(--pcol-flow-accent-color, var(--pcol-base-color-2, #326ff9));
+  $card-num-color: var(--pcol-flow-card-num-color, $accent-color);
+  $card-head-color: var(--pcol-flow-card-head-color, $text-color);
+  $card-head-sub-color: var(--pcol-flow-card-head-sub-color, $accent-color);
+  $card-text-color: var(--pcol-flow-card-text-color, $text-color);
+
+  width: 100%;
+  background: $bg-color;
+  color: $text-color;
+
+  .container {
+    max-width: 1000px;
+    margin-inline: auto;
+    padding: 56px 0;
+  }
+
+  .title-sub {
+    text-align: center;
+    color: $card-head-sub-color;
+    margin-bottom: 8px;
+  }
+
+  h2 {
+    text-align: center;
+  }
+
+  .section-lead {
+    margin-top: 24px;
+    text-align: center;
+  }
+
+  .flow-swiper {
+    margin-top: 32px;
+    position: relative;
+    padding-bottom: 40px;
+
+    .swiper {
+      .swiper-button-prev,
+      .swiper-button-next {
+        height: 100%;
+        width: 40px;
+        top: 0;
+        opacity: 0;
+        &::after {
+          display: none;
+        }
+      }
+      .swiper-button-prev {
+        left: 0;
+      }
+      .swiper-button-next {
+        right: 0;
+      }
+    }
+
+    .swiper-slide {
+      height: auto;
+      width: 200px;
+    }
+    .flow-card {
+      height: 100%;
+      .flow-card-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding: 20px 10px;
+        border-radius: var(--base-radius-m, 16px);
+        background: var(--pcol-base-white, #fff);
+        color: $card-text-color;
+        .step-head {
+          display: flex;
+          justify-content: center;
+          align-items: flex-end;
+          gap: 4px;
+          color: $accent-color;
+          span {
+            line-height: 1 !important;
+            &.num {
+            }
+          }
+        }
+        .image-wrap {
+          margin: 0;
+          .step-image {
+            margin: 0;
+            border-radius: var(--base-radius-m, 16px);
+            overflow: hidden;
+            img {
+              width: 100%;
+              display: block;
+            }
+          }
+        }
+        .step-body {
+          .head-sub {
+            color: $card-head-sub-color;
+            margin-bottom: 4px;
+          }
+          h3 {
+            color: $card-head-color;
+            margin-bottom: 8px;
+          }
+          .step-text {
+            color: $card-text-color;
+          }
+        }
+      }
+    }
+  }
+}

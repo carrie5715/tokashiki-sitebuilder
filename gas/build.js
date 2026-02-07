@@ -278,12 +278,13 @@ const Build = {
     if (flags && flags.faqOk) list.push('faq.js');
     if (flags && flags.companyOk) list.push('company.js');
     if (flags && flags.worksOk) list.push('works.js');
+    if (flags && flags.flowOk) list.push('flow.js');
 
     const tags = [];
     list.forEach((name) => {
       try {
         const id = this.copyJsFromTemplate(name);
-        if (id) tags.push(`<script src="/js/${name}"></script>`);
+        if (id) tags.push(`<script src="js/${name}"></script>`);
       } catch (e) {
         if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`JSコピー失敗: ${name} - ${e.message}`, 'buildScriptsTag');
       }
@@ -335,6 +336,9 @@ const Build = {
         }
         if (item.id === 'works') {
           sectionString += this.getWorksContents() + '\n';
+        }
+        if (item.id === 'flow') {
+          sectionString += this.getFlowContents() + '\n';
         }
         if (item.id === 'contact') {
           sectionString += this.getContactContents() + '\n';
@@ -538,6 +542,29 @@ const Build = {
       replacements = {
         section_title: Utils.getSheetValue('works', 'section_title') || '',
         section_intro: Utils.getSheetValue('works', 'section_intro') || '',
+      };
+    }
+    return this.applyTagReplacements(template, replacements);
+  },
+
+  /** flow */
+  getFlowContents() {
+    const template = this.getTemplateFile('components', 'flow');
+    let replacements = {};
+    if (typeof FlowInfo !== 'undefined' && typeof FlowInfo.getTemplateReplacements === 'function') {
+      replacements = FlowInfo.getTemplateReplacements();
+    } else {
+      const h2Sub = Utils.getSheetValue('flow', 'h2_sub') || '';
+      const h2 = Utils.getSheetValue('flow', 'h2') || '';
+      const sectionLead = Utils.getSheetValue('flow', 'section_lead') || '';
+      const typeVal = String(Utils.getSheetValue('flow', 'type') || '').trim();
+      const classes = typeVal ? `type-${typeVal}` : '';
+      const sectionLeadHtml = sectionLead ? `<div class="section-lead">${sectionLead}</div>` : '';
+      replacements = {
+        h2_sub: h2Sub,
+        h2: h2,
+        section_lead: sectionLeadHtml,
+        flow_classes: classes,
       };
     }
     return this.applyTagReplacements(template, replacements);
