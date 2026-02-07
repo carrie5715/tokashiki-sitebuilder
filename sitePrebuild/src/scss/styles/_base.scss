@@ -96,6 +96,16 @@ br {
   }
 }
 
+//swiper
+:root {
+  --swiper-pagination-bullet-width: 40px;
+  --swiper-pagination-bullet-height: 2px;
+  --swiper-pagination-bullet-border-radius: 0;
+  --swiper-pagination-bullet-horizontal-gap: 0;
+  --swiper-pagination-color: var(--pcol-theme);
+}
+
+// マーキー
 .bg-title {
   overflow: hidden;
   width: 100%;
