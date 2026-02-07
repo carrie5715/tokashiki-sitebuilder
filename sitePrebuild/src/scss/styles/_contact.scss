@@ -12,9 +12,18 @@
       $card_text: var(--pcol-contact-card-text-color, var(--pcol-base-white, var(--col-white)));
 
       padding: 4vw;
+      backdrop-filter: blur(12px);
       background: $card_bg;
       color: $card_text;
       border-radius: 4vw;
+
+      @include pc {
+        max-width: 1200px;
+        margin: auto;
+        padding: 32px;
+        border-radius: var(--base-radius-m, 16px);
+      }
+
       h2 {
         text-align: center;
         position: relative;
@@ -47,8 +56,12 @@
         .item {
           pointer-events: auto;
           cursor: pointer;
+          display: flex;
+          justify-content: center;
+          align-items: center;
 
           a {
+            flex-grow: 1;
             display: flex;
             min-height: 5rem;
             border-radius: 9999px;
