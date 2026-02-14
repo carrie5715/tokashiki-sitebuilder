@@ -8,18 +8,23 @@
   width: 100%;
   background: $base-color;
   color: $light-color;
+  position: relative;
+  .bg-title {
+    display: block;
+    color: var(--pcol-message-heading-color, var(--pcol-base-color-3));
+    white-space: nowrap;
+    line-height: 1;
+    margin-top: -0.1em;
+  }
 
   .container {
+    position: relative;
+    z-index: 10;
     max-width: 1000px;
     margin-inline: auto;
     padding: 5.5vw 5.5vw 12vw;
     @include pc {
       padding: 22px 22px 48px;
-    }
-    .section-title {
-      display: block;
-      color: $dark-color;
-      white-space: nowrap;
     }
     h2 {
       text-align: center;

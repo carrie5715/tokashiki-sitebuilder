@@ -114,6 +114,7 @@ br {
   display: inline-flex;
   white-space: nowrap;
   animation: bg-marquee 40s linear infinite;
+  line-height: 1 !important;
 }
 @keyframes bg-marquee {
   from {

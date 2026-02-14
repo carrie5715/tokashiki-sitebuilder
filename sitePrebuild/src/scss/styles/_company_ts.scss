@@ -1,24 +1,24 @@
 @use '../common/mixins' as *;
 
 #company {
-  .container {
-    .section-title {
-      $sp-fs: var(--company-bg-title-sp-fs);
-      $sp-fw: var(--company-bg-title-sp-fw);
-      $sp-lh: var(--company-bg-title-sp-lh);
-      $sp-ls: var(--company-bg-title-sp-ls);
-      font-size: $sp-fs;
-      font-weight: $sp-fw;
-      line-height: $sp-lh;
-      letter-spacing: $sp-ls;
-      @include pc {
-        font-size: var(--company-bg-title-pc-fs, $sp-fs);
-        font-weight: var(--company-bg-title-pc-fw, $sp-fw);
-        line-height: var(--company-bg-title-pc-lh, $sp-lh);
-        letter-spacing: var(--company-bg-title-pc-ls, $sp-ls);
-      }
+  .bg-title {
+    $sp-fs: var(--company-bg-title-sp-fs);
+    $sp-fw: var(--company-bg-title-sp-fw);
+    $sp-lh: var(--company-bg-title-sp-lh);
+    $sp-ls: var(--company-bg-title-sp-ls);
+    font-size: $sp-fs;
+    font-weight: $sp-fw;
+    // line-height: $sp-lh;
+    letter-spacing: $sp-ls;
+    @include pc {
+      font-size: var(--company-bg-title-pc-fs, $sp-fs);
+      font-weight: var(--company-bg-title-pc-fw, $sp-fw);
+      // line-height: var(--company-bg-title-pc-lh, $sp-lh);
+      letter-spacing: var(--company-bg-title-pc-ls, $sp-ls);
     }
+  }
 
+  .container {
     h2 {
       $sp-fs: var(--company-h2-sp-fs);
       $sp-fw: var(--company-h2-sp-fw);
