@@ -13,10 +13,6 @@
     display: block;
     color: var(--pcol-message-heading-color, var(--pcol-base-color-3));
     white-space: nowrap;
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
   }
 
   .container {
