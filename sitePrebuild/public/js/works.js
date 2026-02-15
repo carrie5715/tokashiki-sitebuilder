@@ -1,12 +1,14 @@
 addEventListener('alpine:init', () => {
-  Alpine.data('worksComponent', () => ({
+  Alpine.data('worksComponent', (key = 'works') => ({
+    key,
     items: [],
     swiper: null,
     loading: true,
     error: null,
     async init() {
       try {
-        const res = await fetch('data/works.json', { cache: 'no-store' });
+        const jsonName = key === 'works' ? 'works.json' : `${key}.json`;
+        const res = await fetch(`data/${jsonName}`, { cache: 'no-store' });
         if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
         const data = await res.json();
         this.items = Array.isArray(data) ? data : [];

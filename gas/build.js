@@ -334,8 +334,8 @@ const Build = {
         if (item.id === 'company') {
           sectionString += this.getCompanyContents() + '\n';
         }
-        if (item.id === 'works') {
-          sectionString += this.getWorksContents() + '\n';
+        if (/^works(\d+)?$/.test(item.id)) {
+          sectionString += this.getWorksContents(item.id) + '\n';
         }
         if (item.id === 'flow') {
           sectionString += this.getFlowContents() + '\n';
@@ -532,18 +532,26 @@ const Build = {
     return this.applyTagReplacements(template, replacements);
   },
 
-  /** works */
-  getWorksContents() {
+  /** works (works, works1, works2, ...) */
+  getWorksContents(sectionId) {
+    const sheetName = sectionId || 'works';
     const template = this.getTemplateFile('components', 'works');
-    let replacements = {};
-    if (typeof WorksInfo !== 'undefined' && typeof WorksInfo.getTemplateReplacements === 'function') {
-      replacements = WorksInfo.getTemplateReplacements();
-    } else {
-      replacements = {
-        section_title: Utils.getSheetValue('works', 'section_title') || '',
-        section_intro: Utils.getSheetValue('works', 'section_intro') || '',
-      };
+
+    // シート存在チェック（buildAll側でも事前検証するが、念のため）
+    try {
+      const ss = SpreadsheetApp.getActive();
+      const sh = ss.getSheetByName(sheetName);
+      if (!sh) throw new Error(`「${sheetName}」シートが見つかりません。`);
+    } catch (e) {
+      if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`worksテンプレ生成時にシート未検出: ${sheetName} - ${e.message}`, 'getWorksContents');
+      throw e;
     }
+
+    const replacements = {
+      section_id: sheetName,
+      section_title: Utils.getSheetValue(sheetName, 'section_title') || '',
+      section_intro: Utils.getSheetValue(sheetName, 'section_intro') || '',
+    };
     return this.applyTagReplacements(template, replacements);
   },
 
@@ -760,6 +768,41 @@ const Build = {
     items.sort((a, b) => a.order - b.order);
 
     return items;
+  },
+
+  /**
+   * コンテンツ表示順に基づき works / worksN シートの存在を検証し、対応する JSON を出力する
+   * @param {Array<{order:number,id:string,name?:string}>} order
+   */
+  prepareWorksSections(order) {
+    if (!order || order.length === 0) return;
+
+    const ss = SpreadsheetApp.getActive();
+    const handled = {};
+
+    order.forEach(item => {
+      const id = (item && item.id) ? String(item.id).trim() : '';
+      if (!id || !/^works(\d+)?$/.test(id)) return;
+      if (handled[id]) return;
+      handled[id] = true;
+
+      const sheetName = id;
+      const sh = ss.getSheetByName(sheetName);
+      if (!sh) {
+        const msg = `コンテンツ表示順のid=[${id}] に対応するシート「${sheetName}」が見つかりません。`;
+        if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(msg, 'prepareWorksSections');
+        throw new Error(msg);
+      }
+
+      if (typeof WorksInfo !== 'undefined' && typeof WorksInfo.buildFromSheet === 'function') {
+        try {
+          WorksInfo.buildFromSheet(sheetName);
+        } catch (e) {
+          if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`worksシート処理失敗: ${sheetName} - ${e.message}`, 'prepareWorksSections');
+          throw e;
+        }
+      }
+    });
   },
 
   /**

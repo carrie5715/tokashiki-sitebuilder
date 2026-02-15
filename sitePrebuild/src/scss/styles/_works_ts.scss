@@ -1,6 +1,6 @@
 @use '../common/mixins' as *;
 
-#works {
+.works-common {
   h2 {
     $sp-fs: var(--works-h2-sp-fs);
     $sp-fw: var(--works-h2-sp-fw);

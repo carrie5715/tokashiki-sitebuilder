@@ -60,19 +60,19 @@ var WorksInfo = (function () {
     return dict;
   }
 
-  function parseWorksItems_() {
+  function parseWorksItemsFromMap_(map) {
     const items = [];
     const maxN = 200; // worksは多めに想定
     for (let i = 1; i <= maxN; i++) {
-      const title = works[`card_${i}_title`];
-      const tagsStr = works[`card_${i}_tags`];
-      const desc = works[`card_${i}_description`];
-      const link = works[`card_${i}_link`];
-      const isExtRaw = works[`card_${i}_is_external`];
-      const layoutRaw = works[`card_${i}_image_layout`];
+      const title = map[`card_${i}_title`];
+      const tagsStr = map[`card_${i}_tags`];
+      const desc = map[`card_${i}_description`];
+      const link = map[`card_${i}_link`];
+      const isExtRaw = map[`card_${i}_is_external`];
+      const layoutRaw = map[`card_${i}_image_layout`];
 
-      const image1 = works[`card_${i}_image1`];
-      const image1_alt = works[`card_${i}_image1_alt`];
+      const image1 = map[`card_${i}_image1`];
+      const image1_alt = map[`card_${i}_image1_alt`];
       // 将来的に image2.. も対応
       const imgs = [];
       if (image1 && String(image1).trim()) {
@@ -121,7 +121,12 @@ var WorksInfo = (function () {
     return out;
   }
 
-  function writeWorksJson_(items) {
+  // 互換用: 既存処理はグローバルworksを使う
+  function parseWorksItems_() {
+    return parseWorksItemsFromMap_(works);
+  }
+
+  function writeJsonForSheet_(sheetKey, items) {
     try {
       const props = PropertiesService.getScriptProperties();
       const outRootId = props.getProperty(PROP_KEYS.OUTPUT_ID);
@@ -130,7 +135,7 @@ var WorksInfo = (function () {
       const dataFolder = Utils.getOrCreateSubFolder_(outRoot, 'data');
 
       const json = JSON.stringify(items || [], null, 2);
-      const filename = 'works.json';
+      const filename = `${sheetKey}.json`;
       const files = dataFolder.getFilesByName(filename);
       if (files.hasNext()) {
         const file = files.next();
@@ -141,14 +146,50 @@ var WorksInfo = (function () {
       }
 
       if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-        // Utils.logToSheet(`works.json を出力しました（${(items || []).length}件）`, 'WorksInfo');
+        // Utils.logToSheet(`${filename} を出力しました（${(items || []).length}件）`, 'WorksInfo');
       }
     } catch (e) {
       if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-        Utils.logToSheet(`works.json 出力エラー: ${e.message}`, 'WorksInfo');
+        Utils.logToSheet(`works系JSON 出力エラー: ${e.message}`, 'WorksInfo');
       }
       throw e;
     }
+  }
+
+  // 既存API互換: works.json 固定出力
+  function writeWorksJson_(items) {
+    return writeJsonForSheet_(SHEET_NAME, items);
+  }
+
+  // 任意のworks系シートから items を構築し JSON を出力
+  function buildFromSheet(sheetName) {
+    const ss = SpreadsheetApp.getActive();
+    const sh = ss.getSheetByName(sheetName);
+    if (!sh) throw new Error(`「${sheetName}」シートが見つかりません。`);
+
+    const values = sh.getDataRange().getValues();
+    if (!values || values.length === 0) {
+      writeJsonForSheet_(sheetName, []);
+      return { sheetName, items: [], ok: false };
+    }
+
+    const a1 = (values[0][0] != null ? String(values[0][0]).trim().toLowerCase() : '');
+    const b1 = (values[0][1] != null ? String(values[0][1]).trim().toLowerCase() : '');
+    const hasHeader = (a1 === 'key' && (b1 === 'value' || b1 === 'val' || b1 === '値'));
+
+    const localMap = {};
+    const startRow = hasHeader ? 1 : 0;
+    for (let r = startRow; r < values.length; r++) {
+      const key  = values[r][0] ? String(values[r][0]).trim() : '';
+      const val  = values[r][1] != null ? values[r][1] : '';
+      if (!key) continue;
+      localMap[key] = val;
+    }
+
+    const items = parseWorksItemsFromMap_(localMap);
+    writeJsonForSheet_(sheetName, items);
+    const ok = items && items.length > 0;
+    return { sheetName, items, ok };
   }
 
   // 公開API
@@ -228,5 +269,6 @@ var WorksInfo = (function () {
     getAll,
     parseWorksItems_: parseWorksItems_,
     writeWorksJson_: writeWorksJson_,
+    buildFromSheet: buildFromSheet,
   };
 })();

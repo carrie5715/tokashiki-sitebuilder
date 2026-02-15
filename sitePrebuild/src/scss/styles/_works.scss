@@ -1,6 +1,6 @@
 @use '../common/mixins' as *;
 
-#works {
+.works-common {
   $def-transition: all 0.5s ease-out 0.2s;
 
   $base-bg-color: var(--pcol-works-base-bg-color, var(--pcol-base-white, --col-white));

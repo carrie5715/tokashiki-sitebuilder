@@ -6,9 +6,10 @@ function onOpen() {
     var ui = SpreadsheetApp.getUi && SpreadsheetApp.getUi();
     if (!ui) return;
     ui.createMenu('サイト生成')
-      .addItem('シート読み取り', 'sheetReadAll')
-      .addItem('スタイル変数出力', 'exportStyleVariablesMenu')
-      .addItem('ファイル出力', 'buildAll')
+      .addItem('Step① シート読み取り', 'sheetReadAll')
+      .addItem('Step② スタイル変数出力', 'exportStyleVariablesMenu')
+      .addItem('Step③ ファイル出力準備', 'prepareOutputResourcesMenu')
+      .addItem('Step④ ファイル出力', 'buildAll')
       .addItem('出力をZIP作成（ダウンロード用）', 'zipOutput')
       .addItem('出力ZIPの共有リンク生成', 'zipOutputWithLink')
       .addSeparator()
@@ -190,6 +191,20 @@ function sheetReadAll() {
   Utils.logToSheet(`##### シート読み取り全て完了 処理時間: ${elapSec} 秒 #####`, 'sheetReadAll');
 }
 
+// 出力フォルダ確認と CSS / extend-css / 画像コピーをまとめた共通処理
+function prepareOutputResources_(sourceLabel) {
+  const label = sourceLabel || 'prepareOutputResources';
+  const ids = Build.checkDirectories();
+  SpreadsheetApp.getActive().toast('出力準備OK（フォルダ確認済み）', label, 3);
+  Utils.logToSheet('出力準備OK（フォルダ確認・作成完了）', label);
+
+  try { Build.copyAllCssFromTemplate(); } catch (e) { Utils.logToSheet(`テンプレCSSコピー失敗: ${e.message}`, label); }
+  try { Build.copyExtendCssFromTemplate(); } catch (e) { Utils.logToSheet(`extend-css コピー失敗: ${e.message}`, label); }
+  try { Build.copyAssetsToOutputImg(); } catch (e) { Utils.logToSheet(`assets→output/img コピー失敗: ${e.message}`, label); }
+
+  return ids;
+}
+
 
 function buildAll() {
   const stTime = new Date().getTime();
@@ -197,13 +212,8 @@ function buildAll() {
 
   try { if (typeof Utils !== 'undefined' && Utils.ensureUtilitySheets) { Utils.ensureUtilitySheets(); } } catch (e) {}
 
-  const ids = Build.checkDirectories();
-  SpreadsheetApp.getActive().toast('出力準備OK（フォルダ確認済み）', 'buildAll', 3);
-  Utils.logToSheet('出力準備OK（フォルダ確認・作成完了）', 'buildAll');
-
-  try { Build.copyAllCssFromTemplate(); } catch (e) { Utils.logToSheet(`テンプレCSSコピー失敗: ${e.message}`, 'buildAll'); }
-  try { Build.copyExtendCssFromTemplate(); } catch (e) { Utils.logToSheet(`extend-css コピー失敗: ${e.message}`, 'buildAll'); }
-  try { Build.copyAssetsToOutputImg(); } catch (e) { Utils.logToSheet(`assets→output/img コピー失敗: ${e.message}`, 'buildAll'); }
+  // 出力フォルダ確認 + CSS/画像コピー
+  const ids = prepareOutputResources_('buildAll');
 
   const common = CommonInfo.readAndRecordBasicSettings();
 
@@ -307,6 +317,18 @@ function buildAll() {
   }
 
   const order = Build.getContentOrder();
+
+  // works / worksN 用のシート存在チェックと JSON 出力
+  try {
+    if (typeof Build.prepareWorksSections === 'function') {
+      Build.prepareWorksSections(order);
+    }
+  } catch (e) {
+    Utils.logToSheet(`works系セクション準備中にエラー: ${e.message}`, 'buildAll');
+    SpreadsheetApp.getActive().toast('works セクションの準備中にエラーが発生しました。ログを確認してください。', 'buildAll', 6);
+    throw e;
+  }
+
   const mainHtml = Build.loadTemplates('top', order);
 
   var mvOk = !!(mvRes && mvRes.ok);
@@ -314,7 +336,9 @@ function buildAll() {
   var serviceOk = !!(serviceRes && serviceRes.ok);
   var companyOk = !!(companyRes && companyRes.ok);
   var faqOk = !!(faqRes && faqRes.ok);
-  var worksOk = !!(worksRes && worksRes.ok);
+  // works セクションが1つでもあれば works.js を必ず読み込む
+  var hasWorksSection = Array.isArray(order) && order.some(function(it){ return it && typeof it.id === 'string' && /^works(\d+)?$/.test(it.id); });
+  var worksOk = hasWorksSection;
   var flowOk = !!(flowRes && flowRes.ok);
   const scriptsTag = Build.buildScriptsTag({ mvOk, messageOk, serviceOk, faqOk, companyOk, worksOk, flowOk });
   const mainWithScripts = Build.applyTagReplacements(mainHtml, { scripts: scriptsTag });
@@ -391,6 +415,25 @@ function clearTemplateRootId() {
   SpreadsheetApp.getActive().toast('テンプレートIDをクリアしました', 'clearTemplateRootId', 3);
 }
 
+// 新メニュー: 出力フォルダ準備 + テンプレCSS/画像コピー
+function prepareOutputResourcesMenu() {
+  try {
+    const stTime = new Date().getTime();
+    prepareOutputResources_('prepareOutputResources');
+    const edTime = new Date().getTime();
+    const elapSec = ((edTime - stTime) / 1000).toFixed(2);
+    if (typeof Utils !== 'undefined' && Utils.logToSheet) {
+      Utils.logToSheet(`##### ファイル出力準備完了 処理時間: ${elapSec} 秒 #####`, 'prepareOutputResources');
+    }
+  } catch (e) {
+    if (typeof Utils !== 'undefined' && Utils.logToSheet) {
+      Utils.logToSheet('ファイル出力準備エラー: ' + e.message, 'prepareOutputResources');
+    }
+    SpreadsheetApp.getActive().toast('ファイル出力準備に失敗しました。ログを確認してください。', 'prepareOutputResources', 4);
+    throw e;
+  }
+}
+
 // 新メニュー: スタイル変数出力（base + theme_styles）
 function exportStyleVariablesMenu() {
   try {
@@ -409,6 +452,10 @@ function exportStyleVariablesMenu() {
     // 2) theme_styles シート由来の変数を追加出力
     if (typeof StyleVariables !== 'undefined' && StyleVariables.exportThemeStylesVariables) {
       StyleVariables.exportThemeStylesVariables(cssFolderId);
+    }
+    // 3) works / worksN セクション用のカラーCSSを works-variants.css として出力
+    if (typeof StyleVariables !== 'undefined' && typeof StyleVariables.exportWorksVariantsCss === 'function') {
+      StyleVariables.exportWorksVariantsCss(cssFolderId);
     }
     SpreadsheetApp.getActive().toast('スタイル変数を出力しました', 'exportStyleVariablesMenu', 3);
     const edTime = new Date().getTime();

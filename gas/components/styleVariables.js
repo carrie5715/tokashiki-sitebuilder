@@ -201,7 +201,7 @@ var StyleVariables = (function () {
 		}
 		Object.keys(outVars).forEach(k => { merged[k] = outVars[k]; });
 
-		// 1件も抽出できなければエラー
+ 		// 1件も抽出できなければエラー
 		const outCount = Object.keys(outVars).length;
 		if (!outCount) {
 			const msg = 'theme_styles から出力すべき変数が検出されませんでした（フォーマット要確認）';
@@ -216,9 +216,140 @@ var StyleVariables = (function () {
 		return { count: outCount, filename: res && res.filename };
 	}
 
+	// works / worksN シートのカラー設定から、works-variants.css を出力する
+	function exportWorksVariantsCss(folderId) {
+		try {
+			let cssFolderId = folderId;
+			if (!cssFolderId) {
+				const props = PropertiesService.getScriptProperties();
+				cssFolderId = props.getProperty(PROP_KEYS.OUTPUT_CSS_ID);
+			}
+			if (!cssFolderId) throw new Error('CSS 出力フォルダIDが不明です。Build.checkDirectories() 実行後に呼び出してください。');
+
+			const ss = SpreadsheetApp.getActive();
+			const sheets = ss.getSheets();
+			const targetNames = [];
+			for (let i = 0; i < sheets.length; i++) {
+				const name = sheets[i].getName();
+				if (/^works(\d+)?$/i.test(String(name || ''))) {
+					targetNames.push(String(name));
+				}
+			}
+			if (!targetNames.length) {
+				return { filename: 'works-variants.css', sections: 0 };
+			}
+			// 安定した順序で出力
+			targetNames.sort();
+
+			const blocks = [];
+			targetNames.forEach(function (sheetName) {
+				const sh = ss.getSheetByName(sheetName);
+				if (!sh) return;
+				const values = sh.getDataRange().getValues();
+				if (!values || !values.length) return;
+
+				const a1 = (values[0][0] != null ? String(values[0][0]).trim().toLowerCase() : '');
+				const b1 = (values[0][1] != null ? String(values[0][1]).trim().toLowerCase() : '');
+				const hasHeader = (a1 === 'key' && (b1 === 'value' || b1 === 'val' || b1 === '値'));
+				const startRow = hasHeader ? 1 : 0;
+				const localMap = {};
+				for (let r = startRow; r < values.length; r++) {
+					const key = values[r][0] ? String(values[r][0]).trim() : '';
+					const val = values[r][1] != null ? values[r][1] : '';
+					if (!key) continue;
+					localMap[key] = val;
+				}
+
+				function val(key) {
+					const v = localMap[key];
+					if (v == null) return '';
+					const s = String(v).trim();
+					return s;
+				}
+
+				const baseBg = val('base_bg_color');
+				const baseText = val('base_text_color');
+				const baseTagBg = val('base_tag_bg');
+				const baseTagText = val('base_tag_text');
+				const accBg = val('acc_bg_color');
+				const accText = val('acc_text_color');
+				const accTagBg = val('acc_tag_bg');
+				const accTagText = val('acc_tag_text');
+
+				const lines = [];
+				lines.push(`/* ${sheetName} */`);
+
+				const rootProps = [];
+				if (baseBg) rootProps.push(`  background: ${baseBg};`);
+				if (baseText) rootProps.push(`  color: ${baseText};`);
+				if (rootProps.length) {
+					lines.push(`#${sheetName} {`);
+					Array.prototype.push.apply(lines, rootProps);
+					lines.push('}');
+					lines.push('');
+				}
+
+				const tagProps = [];
+				if (baseTagText) tagProps.push(`  color: ${baseTagText};`);
+				if (baseTagBg) tagProps.push(`  background: ${baseTagBg};`);
+				if (tagProps.length) {
+					lines.push(`#${sheetName} .works-swiper .swiper-slide .work-tags .tag {`);
+					Array.prototype.push.apply(lines, tagProps);
+					lines.push('}');
+					lines.push('');
+				}
+
+				const revRootProps = [];
+				if (accText) revRootProps.push(`  color: ${accText};`);
+				if (accBg) revRootProps.push(`  background: ${accBg};`);
+				if (revRootProps.length) {
+					lines.push(`#${sheetName}.reverse {`);
+					Array.prototype.push.apply(lines, revRootProps);
+					lines.push('}');
+					lines.push('');
+				}
+
+				const revTagProps = [];
+				if (accTagText) revTagProps.push(`  color: ${accTagText};`);
+				if (accTagBg) revTagProps.push(`  background: ${accTagBg};`);
+				if (revTagProps.length) {
+					lines.push(`#${sheetName}.reverse .works-swiper .swiper-slide .work-tags .tag {`);
+					Array.prototype.push.apply(lines, revTagProps);
+					lines.push('}');
+					lines.push('');
+				}
+
+				blocks.push(lines.join('\n'));
+			});
+
+			const cssText = blocks.join('\n').trim() + '\n';
+			const folder = DriveApp.getFolderById(cssFolderId);
+			const filename = 'works-variants.css';
+			const it = folder.getFilesByName(filename);
+			if (it.hasNext()) {
+				const file = it.next();
+				file.setContent(cssText);
+			} else {
+				const blob = Utilities.newBlob(cssText, 'text/css', filename);
+				folder.createFile(blob);
+			}
+
+			if (typeof Utils !== 'undefined' && Utils.logToSheet) {
+				Utils.logToSheet(`works-variants.css を出力しました（セクション ${targetNames.length} 件）`, 'StyleVariables');
+			}
+			return { filename: filename, sections: targetNames.length };
+		} catch (e) {
+			if (typeof Utils !== 'undefined' && Utils.logToSheet) {
+				Utils.logToSheet(`works-variants.css 出力エラー: ${e.message}`, 'StyleVariables');
+			}
+			throw e;
+		}
+	}
+
 	return {
 		writeVariablesCss,
 		exportThemeStylesVariables,
+		exportWorksVariantsCss,
 	};
 })();
 
