@@ -201,6 +201,7 @@ function prepareOutputResources_(sourceLabel) {
   try { Build.copyAllCssFromTemplate(); } catch (e) { Utils.logToSheet(`テンプレCSSコピー失敗: ${e.message}`, label); }
   try { Build.copyExtendCssFromTemplate(); } catch (e) { Utils.logToSheet(`extend-css コピー失敗: ${e.message}`, label); }
   try { Build.copyAssetsToOutputImg(); } catch (e) { Utils.logToSheet(`assets→output/img コピー失敗: ${e.message}`, label); }
+  try { if (Build.copyAssetsToOutputCustomStyles) { Build.copyAssetsToOutputCustomStyles(); } } catch (e) { Utils.logToSheet(`assets→output/custom-styles コピー失敗: ${e.message}`, label); }
 
   return ids;
 }

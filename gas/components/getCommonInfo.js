@@ -7,6 +7,8 @@ var cssVars   = cssVars || {};
 var colorVars = colorVars || {};
 // body に付与するクラスの蓄積（重複排除して出力）
 var bodyClassBag = bodyClassBag || [];
+// 基本設定シートの custom_css 行から取得した CSS パス配列
+var customCssPaths = customCssPaths || [];
 
 var CommonInfo = (function () {
   const BASIC_SHEET_NAME      = '基本設定';
@@ -56,6 +58,9 @@ var CommonInfo = (function () {
 
     const values = sh.getDataRange().getValues();
     if (!values || values.length <= 1) return [];
+
+    // 毎回読み直し時に custom_css パスをリセット
+    customCssPaths = [];
 
     // 1行目はヘッダ
     const rows = [];
@@ -123,6 +128,13 @@ var CommonInfo = (function () {
         // 追加: 字間
         addCssVar('--base-letter-spacing', String(val).trim());
         category = 'variables';
+      } else if (key === 'custom_css') {
+        // カスタムCSSパス（例: "custom-styles/foo.css" や "css/custom.css"）を配列に蓄積
+        const path = String(val || '').trim();
+        if (path) {
+          customCssPaths.push(path);
+        }
+        category = 'custom_css';
       } else {
         // 対象外はスキップ（必要なら 'others' に積む）
         continue;
@@ -290,6 +302,24 @@ var CommonInfo = (function () {
     return uniq.join(' ');
   }
 
+  // 基本設定シート由来の custom_css パスから <link> タグ群を構築
+  function getCustomCssItemsHtml() {
+    if (!customCssPaths || customCssPaths.length === 0) return '';
+    const uniq = Array.from(new Set(customCssPaths.map(v => String(v || '').trim()).filter(Boolean)));
+    if (uniq.length === 0) return '';
+    const escAttr = function (s) {
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    };
+    const tags = uniq.map(function (href) {
+      return '<link rel="stylesheet" href="' + escAttr(href) + '" />';
+    });
+    return tags.join('\n');
+  }
+
   return {
     readAndRecordBasicSettings,
     read,
@@ -301,6 +331,7 @@ var CommonInfo = (function () {
     addBodyClass,
     resetBodyClasses,
     getBodyClassesString,
+    getCustomCssItemsHtml,
     // reset/removeParametersSheet は廃止
     // 必要ならエクスポート
     readBasicSettings_: read,

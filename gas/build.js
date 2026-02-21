@@ -10,14 +10,16 @@ const Build = {
       throw new Error('親フォルダなし');
     }
 
-    const assets    = Utils.getOrCreateSubFolder_(parent, DIR_ASSETS);
-    const assetsImg = Utils.getOrCreateSubFolder_(assets, ASSETS_IMG);
+  const assets           = Utils.getOrCreateSubFolder_(parent, DIR_ASSETS);
+  const assetsImg        = Utils.getOrCreateSubFolder_(assets, ASSETS_IMG);
+  const assetsCustomCss  = Utils.getOrCreateSubFolder_(assets, ASSETS_CUSTOM_STYLES);
 
-    const output = Utils.getOrCreateSubFolder_(parent, DIR_OUTPUT);
-    const outCss       = Utils.getOrCreateSubFolder_(output, OUT_CSS);
-    const outExtendCss = Utils.getOrCreateSubFolder_(output, OUT_EXTEND_CSS);
-    const outJs        = Utils.getOrCreateSubFolder_(output, OUT_JS);
-    const outImg       = Utils.getOrCreateSubFolder_(output, OUT_IMG);
+    const output           = Utils.getOrCreateSubFolder_(parent, DIR_OUTPUT);
+    const outCss           = Utils.getOrCreateSubFolder_(output, OUT_CSS);
+    const outExtendCss     = Utils.getOrCreateSubFolder_(output, OUT_EXTEND_CSS);
+    const outCustomStyles  = Utils.getOrCreateSubFolder_(output, OUT_CUSTOM_STYLES);
+    const outJs            = Utils.getOrCreateSubFolder_(output, OUT_JS);
+    const outImg           = Utils.getOrCreateSubFolder_(output, OUT_IMG);
     // ルート直下 info フォルダとその配下
     const infoRoot      = Utils.getOrCreateSubFolder_(parent, DIR_INFO);
     const infoSnapshot  = Utils.getOrCreateSubFolder_(infoRoot, INFO_SNAPSHOT);
@@ -27,9 +29,11 @@ const Build = {
       [PROP_KEYS.PARENT_ID]: parent.getId(),
       [PROP_KEYS.ASSETS_ID]: assets.getId(),
       [PROP_KEYS.ASSETS_IMG_ID]: assetsImg.getId(),
+      [PROP_KEYS.ASSETS_CUSTOM_STYLES_ID]: assetsCustomCss.getId(),
       [PROP_KEYS.OUTPUT_ID]: output.getId(),
       [PROP_KEYS.OUTPUT_CSS_ID]: outCss.getId(),
       [PROP_KEYS.OUTPUT_EXTEND_CSS_ID]: outExtendCss.getId(),
+      [PROP_KEYS.OUTPUT_CUSTOM_STYLES_ID]: outCustomStyles.getId(),
       [PROP_KEYS.OUTPUT_JS_ID]: outJs.getId(),
       [PROP_KEYS.OUTPUT_IMG_ID]: outImg.getId(),
       [PROP_KEYS.INFO_ID]: infoRoot.getId(),
@@ -39,8 +43,19 @@ const Build = {
 
     return {
       parentId: parent.getId(),
-      assets: { rootId: assets.getId(), imgId: assetsImg.getId() },
-      output: { rootId: output.getId(), cssId: outCss.getId(), extendCssId: outExtendCss.getId(), jsId: outJs.getId(), imgId: outImg.getId() },
+      assets: {
+        rootId: assets.getId(),
+        imgId: assetsImg.getId(),
+        customStylesId: assetsCustomCss.getId(),
+      },
+      output: {
+        rootId: output.getId(),
+        cssId: outCss.getId(),
+        extendCssId: outExtendCss.getId(),
+        customStylesId: outCustomStyles.getId(),
+        jsId: outJs.getId(),
+        imgId: outImg.getId(),
+      },
       info: { rootId: infoRoot.getId(), snapshotId: infoSnapshot.getId(), logsId: infoLogs.getId() },
     };
   },
@@ -177,6 +192,23 @@ const Build = {
 
     const count = this.copyFolderContents_(src, dst);
     // if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`assets/img → output/img: ${count}ファイル`, 'copyAssetsToOutputImg');
+    return count;
+  },
+
+  /**
+   * assets/custom-styles 配下の全ファイル・フォルダを output/custom-styles に再帰コピー（同名は上書き）
+   * @returns {number} コピー（新規作成+上書き）したファイル数
+   */
+  copyAssetsToOutputCustomStyles() {
+    const assetsCustomId = PropertiesService.getScriptProperties().getProperty(PROP_KEYS.ASSETS_CUSTOM_STYLES_ID);
+    const outCustomId    = PropertiesService.getScriptProperties().getProperty(PROP_KEYS.OUTPUT_CUSTOM_STYLES_ID);
+    if (!assetsCustomId) throw new Error('ASSETS_CUSTOM_STYLES_ID が未設定です。Build.checkDirectories() を先に呼んでください。');
+    if (!outCustomId)    throw new Error('OUTPUT_CUSTOM_STYLES_ID が未設定です。Build.checkDirectories() を先に呼んでください。');
+
+    const src = DriveApp.getFolderById(assetsCustomId);
+    const dst = DriveApp.getFolderById(outCustomId);
+
+    const count = this.copyFolderContents_(src, dst);
     return count;
   },
 
@@ -382,6 +414,11 @@ const Build = {
       if (typeof CommonInfo !== 'undefined' && CommonInfo.getBodyClassesString) {
         const bodyCls = CommonInfo.getBodyClassesString();
         metaRepl.body_classes = bodyCls;
+      }
+      // 基本設定シートの custom_css から <link> タグ群を差し込み
+      if (typeof CommonInfo !== 'undefined' && CommonInfo.getCustomCssItemsHtml) {
+        const customItems = CommonInfo.getCustomCssItemsHtml();
+        metaRepl.custom_css_items = customItems || '';
       }
     } catch (e) {
       // noop
@@ -590,14 +627,44 @@ const Build = {
     try { const items = this.getNavItemsFromSheet_(); navHtml = this.buildNavLis_(items); } catch (e) { if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`ヘッダーナビ生成失敗: ${e.message}`, 'getHeaderContents'); }
     const s = (typeof siteInfos !== 'undefined') ? siteInfos : {};
     const get = (k) => { if (s && s[k] != null && String(s[k]).trim() !== '') return String(s[k]); try { return String(Utils.getSheetValue('基本設定', k) || ''); } catch (_) { return ''; } };
-    const logoUrl = get('logo_url') || '/images/logo.png';
+
+    const rawLogoUrl = get('logo_url');
+    const hasLogo = !!(rawLogoUrl && String(rawLogoUrl).trim() !== '');
+    const logoUrl = hasLogo ? String(rawLogoUrl).trim() : '';
+    const companyName = String(get('company_name') || '').trim();
+
+    // ロゴ部分のHTML: logo_url が空なら company_name をテキスト表示
+    const escAttr = (v) => String(v)
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    const escHtml = (v) => String(v)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+
+    let headerLogoHtml = '';
+    if (hasLogo) {
+      headerLogoHtml = `<img src="${escAttr(logoUrl)}" alt="Logo">`;
+    } else if (companyName) {
+      headerLogoHtml = `<span class="company-name">${escHtml(companyName)}</span>`;
+    }
+
     const contactUrl = get('contact_url') || '';
     const extRaw = get('contact_is_external');
     const isExternal = (function(v){ if (v == null) return false; if (typeof v === 'boolean') return v; if (typeof v === 'number') return v !== 0; const s2 = String(v).trim().toLowerCase(); return ['true','1','yes','y','on'].includes(s2); })(extRaw);
     const contactTarget = isExternal ? '_blank' : '_self';
     let headerContactHtml = '';
     try { const contactItems = this.getHeaderContactItemsFromContactSheet_(); headerContactHtml = this.buildHeaderContactLis_(contactItems); } catch (e) { if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`ヘッダー用contact生成失敗: ${e.message}`, 'getHeaderContents'); }
-    return this.applyTagReplacements(template, { header_nav: navHtml, header_contact: headerContactHtml, logo_url: logoUrl, contact_url: contactUrl, contact_is_external: contactTarget });
+    return this.applyTagReplacements(template, {
+      header_nav: navHtml,
+      header_contact: headerContactHtml,
+      logo_url: logoUrl,
+      header_logo: headerLogoHtml,
+      contact_url: contactUrl,
+      contact_is_external: contactTarget
+    });
   },
 
   /** footer */

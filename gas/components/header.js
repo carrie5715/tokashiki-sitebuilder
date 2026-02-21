@@ -135,7 +135,8 @@ var HeaderInfo = (function () {
   function read() {
     const s = (typeof siteInfos !== 'undefined') ? siteInfos : {};
     const get = (k) => (s && s[k] != null && String(s[k]).trim() !== '') ? String(s[k]).trim() : '';
-    header.logo_url = get('logo_url') || '/images/logo.png';
+    header.logo_url = get('logo_url') || '';
+    header.company_name = get('company_name') || '';
     header.contact_url = get('contact_url') || '';
     const extRaw = get('contact_is_external');
     header.contact_is_external = (function(v){
@@ -234,10 +235,32 @@ var HeaderInfo = (function () {
     if (!header.navItems || !header.contactItems || !header.logo_url) {
       read();
     }
+    const escAttr = (v) => String(v)
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    const escHtml = (v) => String(v)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+
+    const hasLogo = !!(header.logo_url && String(header.logo_url).trim() !== '');
+    const logoUrl = hasLogo ? String(header.logo_url).trim() : '';
+    const companyName = String(header.company_name || '').trim();
+
+    let headerLogoHtml = '';
+    if (hasLogo) {
+      headerLogoHtml = `<img src="${escAttr(logoUrl)}" alt="Logo">`;
+    } else if (companyName) {
+      headerLogoHtml = `<span class="company-name">${escHtml(companyName)}</span>`;
+    }
+
     return {
       header_nav: buildNavLis_(header.navItems),
       header_contact: buildHeaderContactLis_(header.contactItems),
       logo_url: header.logo_url,
+      header_logo: headerLogoHtml,
       contact_url: header.contact_url,
       contact_is_external: header.contact_is_external,
     };

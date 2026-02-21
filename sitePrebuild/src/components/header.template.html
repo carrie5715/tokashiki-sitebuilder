@@ -2,7 +2,13 @@
 <header x-data="headerComponent" data-component-name="header">
   <div class="header-wrap">
     <div class="logo" data-target-name="header_logo">
-      <img src="<?= logo_url ?>" alt="Logo">
+      <!-- ロゴ領域:
+        - logo_url に値がある場合:
+          <img src="<?= logo_url ?>" alt="Logo">
+        - logo_url が空で company_name がある場合:
+          <span class="company-name"><?= company_name ?></span>
+        （実際の出力は Build.getHeaderContents で header_logo に埋め込まれます） -->
+      <?= header_logo ?>
     </div>
     <ul class="header-nav" data-target-name="header_nav">
       <!-- <li><a @click.prevent="onItemClick" href="#message">メッセージ</a></li> -->
