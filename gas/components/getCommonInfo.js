@@ -48,7 +48,9 @@ var CommonInfo = (function () {
     'theme_color', 'base_color1', 'base_color2', 'base_color3',
     'base_white', 'base_black', 'base_gray1', 'base_gray2',
     // 追加: ロゴカラー
-    'logo_color'
+    'logo_color',
+    // 追加: メインCTAカラー
+    'maincta_color'
   ];
 
   // 基本設定シートを読み込み、siteInfos/colors を更新し、行データを返す
@@ -206,19 +208,23 @@ var CommonInfo = (function () {
       if (val == null || String(val).trim() === '') continue;
       val = String(val).trim();
 
-        // 特別扱い: logo_color は --pcol-logo-color にマッピング
-        if (key === 'logo_color') {
-          decls.push(`  --pcol-logo-color: ${val};`);
-          continue;
-        }
+      // 特別扱い: logo_color / maincta_color は固定名にマッピング
+      if (key === 'logo_color') {
+        decls.push(`  --pcol-logo-color: ${val};`);
+        continue;
+      }
+      if (key === 'maincta_color') {
+        decls.push(`  --pcol-maincta-color: ${val};`);
+        continue;
+      }
 
-  // snake_case → kebab-case、'color' トークンは除去、英字-数字の境界にハイフン
+      // snake_case → kebab-case、'color' トークンは除去、英字-数字の境界にハイフン
       const tokens = key.toLowerCase().split('_').filter(Boolean).filter(t => t !== 'color');
       const normTokens = tokens.map(t => t.replace(/([a-z]+)(\d+)/i, '$1-$2'));
       const suffix = normTokens.join('-');
       if (!suffix) continue;
-  // 変数接頭辞を --pcol- に統一（旧 --color- は廃止）
-  const varName = `--pcol-${suffix}`;
+      // 変数接頭辞を --pcol- に統一（旧 --color- は廃止）
+      const varName = `--pcol-${suffix}`;
       decls.push(`  ${varName}: ${val};`);
     }
 
