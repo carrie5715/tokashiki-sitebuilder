@@ -1,0 +1,74 @@
+@use '../common/mixins' as *;
+
+header {
+  .header-wrap {
+    .logo {
+      img {
+      }
+      .company-name {
+        $sp-fs: var(--header-company-name-sp-fs);
+        $sp-fw: var(--header-company-name-sp-fw);
+        $sp-lh: var(--header-company-name-sp-lh);
+        $sp-ls: var(--header-company-name-sp-ls);
+        font-size: $sp-fs;
+        font-weight: $sp-fw;
+        line-height: $sp-lh;
+        letter-spacing: $sp-ls;
+        @include pc {
+          font-size: var(--header-company-name-pc-fs, $sp-fs);
+          font-weight: var(--header-company-name-pc-fw, $sp-fw);
+          line-height: var(--header-company-name-pc-lh, $sp-lh);
+          letter-spacing: var(--header-company-name-pc-ls, $sp-ls);
+        }
+      }
+    }
+    .header-nav {
+      li {
+        a {
+        }
+      }
+    }
+    .button-wrap {
+      a {
+      }
+    }
+  }
+  .header-drawer-menu {
+    .button-wrap {
+      .hamburger {
+        span {
+        }
+        &::before {
+        }
+        &::after {
+        }
+      }
+    }
+    .modal-bg {
+    }
+    .drawer-wrap {
+    }
+    .drawer-nav {
+      li {
+        a {
+        }
+      }
+    }
+    &.open {
+      .button-wrap {
+        .hamburger {
+          span {
+          }
+          &::before {
+          }
+          &::after {
+          }
+        }
+      }
+      .modal-bg {
+      }
+      .drawer-wrap {
+      }
+    }
+  }
+}

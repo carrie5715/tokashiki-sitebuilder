@@ -1,16 +1,47 @@
-.sans {
-  font-family: "Noto Sans JP", sans-serif;
+$fontface-sans: 'Noto Sans JP', sans-serif;
+$fontface-serif: 'Noto Serif JP', serif;
+$fontface-rounded: 'M PLUS Rounded 1c', sans-serif;
+$fontface-roboto: 'Roboto', sans-serif;
+$fontface-jost: 'Jost', sans-serif;
+$fontface-lato: 'Lato', sans-serif;
+
+:root {
+  --font-sans: #{$fontface-sans};
+  --font-serif: #{$fontface-serif};
+  --font-rounded: #{$fontface-rounded};
+  --font-roboto: #{$fontface-roboto};
+  --font-jost: #{$fontface-jost};
+  --font-lato: #{$fontface-lato};
+}
+
+.font-sans {
+  font-family: $fontface-sans;
   font-optical-sizing: auto;
   font-style: normal;
 }
 
-.serif {
-  font-family: "Noto Serif JP", serif;
+.font-serif {
+  font-family: $fontface-serif;
   font-optical-sizing: auto;
   font-style: normal;
 }
 
-.rounded {
-  font-family: "M PLUS Rounded 1c", sans-serif;
+.font-rounded {
+  font-family: $fontface-rounded;
+  font-style: normal;
+}
+
+.font-roboto {
+  font-family: $fontface-roboto;
+  font-style: normal;
+}
+
+.font-jost {
+  font-family: $fontface-jost;
+  font-style: normal;
+}
+
+.font-lato {
+  font-family: $fontface-lato;
   font-style: normal;
 }

@@ -46,7 +46,9 @@ var CommonInfo = (function () {
   ];
   const COLOR_KEYS = [
     'theme_color', 'base_color1', 'base_color2', 'base_color3',
-    'base_white', 'base_black', 'base_gray1', 'base_gray2'
+    'base_white', 'base_black', 'base_gray1', 'base_gray2',
+    // 追加: ロゴカラー
+    'logo_color'
   ];
 
   // 基本設定シートを読み込み、siteInfos/colors を更新し、行データを返す
@@ -128,6 +130,21 @@ var CommonInfo = (function () {
         // 追加: 字間
         addCssVar('--base-letter-spacing', String(val).trim());
         category = 'variables';
+      } else if (key === 'base_en_font') {
+        // 英文用フォント指定 → CSS変数 --base-en-fontfamily へマッピング
+        const name = String(val || '').trim();
+        let cssVal = '';
+        if (name === 'Jost') {
+          cssVal = 'var(--font-jost)';
+        } else if (name === 'Lato') {
+          cssVal = 'var(--font-lato)';
+        } else if (name === 'Roboto') {
+          cssVal = 'var(--font-roboto)';
+        }
+        if (cssVal) {
+          addCssVar('--base-en-fontfamily', cssVal);
+        }
+        category = 'variables';
       } else if (key === 'custom_css') {
         // カスタムCSSパス（例: "custom-styles/foo.css" や "css/custom.css"）を配列に蓄積
         const path = String(val || '').trim();
@@ -148,9 +165,9 @@ var CommonInfo = (function () {
   function mapBaseFontToClass_(v) {
     const s = String(v || '').trim();
     if (!s) return '';
-    if (s === 'ゴシック') return 'sans';
-    if (s === '明朝') return 'serif';
-    if (s === '丸ゴシック') return 'rounded';
+    if (s === 'ゴシック') return 'font-sans';
+    if (s === '明朝') return 'font-serif';
+    if (s === '丸ゴシック') return 'font-rounded';
     // 不明値は何もしない
     return '';
   }
@@ -188,6 +205,12 @@ var CommonInfo = (function () {
       let val = obj[key];
       if (val == null || String(val).trim() === '') continue;
       val = String(val).trim();
+
+        // 特別扱い: logo_color は --pcol-logo-color にマッピング
+        if (key === 'logo_color') {
+          decls.push(`  --pcol-logo-color: ${val};`);
+          continue;
+        }
 
   // snake_case → kebab-case、'color' トークンは除去、英字-数字の境界にハイフン
       const tokens = key.toLowerCase().split('_').filter(Boolean).filter(t => t !== 'color');
