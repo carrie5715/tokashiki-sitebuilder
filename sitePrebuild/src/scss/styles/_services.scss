@@ -13,7 +13,7 @@
     text-align: center;
     padding-bottom: 3.2vw;
     position: relative;
-    @include pc {
+    @include tab {
       padding-bottom: 16px;
     }
     &::after {
@@ -28,7 +28,7 @@
       right: 0;
       margin: auto;
       position: absolute;
-      @include pc {
+      @include tab {
         width: 60px;
         height: 4px;
       }
@@ -43,7 +43,7 @@
     text-align: center;
     padding: 4vw;
     margin-bottom: 4.8vw;
-    @include pc {
+    @include tab {
       padding: 32px;
       margin-bottom: 24px;
     }
@@ -53,7 +53,7 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: 20vw;
-    @include pc {
+    @include tab {
       gap: 24px;
     }
   }
@@ -62,7 +62,7 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
-    @include pc {
+    @include tab {
       gap: 32px;
       flex-direction: row;
     }
@@ -71,7 +71,7 @@
       width: 100%;
       margin: 0;
       overflow: hidden;
-      @include pc {
+      @include tab {
         width: 40%;
       }
       img {
@@ -80,7 +80,7 @@
       }
     }
     .service-body {
-      @include pc {
+      @include tab {
         width: 60%;
       }
 
@@ -98,12 +98,12 @@
       }
       .service-desc {
         margin-top: 2vw;
-        @include pc {
+        @include tab {
           margin-top: 16px;
         }
       }
       .service-tags {
-        @include pc {
+        @include tab {
           margin-top: 16px;
         }
         .tag {
@@ -114,7 +114,7 @@
         display: flex;
         justify-content: center;
         padding-top: 4vw;
-        @include pc {
+        @include tab {
           justify-content: flex-end;
           padding-top: 16px;
         }

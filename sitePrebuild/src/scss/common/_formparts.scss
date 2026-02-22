@@ -26,7 +26,7 @@ select {
   display: flex;
   align-items: center;
   justify-content: center;
-  @include pc {
+  @include tab {
     border: 2px solid var(--col-base-green);
     height: 60px;
     background-size: 20px;
@@ -59,7 +59,7 @@ select {
       background: var(--col-base-green);
       color: var(--col-white);
     }
-    @include pc {
+    @include tab {
       border: 2px solid var(--col-base-green);
       height: 60px;
       font-size: 1.8rem;
@@ -85,7 +85,7 @@ textarea {
   &::placeholder {
     color: var(--col-gray2);
   }
-  @include pc {
+  @include tab {
     border: 2px solid var(--col-base-green);
   }
 }
@@ -100,7 +100,7 @@ textarea {
   input[type='email'],
   input[type='tel'] {
     background: var(--col-pink);
-    @include pc {
+    @include tab {
       background: var(--col-pink);
     }
   }
@@ -115,7 +115,7 @@ textarea {
   display: flex;
   align-items: center;
   height: 20px;
-  @include pc {
+  @include tab {
     font-size: 1.8rem;
     min-height: 36px;
   }
@@ -138,7 +138,7 @@ textarea {
         border-left: 3px solid var(--col-white);
         border-bottom: 3px solid var(--col-white);
         transform: rotate(-45deg);
-        @include pc {
+        @include tab {
           top: 10px;
           left: 7px;
           width: 18px;
@@ -156,7 +156,7 @@ textarea {
     user-select: none;
     line-height: 20px;
     display: inline-block;
-    @include pc {
+    @include tab {
       padding-left: 54px;
       line-height: 36px;
     }
@@ -171,7 +171,7 @@ textarea {
       border: 1px solid var(--col-gray2);
       border-radius: 4px;
       background: var(--col-white);
-      @include pc {
+      @include tab {
         width: 36px;
         height: 36px;
         border: 2px solid var(--col-gray2);
@@ -184,7 +184,7 @@ textarea {
   display: inline-block;
   width: 100%;
   padding-bottom: 6px;
-  @include pc {
+  @include tab {
     width: auto;
   }
   button {
@@ -213,7 +213,7 @@ textarea {
       color: white;
       letter-spacing: 0.15em;
       transition: all 0.2s ease-out;
-      @include pc {
+      @include tab {
         font-size: 2.4rem;
         height: 90px;
         width: 600px;
@@ -231,7 +231,7 @@ textarea {
       margin: auto;
       background: url(../img/icon/ic_chevron_right.svg) no-repeat center center / 100% auto;
       z-index: 12;
-      @include pc {
+      @include tab {
         width: 24px;
         height: 24px;
       }
@@ -248,7 +248,7 @@ textarea {
       background: var(--col-light-green);
       z-index: 0;
       transition: all 0.2s ease-out;
-      @include pc {
+      @include tab {
         height: 90px;
         width: 600px;
       }

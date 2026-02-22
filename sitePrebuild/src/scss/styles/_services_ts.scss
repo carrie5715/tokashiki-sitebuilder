@@ -10,7 +10,7 @@
     font-weight: $sp-fw;
     line-height: $sp-lh;
     letter-spacing: $sp-ls;
-    @include pc {
+    @include tab {
       font-size: var(--service-h2-pc-fs, $sp-fs);
       font-weight: var(--service-h2-pc-fw, $sp-fw);
       line-height: var(--service-h2-pc-lh, $sp-lh);
@@ -26,7 +26,7 @@
       font-weight: $sp-fw;
       line-height: $sp-lh;
       letter-spacing: $sp-ls;
-      @include pc {
+      @include tab {
         font-size: var(--service-h2-sub-pc-fs, $sp-fs);
         font-weight: var(--service-h2-sub-pc-fw, $sp-fw);
         line-height: var(--service-h2-sub-pc-lh, $sp-lh);
@@ -44,7 +44,7 @@
     font-weight: $sp-fw;
     line-height: $sp-lh;
     letter-spacing: $sp-ls;
-    @include pc {
+    @include tab {
       font-size: var(--service-section-lead-pc-fs, $sp-fs);
       font-weight: var(--service-section-lead-pc-fw, $sp-fw);
       line-height: var(--service-section-lead-pc-lh, $sp-lh);
@@ -64,7 +64,7 @@
           font-weight: $sp-fw;
           line-height: $sp-lh;
           letter-spacing: $sp-ls;
-          @include pc {
+          @include tab {
             font-size: var(--service-title-pc-fs, $sp-fs);
             font-weight: var(--service-title-pc-fw, $sp-fw);
             line-height: var(--service-title-pc-lh, $sp-lh);
@@ -80,7 +80,7 @@
           font-weight: $sp-fw;
           line-height: $sp-lh;
           letter-spacing: $sp-ls;
-          @include pc {
+          @include tab {
             font-size: var(--service-title-sub-pc-fs, $sp-fs);
             font-weight: var(--service-title-sub-pc-fw, $sp-fw);
             line-height: var(--service-title-sub-pc-lh, $sp-lh);
@@ -97,7 +97,7 @@
         font-weight: $sp-fw;
         line-height: $sp-lh;
         letter-spacing: $sp-ls;
-        @include pc {
+        @include tab {
           font-size: var(--service-description-pc-fs, $sp-fs);
           font-weight: var(--service-description-pc-fw, $sp-fw);
           line-height: var(--service-description-pc-lh, $sp-lh);
@@ -114,7 +114,7 @@
           font-weight: $sp-fw;
           line-height: $sp-lh;
           letter-spacing: $sp-ls;
-          @include pc {
+          @include tab {
             font-size: var(--service-tag-pc-fs, $sp-fs);
             font-weight: var(--service-tag-pc-fw, $sp-fw);
             line-height: var(--service-tag-pc-lh, $sp-lh);
@@ -131,7 +131,7 @@
         font-weight: $sp-fw;
         line-height: $sp-lh;
         letter-spacing: $sp-ls;
-        @include pc {
+        @include tab {
           font-size: var(--service-btn-pc-fs, $sp-fs);
           font-weight: var(--service-btn-pc-fw, $sp-fw);
           line-height: var(--service-btn-pc-lh, $sp-lh);
@@ -148,7 +148,7 @@
           font-weight: $sp-fw;
           line-height: $sp-lh;
           letter-spacing: $sp-ls;
-          @include pc {
+          @include tab {
             font-size: var(--service-notice-pc-fs, $sp-fs);
             font-weight: var(--service-notice-pc-fw, $sp-fw);
             line-height: var(--service-notice-pc-lh, $sp-lh);

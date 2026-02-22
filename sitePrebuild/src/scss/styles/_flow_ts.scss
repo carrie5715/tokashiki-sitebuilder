@@ -10,7 +10,7 @@
     font-weight: $sp-fw;
     line-height: $sp-lh;
     letter-spacing: $sp-ls;
-    @include pc {
+    @include tab {
       font-size: var(--flow-h2-sub-pc-fs, $sp-fs);
       font-weight: var(--flow-h2-sub-pc-fw, $sp-fw);
       line-height: var(--flow-h2-sub-pc-lh, $sp-lh);
@@ -27,7 +27,7 @@
     font-weight: $sp-fw;
     line-height: $sp-lh;
     letter-spacing: $sp-ls;
-    @include pc {
+    @include tab {
       font-size: var(--flow-h2-pc-fs, $sp-fs);
       font-weight: var(--flow-h2-pc-fw, $sp-fw);
       line-height: var(--flow-h2-pc-lh, $sp-lh);
@@ -44,7 +44,7 @@
     font-weight: $sp-fw;
     line-height: $sp-lh;
     letter-spacing: $sp-ls;
-    @include pc {
+    @include tab {
       font-size: var(--flow-section-lead-pc-fs, $sp-fs);
       font-weight: var(--flow-section-lead-pc-fw, $sp-fw);
       line-height: var(--flow-section-lead-pc-lh, $sp-lh);
@@ -65,7 +65,7 @@
             font-weight: $sp-fw;
             line-height: $sp-lh;
             letter-spacing: $sp-ls;
-            @include pc {
+            @include tab {
               font-size: var(--flow-step-label-pc-fs, $sp-fs);
               font-weight: var(--flow-step-label-pc-fw, $sp-fw);
               line-height: var(--flow-step-label-pc-lh, $sp-lh);
@@ -81,7 +81,7 @@
               font-weight: $sp-fw;
               line-height: $sp-lh;
               letter-spacing: $sp-ls;
-              @include pc {
+              @include tab {
                 font-size: var(--flow-step-number-pc-fs, $sp-fs);
                 font-weight: var(--flow-step-number-pc-fw, $sp-fw);
                 line-height: var(--flow-step-number-pc-lh, $sp-lh);
@@ -100,7 +100,7 @@
             font-weight: $sp-fw;
             line-height: $sp-lh;
             letter-spacing: $sp-ls;
-            @include pc {
+            @include tab {
               font-size: var(--flow-step-title-sub-pc-fs, $sp-fs);
               font-weight: var(--flow-step-title-sub-pc-fw, $sp-fw);
               line-height: var(--flow-step-title-sub-pc-lh, $sp-lh);
@@ -116,7 +116,7 @@
             font-weight: $sp-fw;
             line-height: $sp-lh;
             letter-spacing: $sp-ls;
-            @include pc {
+            @include tab {
               font-size: var(--flow-step-title-pc-fs, $sp-fs);
               font-weight: var(--flow-step-title-pc-fw, $sp-fw);
               line-height: var(--flow-step-title-pc-lh, $sp-lh);
@@ -132,7 +132,7 @@
             font-weight: $sp-fw;
             line-height: $sp-lh;
             letter-spacing: $sp-ls;
-            @include pc {
+            @include tab {
               font-size: var(--flow-step-body-pc-fs, $sp-fs);
               font-weight: var(--flow-step-body-pc-fw, $sp-fw);
               line-height: var(--flow-step-body-pc-lh, $sp-lh);

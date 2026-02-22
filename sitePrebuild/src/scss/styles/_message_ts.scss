@@ -10,7 +10,7 @@
     font-weight: $sp-fw;
     line-height: $sp-lh;
     letter-spacing: $sp-ls;
-    @include pc {
+    @include tab {
       font-size: var(--message-bg-title-pc-fs, $sp-fs);
       font-weight: var(--message-bg-title-pc-fw, $sp-fw);
       line-height: var(--message-bg-title-pc-lh, $sp-lh);
@@ -28,7 +28,7 @@
         font-weight: $sp-fw;
         line-height: $sp-lh;
         letter-spacing: $sp-ls;
-        @include pc {
+        @include tab {
           font-size: var(--message-h2-main-pc-fs, $sp-fs);
           font-weight: var(--message-h2-main-pc-fw, $sp-fw);
           line-height: var(--message-h2-main-pc-lh, $sp-lh);
@@ -44,7 +44,7 @@
           font-weight: $sp-fw;
           line-height: $sp-lh;
           letter-spacing: $sp-ls;
-          @include pc {
+          @include tab {
             font-size: var(--message-h2-sub-pc-fs, $sp-fs);
             font-weight: var(--message-h2-sub-pc-fw, $sp-fw);
             line-height: var(--message-h2-sub-pc-lh, $sp-lh);
@@ -62,7 +62,7 @@
         font-weight: $sp-fw;
         line-height: $sp-lh;
         letter-spacing: $sp-ls;
-        @include pc {
+        @include tab {
           font-size: var(--message-section-lead-pc-fs, $sp-fs);
           font-weight: var(--message-section-lead-pc-fw, $sp-fw);
           line-height: var(--message-section-lead-pc-lh, $sp-lh);
@@ -80,7 +80,7 @@
           font-weight: $sp-fw;
           line-height: $sp-lh;
           letter-spacing: $sp-ls;
-          @include pc {
+          @include tab {
             font-size: var(--message-core-head-pc-fs, $sp-fs);
             font-weight: var(--message-core-head-pc-fw, $sp-fw);
             line-height: var(--message-core-head-pc-lh, $sp-lh);
@@ -97,7 +97,7 @@
           font-weight: $sp-fw;
           line-height: $sp-lh;
           letter-spacing: $sp-ls;
-          @include pc {
+          @include tab {
             font-size: var(--message-core-text-pc-fs, $sp-fs);
             font-weight: var(--message-core-text-pc-fw, $sp-fw);
             line-height: var(--message-core-text-pc-lh, $sp-lh);

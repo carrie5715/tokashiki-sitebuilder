@@ -65,7 +65,7 @@ br {
   }
   &.br-pc {
     display: none;
-    @include pc {
+    @include tab {
       display: inline;
     }
   }

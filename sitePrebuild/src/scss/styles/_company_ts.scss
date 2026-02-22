@@ -10,7 +10,7 @@
     font-weight: $sp-fw;
     // line-height: $sp-lh;
     letter-spacing: $sp-ls;
-    @include pc {
+    @include tab {
       font-size: var(--company-bg-title-pc-fs, $sp-fs);
       font-weight: var(--company-bg-title-pc-fw, $sp-fw);
       // line-height: var(--company-bg-title-pc-lh, $sp-lh);
@@ -28,7 +28,7 @@
       font-weight: $sp-fw;
       line-height: $sp-lh;
       letter-spacing: $sp-ls;
-      @include pc {
+      @include tab {
         font-size: var(--company-h2-pc-fs, $sp-fs);
         font-weight: var(--company-h2-pc-fw, $sp-fw);
         line-height: var(--company-h2-pc-lh, $sp-lh);
@@ -44,7 +44,7 @@
         font-weight: $sp-fw;
         line-height: $sp-lh;
         letter-spacing: $sp-ls;
-        @include pc {
+        @include tab {
           font-size: var(--company-h2-sub-pc-fs, $sp-fs);
           font-weight: var(--company-h2-sub-pc-fw, $sp-fw);
           line-height: var(--company-h2-sub-pc-lh, $sp-lh);
@@ -62,7 +62,7 @@
       font-weight: $sp-fw;
       line-height: $sp-lh;
       letter-spacing: $sp-ls;
-      @include pc {
+      @include tab {
         font-size: var(--company-section-lead-pc-fs, $sp-fs);
         font-weight: var(--company-section-lead-pc-fw, $sp-fw);
         line-height: var(--company-section-lead-pc-lh, $sp-lh);
@@ -82,7 +82,7 @@
             font-weight: $sp-fw;
             line-height: $sp-lh;
             letter-spacing: $sp-ls;
-            @include pc {
+            @include tab {
               font-size: var(--company-item-label-pc-fs, $sp-fs);
               font-weight: var(--company-item-label-pc-fw, $sp-fw);
               line-height: var(--company-item-label-pc-lh, $sp-lh);
@@ -98,7 +98,7 @@
             font-weight: $sp-fw;
             line-height: $sp-lh;
             letter-spacing: $sp-ls;
-            @include pc {
+            @include tab {
               font-size: var(--company-item-value-pc-fs, $sp-fs);
               font-weight: var(--company-item-value-pc-fw, $sp-fw);
               line-height: var(--company-item-value-pc-lh, $sp-lh);

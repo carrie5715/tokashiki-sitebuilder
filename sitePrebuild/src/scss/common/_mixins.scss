@@ -6,6 +6,7 @@ $breakpoints: (
   md: 768px,
   lg: 1024px,
   xl: 1280px,
+  fhd: 1920px,
 );
 
 // ブレークポイント取得関数
@@ -22,9 +23,30 @@ $breakpoints: (
   }
 }
 
-// PC（768px以上）
-@mixin pc {
+// TAB（768px以上）
+@mixin tab {
   @media (min-width: #{bp(md) + 1}) {
+    @content;
+  }
+}
+
+// PC（1024px以上）
+@mixin pc {
+  @media (min-width: #{bp(lg) + 1}) {
+    @content;
+  }
+}
+
+// PC（1280px以上）
+@mixin pclg {
+  @media (min-width: #{bp(xl) + 1}) {
+    @content;
+  }
+}
+
+// PC（1920px以上）
+@mixin pcxl {
+  @media (min-width: #{bp(fhd) + 1}) {
     @content;
   }
 }

@@ -32,13 +32,13 @@ strong {
 br {
   &.sp {
     display: inline;
-    @include pc {
+    @include tab {
       display: none;
     }
   }
   &.pc {
     display: none;
-    @include pc {
+    @include tab {
       display: inline;
     }
   }
@@ -52,7 +52,7 @@ br {
   display: flex;
   gap: 2vw;
   padding: 2vw 0;
-  @include pc {
+  @include tab {
     gap: 8px;
     padding: 8px 0;
   }
@@ -63,7 +63,7 @@ br {
     border-radius: 1.2vw;
     background-color: var(--pcol-base-gray-1, var(--col-light-gray2));
     color: var(--pcol-base-gray-2, var(--col-gray-4));
-    @include pc {
+    @include tab {
       padding: 4px 16px;
       border-radius: 16px;
     }
@@ -82,7 +82,7 @@ br {
   cursor: pointer;
   font-size: 1.8rem;
   font-weight: 500;
-  @include pc {
+  @include tab {
     min-width: 200px;
     min-height: 44px;
     font-size: 14px;

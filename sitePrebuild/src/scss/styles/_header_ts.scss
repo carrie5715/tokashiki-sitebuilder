@@ -14,7 +14,7 @@ header {
         font-weight: $sp-fw;
         line-height: $sp-lh;
         letter-spacing: $sp-ls;
-        @include pc {
+        @include tab {
           font-size: var(--header-company-name-pc-fs, $sp-fs);
           font-weight: var(--header-company-name-pc-fw, $sp-fw);
           line-height: var(--header-company-name-pc-lh, $sp-lh);

@@ -12,7 +12,7 @@
         font-weight: $sp-fw;
         line-height: $sp-lh;
         letter-spacing: $sp-ls;
-        @include pc {
+        @include tab {
           font-size: var(--contact-h2-pc-fs, $sp-fs);
           font-weight: var(--contact-h2-pc-fw, $sp-fw);
           line-height: var(--contact-h2-pc-lh, $sp-lh);
@@ -28,7 +28,7 @@
         font-weight: $sp-fw;
         line-height: $sp-lh;
         letter-spacing: $sp-ls;
-        @include pc {
+        @include tab {
           font-size: var(--contact-lead-pc-fs, $sp-fs);
           font-weight: var(--contact-lead-pc-fw, $sp-fw);
           line-height: var(--contact-lead-pc-lh, $sp-lh);
@@ -45,7 +45,7 @@
         font-weight: $sp-fw;
         line-height: $sp-lh;
         letter-spacing: $sp-ls;
-        @include pc {
+        @include tab {
           font-size: var(--contact-h2-pc-fs, $sp-fs);
           font-weight: var(--contact-h2-pc-fw, $sp-fw);
           line-height: var(--contact-h2-pc-lh, $sp-lh);
@@ -64,7 +64,7 @@
           font-weight: $sp-fw;
           line-height: $sp-lh;
           letter-spacing: $sp-ls;
-          @include pc {
+          @include tab {
             font-size: var(--contact-tel-number-pc-fs, $sp-fs);
             font-weight: var(--contact-tel-number-pc-fw, $sp-fw);
             line-height: var(--contact-tel-number-pc-lh, $sp-lh);
@@ -80,7 +80,7 @@
           font-weight: $sp-fw;
           line-height: $sp-lh;
           letter-spacing: $sp-ls;
-          @include pc {
+          @include tab {
             font-size: var(--contact-tel-message-pc-fs, $sp-fs);
             font-weight: var(--contact-tel-message-pc-fw, $sp-fw);
             line-height: var(--contact-tel-message-pc-lh, $sp-lh);
@@ -100,7 +100,7 @@
             font-weight: $sp-fw;
             line-height: $sp-lh;
             letter-spacing: $sp-ls;
-            @include pc {
+            @include tab {
               font-size: var(--contact-cta-pc-fs, $sp-fs);
               font-weight: var(--contact-cta-pc-fw, $sp-fw);
               line-height: var(--contact-cta-pc-lh, $sp-lh);
@@ -119,7 +119,7 @@
                 font-weight: $sp-fw;
                 line-height: $sp-lh;
                 letter-spacing: $sp-ls;
-                @include pc {
+                @include tab {
                   font-size: var(--contact-cta-note-pc-fs, $sp-fs);
                   font-weight: var(--contact-cta-note-pc-fw, $sp-fw);
                   line-height: var(--contact-cta-note-pc-lh, $sp-lh);

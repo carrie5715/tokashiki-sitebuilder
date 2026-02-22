@@ -10,7 +10,7 @@
     font-weight: $sp-fw;
     line-height: $sp-lh;
     letter-spacing: $sp-ls;
-    @include pc {
+    @include tab {
       font-size: var(--works-h2-pc-fs, $sp-fs);
       font-weight: var(--works-h2-pc-fw, $sp-fw);
       line-height: var(--works-h2-pc-lh, $sp-lh);
@@ -26,7 +26,7 @@
       font-weight: $sp-fw;
       line-height: $sp-lh;
       letter-spacing: $sp-ls;
-      @include pc {
+      @include tab {
         font-size: var(--works-h2-sub-pc-fs, $sp-fs);
         font-weight: var(--works-h2-sub-pc-fw, $sp-fw);
         line-height: var(--works-h2-sub-pc-lh, $sp-lh);
@@ -44,7 +44,7 @@
     font-weight: $sp-fw;
     line-height: $sp-lh;
     letter-spacing: $sp-ls;
-    @include pc {
+    @include tab {
       font-size: var(--works-section-lead-pc-fs, $sp-fs);
       font-weight: var(--works-section-lead-pc-fw, $sp-fw);
       line-height: var(--works-section-lead-pc-lh, $sp-lh);
@@ -63,7 +63,7 @@
         font-weight: $sp-fw;
         line-height: $sp-lh;
         letter-spacing: $sp-ls;
-        @include pc {
+        @include tab {
           font-size: var(--works-slider-title-pc-fs, $sp-fs);
           font-weight: var(--works-slider-title-pc-fw, $sp-fw);
           line-height: var(--works-slider-title-pc-lh, $sp-lh);
@@ -78,7 +78,7 @@
           font-weight: $sp-fw;
           line-height: $sp-lh;
           letter-spacing: $sp-ls;
-          @include pc {
+          @include tab {
             font-size: var(--works-slider-title-sub-pc-fs, $sp-fs);
             font-weight: var(--works-slider-title-sub-pc-fw, $sp-fw);
             line-height: var(--works-slider-title-sub-pc-lh, $sp-lh);
@@ -97,7 +97,7 @@
           font-weight: $sp-fw;
           line-height: $sp-lh;
           letter-spacing: $sp-ls;
-          @include pc {
+          @include tab {
             font-size: var(--works-slider-tag-pc-fs, $sp-fs);
             font-weight: var(--works-slider-tag-pc-fw, $sp-fw);
             line-height: var(--works-slider-tag-pc-lh, $sp-lh);
@@ -115,7 +115,7 @@
         font-weight: $sp-fw;
         line-height: $sp-lh;
         letter-spacing: $sp-ls;
-        @include pc {
+        @include tab {
           font-size: var(--works-slider-description-pc-fs, $sp-fs);
           font-weight: var(--works-slider-description-pc-fw, $sp-fw);
           line-height: var(--works-slider-description-pc-lh, $sp-lh);
@@ -133,7 +133,7 @@
           font-weight: $sp-fw;
           line-height: $sp-lh;
           letter-spacing: $sp-ls;
-          @include pc {
+          @include tab {
             font-size: var(--works-slider-btn-pc-fs, $sp-fs);
             font-weight: var(--works-slider-btn-pc-fw, $sp-fw);
             line-height: var(--works-slider-btn-pc-lh, $sp-lh);

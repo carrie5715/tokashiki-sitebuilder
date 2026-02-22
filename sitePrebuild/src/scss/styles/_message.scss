@@ -24,7 +24,7 @@
     .upper-block {
       position: relative;
       padding-top: 80px;
-      @include pc {
+      @include tab {
         padding-top: 30px;
       }
 
@@ -44,7 +44,7 @@
       }
       .section-lead {
         margin-top: 6vw;
-        @include pc {
+        @include tab {
           margin-top: 30px;
         }
       }

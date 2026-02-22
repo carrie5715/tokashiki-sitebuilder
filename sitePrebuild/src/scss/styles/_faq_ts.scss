@@ -18,7 +18,7 @@
     font-weight: $sp-fw;
     line-height: $sp-lh;
     letter-spacing: $sp-ls;
-    @include pc {
+    @include tab {
       font-size: var(--faq-h2-sub-pc-fs, $sp-fs);
       font-weight: var(--faq-h2-sub-pc-fw, $sp-fw);
       line-height: var(--faq-h2-sub-pc-lh, $sp-lh);
@@ -34,7 +34,7 @@
     font-weight: $sp-fw;
     line-height: $sp-lh;
     letter-spacing: $sp-ls;
-    @include pc {
+    @include tab {
       font-size: var(--faq-h2-pc-fs, $sp-fs);
       font-weight: var(--faq-h2-pc-fw, $sp-fw);
       line-height: var(--faq-h2-pc-lh, $sp-lh);
@@ -50,7 +50,7 @@
     font-weight: $sp-fw;
     line-height: $sp-lh;
     letter-spacing: $sp-ls;
-    @include pc {
+    @include tab {
       font-size: var(--faq-section-lead-pc-fs, $sp-fs);
       font-weight: var(--faq-section-lead-pc-fw, $sp-fw);
       line-height: var(--faq-section-lead-pc-lh, $sp-lh);
@@ -73,7 +73,7 @@
       font-weight: $sp-fw;
       line-height: $sp-lh;
       letter-spacing: $sp-ls;
-      @include pc {
+      @include tab {
         font-size: var(--faq-q-pc-fs, $sp-fs);
         font-weight: var(--faq-q-pc-fw, $sp-fw);
         line-height: var(--faq-q-pc-lh, $sp-lh);
@@ -88,7 +88,7 @@
         font-weight: $sp-fw;
         line-height: $sp-lh;
         letter-spacing: $sp-ls;
-        @include pc {
+        @include tab {
           font-size: var(--faq-q-label-pc-fs, $sp-fs);
           font-weight: var(--faq-q-label-pc-fw, $sp-fw);
           line-height: var(--faq-q-label-pc-lh, $sp-lh);
@@ -106,7 +106,7 @@
         font-weight: $sp-fw;
         line-height: $sp-lh;
         letter-spacing: $sp-ls;
-        @include pc {
+        @include tab {
           font-size: var(--faq-a-pc-fs, $sp-fs);
           font-weight: var(--faq-a-pc-fw, $sp-fw);
           line-height: var(--faq-a-pc-lh, $sp-lh);
@@ -122,7 +122,7 @@
           font-weight: $sp-fw;
           line-height: $sp-lh;
           letter-spacing: $sp-ls;
-          @include pc {
+          @include tab {
             font-size: var(--faq-q-label-pc-fs, $sp-fs);
             font-weight: var(--faq-q-label-pc-fw, $sp-fw);
             line-height: var(--faq-q-label-pc-lh, $sp-lh);

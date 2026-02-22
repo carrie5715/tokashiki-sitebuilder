@@ -27,7 +27,7 @@ footer {
     img {
       width: 30vw;
       height: auto;
-      @include pc {
+      @include tab {
         width: 150px;
       }
     }
@@ -37,7 +37,7 @@ footer {
       font-size: 1.8rem;
       line-height: 1.4;
       font-weight: 700;
-      @include pc {
+      @include tab {
         font-size: 20px;
       }
     }
@@ -53,7 +53,7 @@ footer {
     margin-top: 20px;
     flex-direction: column;
     gap: 40px;
-    @include pc {
+    @include tab {
       flex-direction: row;
       justify-content: space-between;
       gap: 0;
@@ -63,13 +63,13 @@ footer {
     line-height: 1.5;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    @include pc {
+    @include tab {
       grid-template-columns: 1fr;
       gap: 24px;
     }
 
     .footer-nav {
-      @include pc {
+      @include tab {
         display: flex;
         justify-content: flex-end;
         gap: 24px;
@@ -82,7 +82,7 @@ footer {
     a {
       color: $base-text;
       font-size: 1.2rem;
-      @include pc {
+      @include tab {
         font-size: 14px;
         font-weight: bold;
       }
@@ -93,14 +93,14 @@ footer {
     display: flex;
     justify-content: center;
     gap: 24px;
-    @include pc {
+    @include tab {
       justify-content: flex-end;
     }
     a {
       display: inline-block;
       color: $base-text;
       font-size: 2.4rem;
-      @include pc {
+      @include tab {
         font-size: 32px;
       }
 
@@ -128,7 +128,7 @@ footer {
     font-size: 1.2rem;
     text-align: center;
     color: $base-text;
-    @include pc {
+    @include tab {
       font-size: 12px;
     }
   }
