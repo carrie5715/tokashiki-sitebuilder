@@ -97,6 +97,46 @@ var HeaderInfo = (function () {
     return items;
   }
 
+  // nav シートの色設定から colors.css 用のカスタムプロパティを設定
+  function applyNavColorCssVariablesFromValues_(values) {
+    if (!values || !values.length) return;
+
+    const getKeyVal = (key) => {
+      for (let r = 0; r < values.length; r++) {
+        const k = values[r][0] != null ? String(values[r][0]).trim() : '';
+        if (k === key) {
+          const v = values[r][1];
+          return v != null ? String(v).trim() : '';
+        }
+      }
+      return '';
+    };
+
+    try {
+      // ヘッダーメニュー色（PC/SP）: 片方のみの場合はもう片方にも同じ値を適用
+      let menuPc = getKeyVal('header_menu_color_pc');
+      let menuSp = getKeyVal('header_menu_color_sp');
+      if (menuPc || menuSp) {
+        if (menuPc && !menuSp) menuSp = menuPc;
+        if (!menuPc && menuSp) menuPc = menuSp;
+        if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
+          if (menuPc) CommonInfo.addColorVar('--pcol-header-menu-color-pc', menuPc);
+          if (menuSp) CommonInfo.addColorVar('--pcol-header-menu-color-sp', menuSp);
+        }
+      }
+
+      // ハンバーガー周りの色（指定がある場合のみ出力、フォールバックはCSS側で制御）
+      const hambBg = getKeyVal('hamburger_bg_color');
+      const hambIcon = getKeyVal('hamburger_icon_color');
+      if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
+        if (hambBg) CommonInfo.addColorVar('--pcol-hamburger-bg-color', hambBg);
+        if (hambIcon) CommonInfo.addColorVar('--pcol-hamburger-icon-color', hambIcon);
+      }
+    } catch (e) {
+      if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('nav 色変数設定失敗: ' + e.message, 'HeaderInfo');
+    }
+  }
+
   function buildNavLis_(items) {
     if (!items || items.length === 0) return '';
     const esc = (s) => String(s)
@@ -146,7 +186,18 @@ var HeaderInfo = (function () {
       const s2 = String(v).trim().toLowerCase();
       return ['true','1','yes','y','on'].includes(s2);
     })(extRaw) ? '_blank' : '_self';
+    // nav シートからナビ項目と色設定を取得
     header.navItems = readNavItems_();
+    try {
+      const ss = SpreadsheetApp.getActive();
+      const sh = ss.getSheetByName('nav');
+      if (sh) {
+        const values = sh.getDataRange().getValues();
+        applyNavColorCssVariablesFromValues_(values);
+      }
+    } catch (e) {
+      if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('nav 色変数読込失敗: ' + e.message, 'HeaderInfo.read');
+    }
     header.contactItems = readHeaderContactItems_();
     // rows/ok を他コンポーネント形式に合わせた形で返却
     const ok = (header.navItems && header.navItems.length > 0) || (header.contactItems && header.contactItems.length > 0) || !!header.logo_url;
@@ -184,6 +235,8 @@ var HeaderInfo = (function () {
           }
           out.sort((a,b)=>a.order-b.order);
           header.navItems = out;
+          // snapshot ベースの nav 情報からも色変数を反映
+          applyNavColorCssVariablesFromValues_(values);
         }
       } catch (e) {
         if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('header snapshot(nav)再構築失敗: '+ e.message, 'HeaderInfo.record');

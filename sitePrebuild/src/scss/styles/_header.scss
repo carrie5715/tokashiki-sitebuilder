@@ -48,6 +48,11 @@ header {
         margin-right: 40px;
         display: flex;
         gap: 32px;
+        li {
+          a {
+            color: var(--pcol-header-menu-color-pc, var(--pcol-base-black, var(--col-black)));
+          }
+        }
       }
     }
     .button-wrap {
@@ -85,7 +90,7 @@ header {
       height: 40px;
       position: absolute;
       z-index: 1100;
-      background: var(--pcol-base-color-2, var(--col-blue));
+      background: var(--pcol-hamburger-bg-color, var(--pcol-base-color-1, var(--col-blue)));
       display: flex;
       justify-content: center;
       align-items: center;
@@ -110,7 +115,7 @@ header {
           position: absolute;
           transition: all 0.3s ease;
           display: block;
-          background: white;
+          background: var(--pcol-hamburger-icon-color, var(--pcol-base-white, var(--col-white)));
         }
         &::before,
         &::after {
@@ -156,7 +161,8 @@ header {
     }
 
     // drawer navigation
-    .drawer-nav {
+    .drawer-nav,
+    .drawer-contact {
       list-style: none;
       margin: 0;
       padding: 16px 20px;
@@ -169,7 +175,7 @@ header {
         a {
           display: block;
           padding: 14px 4px;
-          color: var(--pcol-base-black, #212121);
+          color: var(--pcol-header-menu-color-pc, var(--pcol-base-black, var(--col-black)));
           text-decoration: none;
           font-weight: 600;
           &:hover {
@@ -177,6 +183,9 @@ header {
           }
         }
       }
+    }
+    .drawer-contact {
+      margin-top: 8px;
     }
 
     &.open {
