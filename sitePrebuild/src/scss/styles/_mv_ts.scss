@@ -1,0 +1,53 @@
+@use '../common/mixins' as *;
+
+#mv {
+  .mv-bg-image {
+    .img-wrap {
+      img {
+      }
+    }
+  }
+
+  .container {
+  }
+
+  .mv-base-contents {
+    h1 {
+      $sp-fs: var(--mv-h1-sp-fs);
+      $sp-fw: var(--mv-h1-sp-fw);
+      $sp-lh: var(--mv-h1-sp-lh);
+      $sp-ls: var(--mv-h1-sp-ls);
+      font-size: $sp-fs;
+      font-weight: $sp-fw;
+      line-height: $sp-lh;
+      letter-spacing: $sp-ls;
+      @include tab {
+        font-size: var(--mv-h1-pc-fs, $sp-fs);
+        font-weight: var(--mv-h1-pc-fw, $sp-fw);
+        line-height: var(--mv-h1-pc-lh, $sp-lh);
+        letter-spacing: var(--mv-h1-pc-ls, $sp-ls);
+      }
+    }
+    .sub-catchphrase {
+      $sp-fs: var(--mv-h1-sub-sp-fs);
+      $sp-fw: var(--mv-h1-sub-sp-fw);
+      $sp-lh: var(--mv-h1-sub-sp-lh);
+      $sp-ls: var(--mv-h1-sub-sp-ls);
+      font-size: $sp-fs;
+      font-weight: $sp-fw;
+      line-height: $sp-lh;
+      letter-spacing: $sp-ls;
+      @include tab {
+        font-size: var(--mv-h1-sub-pc-fs, $sp-fs);
+        font-weight: var(--mv-h1-sub-pc-fw, $sp-fw);
+        line-height: var(--mv-h1-sub-pc-lh, $sp-lh);
+        letter-spacing: var(--mv-h1-sub-pc-ls, $sp-ls);
+      }
+    }
+  }
+
+  .cta {
+    .btn {
+    }
+  }
+}

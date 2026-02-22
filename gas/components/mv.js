@@ -43,6 +43,23 @@ var MvInfo = (function () {
 			// Parameters へ渡す行（カテゴリは "mv" 固定）
 			rows.push({ category: 'mv', key, value: val, note });
 		}
+
+		// カラー系の追加CSS変数を登録
+		try {
+			const catchCol = mv['catchphrase_color'];
+			const subCol   = mv['sub_catchphrase_color'];
+			if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
+				if (catchCol != null && String(catchCol).trim() !== '') {
+					CommonInfo.addColorVar('--pcol-mv-catchphrase-color', String(catchCol));
+				}
+				if (subCol != null && String(subCol).trim() !== '') {
+					CommonInfo.addColorVar('--pcol-mv-sub-catchphrase-color', String(subCol));
+				}
+			}
+		} catch (e) {
+			if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('mv 色変数登録失敗: ' + e.message, 'MvInfo.read');
+		}
+
 		lastRows = rows.slice();
 		return rows;
 	}
@@ -70,6 +87,21 @@ var MvInfo = (function () {
 						rows.push({ category: 'mv', key, value: val, note });
 					}
 					lastRows = rows.slice();
+					// 色変数の再登録
+					try {
+						const catchCol = mv['catchphrase_color'];
+						const subCol   = mv['sub_catchphrase_color'];
+						if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
+							if (catchCol != null && String(catchCol).trim() !== '') {
+								CommonInfo.addColorVar('--pcol-mv-catchphrase-color', String(catchCol));
+							}
+							if (subCol != null && String(subCol).trim() !== '') {
+								CommonInfo.addColorVar('--pcol-mv-sub-catchphrase-color', String(subCol));
+							}
+						}
+					} catch (e2) {
+						if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('mv 色変数再登録失敗: ' + e2.message, 'MvInfo.record');
+					}
 				}
 			} catch (e) {
 				if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('mv snapshot再構築失敗: ' + e.message, 'MvInfo.record');
@@ -85,6 +117,21 @@ var MvInfo = (function () {
 		Object.keys(mv).forEach(k => {
 			out[`mv_${k}`] = mv[k];
 		});
+
+		// キャッチコピーとサブキャッチコピーは改行を<br>に変換して出力
+		try {
+			if (typeof Utils !== 'undefined' && Utils.br) {
+				if (mv['catchphrase'] != null) {
+					out['mv_catchphrase'] = Utils.br(String(mv['catchphrase']));
+				}
+				if (mv['sub_catchphrase'] != null && String(mv['sub_catchphrase']).trim() !== '') {
+					const subHtml = Utils.br(String(mv['sub_catchphrase']));
+					out['mv_sub_catchphrase'] = `<p class="sub-catchphrase">${subHtml}</p>`;
+				} else {
+					out['mv_sub_catchphrase'] = '';
+				}
+			}
+		} catch (_) {}
 		return out;
 	}
 
