@@ -2,11 +2,16 @@
 
 #service {
   width: 100%;
-  background: var(--pcol-base-white, var(--col-white));
+  background: var(--pcol-service-bg-color-2, var(--pcol-base-white, var(--col-white)));
+
+  .outer {
+    background: var(--pcol-service-bg-color-1, var(--pcol-base-white, var(--col-white)));
+    border-radius: var(--base-radius-m, 16px);
+  }
   .container {
     max-width: 1000px;
     margin-inline: auto;
-    padding: 56px 24px;
+    padding: 60px 20px;
   }
 
   h2 {
@@ -16,26 +21,10 @@
     @include tab {
       padding-bottom: 16px;
     }
-    &::after {
-      content: '';
-      display: block;
-      width: 8vw;
-      height: 1vw;
-      background-color: var(--pcol-base-color-2, var(--col-blue));
-      border-radius: 9999px;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      margin: auto;
-      position: absolute;
-      @include tab {
-        width: 60px;
-        height: 4px;
-      }
-    }
 
     .subtitle {
-      display: none;
+      display: block;
+      padding-bottom: 8px;
     }
   }
 
@@ -61,7 +50,7 @@
   .service-card {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 32px;
     @include tab {
       gap: 32px;
       flex-direction: row;
