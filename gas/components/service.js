@@ -38,6 +38,23 @@ var ServiceInfo = (function () {
       service[key] = val;
       rows.push({ category: 'service', key, value: val, note });
     }
+
+    // セクション固有カラーのCSS変数を登録
+    try {
+      const bg1Col = service['bg_color_1'];
+      const bg2Col = service['bg_color_2'];
+      if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
+        if (bg1Col != null && String(bg1Col).trim() !== '') {
+          CommonInfo.addColorVar('--pcol-service-bg-color-1', String(bg1Col));
+        }
+        if (bg2Col != null && String(bg2Col).trim() !== '') {
+          CommonInfo.addColorVar('--pcol-service-bg-color-2', String(bg2Col));
+        }
+      }
+    } catch (e) {
+      if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('service 色変数登録失敗: ' + e.message, 'ServiceInfo.read');
+    }
+
     lastRows = rows.slice();
     return rows;
   }
@@ -164,6 +181,22 @@ var ServiceInfo = (function () {
             rows.push({ category: 'service', key, value: val, note });
           }
           lastRows = rows.slice();
+
+          // snapshot 経由時も色変数を再登録
+          try {
+            const bg1Col = service['bg_color_1'];
+            const bg2Col = service['bg_color_2'];
+            if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
+              if (bg1Col != null && String(bg1Col).trim() !== '') {
+                CommonInfo.addColorVar('--pcol-service-bg-color-1', String(bg1Col));
+              }
+              if (bg2Col != null && String(bg2Col).trim() !== '') {
+                CommonInfo.addColorVar('--pcol-service-bg-color-2', String(bg2Col));
+              }
+            }
+          } catch (e2) {
+            if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('service 色変数再登録失敗: ' + e2.message, 'ServiceInfo.record');
+          }
         }
       } catch (e) {
         if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('service snapshot再構築失敗: ' + e.message, 'ServiceInfo.record');
