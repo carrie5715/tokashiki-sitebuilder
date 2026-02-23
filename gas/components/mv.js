@@ -48,12 +48,20 @@ var MvInfo = (function () {
 		try {
 			const catchCol = mv['catchphrase_color'];
 			const subCol   = mv['sub_catchphrase_color'];
+			const bg1Col   = mv['bg_color_1'];
+			const bg2Col   = mv['bg_color_2'];
 			if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
 				if (catchCol != null && String(catchCol).trim() !== '') {
 					CommonInfo.addColorVar('--pcol-mv-catchphrase-color', String(catchCol));
 				}
 				if (subCol != null && String(subCol).trim() !== '') {
 					CommonInfo.addColorVar('--pcol-mv-sub-catchphrase-color', String(subCol));
+				}
+				if (bg1Col != null && String(bg1Col).trim() !== '') {
+					CommonInfo.addColorVar('--pcol-mv-bg-color-1', String(bg1Col));
+				}
+				if (bg2Col != null && String(bg2Col).trim() !== '') {
+					CommonInfo.addColorVar('--pcol-mv-bg-color-2', String(bg2Col));
 				}
 			}
 		} catch (e) {
@@ -91,12 +99,20 @@ var MvInfo = (function () {
 					try {
 						const catchCol = mv['catchphrase_color'];
 						const subCol   = mv['sub_catchphrase_color'];
+						const bg1Col   = mv['bg_color_1'];
+						const bg2Col   = mv['bg_color_2'];
 						if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
 							if (catchCol != null && String(catchCol).trim() !== '') {
 								CommonInfo.addColorVar('--pcol-mv-catchphrase-color', String(catchCol));
 							}
 							if (subCol != null && String(subCol).trim() !== '') {
 								CommonInfo.addColorVar('--pcol-mv-sub-catchphrase-color', String(subCol));
+							}
+							if (bg1Col != null && String(bg1Col).trim() !== '') {
+								CommonInfo.addColorVar('--pcol-mv-bg-color-1', String(bg1Col));
+							}
+							if (bg2Col != null && String(bg2Col).trim() !== '') {
+								CommonInfo.addColorVar('--pcol-mv-bg-color-2', String(bg2Col));
 							}
 						}
 					} catch (e2) {

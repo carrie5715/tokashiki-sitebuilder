@@ -9,10 +9,10 @@
   $sep: 70%;
   background: linear-gradient(
     to bottom,
-    var(--pcol-base-white, var(--col-white)) 0%,
-    var(--pcol-base-white, var(--col-white)) $sep,
-    var(--pcol-base-color-2, var(--col-blue)) $sep,
-    var(--pcol-base-color-2, var(--col-blue)) 100%
+    var(--pcol-mv-bg-color-1, var(--pcol-base-white, var(--col-white))) 0%,
+    var(--pcol-mv-bg-color-1, var(--pcol-base-white, var(--col-white))) $sep,
+    var(--pcol-mv-bg-color-2, var(--pcol-base-color-2, var(--col-blue))) $sep,
+    var(--pcol-mv-bg-color-2, var(--pcol-base-color-2, var(--col-blue))) 100%
   );
 
   @include tab {
