@@ -19,7 +19,7 @@
                   <h3 class="work-title" x-text="item.title"></h3>
 
                   <ul class="work-tags tags" x-show="item.tags && item.tags.length">
-                    <template x-for="tag in item.tags" :key="tag.id">
+                    <template x-for="(tag, tagIdx) in item.tags" :key="'works-item-' + idx + '-' + tagIdx">
                       <li class="tag" x-text="tag.name"></li>
                     </template>
                   </ul>

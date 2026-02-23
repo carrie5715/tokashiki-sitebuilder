@@ -14,16 +14,19 @@ addEventListener('alpine:init', () => {
 
         this.swiper = new Swiper(this.$refs.container, {
           loop: true,
-          slidesPerView: 1,
-          spaceBetween: 16,
+          centeredSlides: true,
+          slidesPerView: 'auto',
+          spaceBetween: 20,
           pagination: { el: this.$refs.pager, clickable: true },
           navigation: {
             nextEl: this.$refs.next,
             prevEl: this.$refs.prev,
           },
-          breakpoints: {
-            768:  { slidesPerView: 2, spaceBetween: 24 },
-            1024: { slidesPerView: 3, spaceBetween: 32 },
+          speed: 6000,
+          allowTouchMove: false,
+          autoplay: {
+            delay: 1,
+            disableOnInteraction: false
           },
           observer: true,
           observeParents: true,
