@@ -8,6 +8,38 @@ var ServiceInfo = (function () {
 
   let lastRows = [];
 
+  function loadFromValues_(values) {
+    if (!values || values.length === 0) return [];
+
+    const a1 = (values[0][0] != null ? String(values[0][0]).trim().toLowerCase() : '');
+    const b1 = (values[0][1] != null ? String(values[0][1]).trim().toLowerCase() : '');
+    const hasHeader = (a1 === 'key' && (b1 === 'value' || b1 === 'val' || b1 === '値'));
+
+    const rows = [];
+    const startRow = hasHeader ? 1 : 0;
+    let noticeIndex = 0;
+
+    service = {};
+
+    for (let r = startRow; r < values.length; r++) {
+      const rawKey = values[r][0] ? String(values[r][0]).trim() : '';
+      const val    = values[r][1] != null ? values[r][1] : '';
+      const note   = values[r][2] != null ? String(values[r][2]) : '';
+      if (!rawKey) continue;
+
+      let key = rawKey;
+      if (rawKey === 'notice') {
+        noticeIndex += 1;
+        key = (noticeIndex === 1) ? 'notice' : `notice_${noticeIndex}`;
+      }
+
+      service[key] = val;
+      rows.push({ category: 'service', key, value: val, note });
+    }
+
+    return rows;
+  }
+
   // 純粋な読み込み処理
   function read() {
     const overrideRows = (typeof globalThis !== 'undefined' && globalThis.__snapshotOverrides && globalThis.__snapshotOverrides[SHEET_NAME]);
@@ -20,35 +52,30 @@ var ServiceInfo = (function () {
       if (!sh) throw new Error('「service」シートが見つかりません。');
       values = sh.getDataRange().getValues();
     }
-    if (!values || values.length === 0) return [];
-
-    // 先頭行がヘッダーかどうか判定（A1=key かつ B1=value ならヘッダーとみなす）
-    const a1 = (values[0][0] != null ? String(values[0][0]).trim().toLowerCase() : '');
-    const b1 = (values[0][1] != null ? String(values[0][1]).trim().toLowerCase() : '');
-    const hasHeader = (a1 === 'key' && (b1 === 'value' || b1 === 'val' || b1 === '値'));
-
-    const rows = [];
-    const startRow = hasHeader ? 1 : 0;
-    for (let r = startRow; r < values.length; r++) {
-      const key  = values[r][0] ? String(values[r][0]).trim() : '';
-      const val  = values[r][1] != null ? values[r][1] : '';
-      const note = values[r][2] != null ? String(values[r][2]) : '';
-      if (!key) continue;
-
-      service[key] = val;
-      rows.push({ category: 'service', key, value: val, note });
-    }
+    const rows = loadFromValues_(values);
 
     // セクション固有カラーのCSS変数を登録
     try {
-      const bg1Col = service['bg_color_1'];
-      const bg2Col = service['bg_color_2'];
+      const bg1Col      = service['bg_color_1'];
+      const bg2Col      = service['bg_color_2'];
+      const tagBgCol    = service['tag_bg_color'];
+      const tagTextCol  = service['tag_text_color'];
+      const listTextCol = service['list_text_color'];
       if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
         if (bg1Col != null && String(bg1Col).trim() !== '') {
           CommonInfo.addColorVar('--pcol-service-bg-color-1', String(bg1Col));
         }
         if (bg2Col != null && String(bg2Col).trim() !== '') {
           CommonInfo.addColorVar('--pcol-service-bg-color-2', String(bg2Col));
+        }
+        if (tagBgCol != null && String(tagBgCol).trim() !== '') {
+          CommonInfo.addColorVar('--pcol-service-tag-bg-color', String(tagBgCol));
+        }
+        if (tagTextCol != null && String(tagTextCol).trim() !== '') {
+          CommonInfo.addColorVar('--pcol-service-tag-text-color', String(tagTextCol));
+        }
+        if (listTextCol != null && String(listTextCol).trim() !== '') {
+          CommonInfo.addColorVar('--pcol-service-list-text-color', String(listTextCol));
         }
       }
     } catch (e) {
@@ -78,6 +105,23 @@ var ServiceInfo = (function () {
     return dict;
   }
 
+  // カンマ区切りキーワードから共通のIDマップを生成（出現順で service_kw_1.. を採番）
+  function buildKeywordDict_(items) {
+    const dict = {}; // name -> id
+    let idx = 1;
+    items.forEach(it => {
+      const names = (it.keywordsRaw || []).filter(Boolean);
+      names.forEach(n => {
+        const name = String(n).trim();
+        if (!name) return;
+        if (!dict[name]) {
+          dict[name] = `service_kw_${idx++}`;
+        }
+      });
+    });
+    return dict;
+  }
+
   function parseItems_() {
     // service_1_*, service_2_* ... を集約
     const items = [];
@@ -88,8 +132,8 @@ var ServiceInfo = (function () {
       const description = service[`service_${i}_description`];
       const image = service[`service_${i}_image`];
       const image_alt = service[`service_${i}_image_alt`];
-      const image_aspect = service[`service_${i}_image_aspect`];
       const tagsStr = service[`service_${i}_tags`];
+      const keywordsStr = service[`service_${i}_keywords`];
       const button_label = service[`service_${i}_button_label`];
       const button_link = service[`service_${i}_button_link`];
 
@@ -98,13 +142,15 @@ var ServiceInfo = (function () {
       if (!hasAny) continue;
 
       const tagsRaw = (typeof tagsStr === 'string' ? tagsStr.split(',') : []).map(s => String(s).trim()).filter(Boolean);
+      const keywordsRaw = (typeof keywordsStr === 'string' ? keywordsStr.split(',') : []).map(s => String(s).trim()).filter(Boolean);
       items.push({
-        title, subtitle, description, image, image_alt, image_aspect, tagsRaw, button_label, button_link
+        title, subtitle, description, image, image_alt, tagsRaw, keywordsRaw, button_label, button_link
       });
     }
 
-    // タグ辞書
+    // タグ・キーワード辞書
     const tagDict = buildTagDict_(items);
+    const keywordDict = buildKeywordDict_(items);
 
     // 最終配列構築
     const out = items.map(it => {
@@ -113,6 +159,7 @@ var ServiceInfo = (function () {
       const imgUrl = it.image ? String(it.image).trim() : '';
       const alt = (it.image_alt && String(it.image_alt).trim()) ? String(it.image_alt).trim() : String(it.title || '');
       const tags = (it.tagsRaw || []).filter(Boolean).map(name => ({ id: tagDict[name], name }));
+      const keywords = (it.keywordsRaw || []).filter(Boolean).map(name => ({ id: keywordDict[name], name }));
       // layout は未指定時は 0 固定
       const layout = 0;
       return {
@@ -123,10 +170,47 @@ var ServiceInfo = (function () {
         image: { url: imgUrl, alt },
         layout,
         tags,
+        keywords,
       };
     });
 
     return out;
+  }
+
+  // 注釈（notice_*）をまとめてHTML断片にする
+  function buildNoticesHtml_() {
+    try {
+      if (!service) return '';
+
+      const entries = Object.keys(service)
+        .filter(k => k === 'notice' || /^notice_\d+$/.test(k))
+        .map(k => {
+          const m = k.match(/^notice_(\d+)$/);
+          const order = m ? parseInt(m[1], 10) : 0;
+          const value = service[k];
+          return { key: k, order, value };
+        })
+        .filter(e => e.value != null && String(e.value).trim() !== '')
+        .sort((a, b) => {
+          if (a.order !== b.order) return a.order - b.order;
+          return a.key.localeCompare(b.key);
+        });
+
+      if (!entries.length) return '';
+
+      const parts = entries.map(e => {
+        const raw = String(e.value);
+        const text = (typeof Utils !== 'undefined' && Utils.br)
+          ? Utils.br(raw)
+          : raw;
+        return `<p class=\"notice\">${text}</p>`;
+      });
+
+      // notice が1件以上ある場合のみ .notice-area ごと返す
+      return `<div class=\"notice-area\">\n${parts.join('\n')}\n<\/div>`;
+    } catch (_) {
+      return '';
+    }
   }
 
   // JSON を output/data/service.json に保存
@@ -166,32 +250,31 @@ var ServiceInfo = (function () {
       try {
         const values = globalThis.__snapshotOverrides[SHEET_NAME];
         if (values && values.length) {
-          const a1 = (values[0][0] != null ? String(values[0][0]).trim().toLowerCase() : '');
-          const b1 = (values[0][1] != null ? String(values[0][1]).trim().toLowerCase() : '');
-          const hasHeader = (a1 === 'key' && (b1 === 'value' || b1 === 'val' || b1 === '値'));
-          const startRow = hasHeader ? 1 : 0;
-          const rows = [];
-          service = {};
-          for (let r = startRow; r < values.length; r++) {
-            const key  = values[r][0] ? String(values[r][0]).trim() : '';
-            const val  = values[r][1] != null ? values[r][1] : '';
-            const note = values[r][2] != null ? String(values[r][2]) : '';
-            if (!key) continue;
-            service[key] = val;
-            rows.push({ category: 'service', key, value: val, note });
-          }
+          const rows = loadFromValues_(values);
           lastRows = rows.slice();
 
           // snapshot 経由時も色変数を再登録
           try {
-            const bg1Col = service['bg_color_1'];
-            const bg2Col = service['bg_color_2'];
+            const bg1Col      = service['bg_color_1'];
+            const bg2Col      = service['bg_color_2'];
+            const tagBgCol    = service['tag_bg_color'];
+            const tagTextCol  = service['tag_text_color'];
+            const listTextCol = service['list_text_color'];
             if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
               if (bg1Col != null && String(bg1Col).trim() !== '') {
                 CommonInfo.addColorVar('--pcol-service-bg-color-1', String(bg1Col));
               }
               if (bg2Col != null && String(bg2Col).trim() !== '') {
                 CommonInfo.addColorVar('--pcol-service-bg-color-2', String(bg2Col));
+              }
+              if (tagBgCol != null && String(tagBgCol).trim() !== '') {
+                CommonInfo.addColorVar('--pcol-service-tag-bg-color', String(tagBgCol));
+              }
+              if (tagTextCol != null && String(tagTextCol).trim() !== '') {
+                CommonInfo.addColorVar('--pcol-service-tag-text-color', String(tagTextCol));
+              }
+              if (listTextCol != null && String(listTextCol).trim() !== '') {
+                CommonInfo.addColorVar('--pcol-service-list-text-color', String(listTextCol));
               }
             }
           } catch (e2) {
@@ -221,6 +304,7 @@ var ServiceInfo = (function () {
       section_title: String(service['section_title'] || ''),
       section_title_en: String(service['section_title_en'] || ''),
       section_intro: String(service['section_intro'] || ''),
+      service_notices: buildNoticesHtml_(),
     };
   }
 

@@ -2,6 +2,7 @@
 <section id="service" data-component-name="service" x-data="serviceComponent">
   <div class="outer">
     <div class="container">
+
       <h2><span class="subtitle"><?= section_title_en ?></span><?= section_title ?></h2>
       <p class="intro"><?= section_intro ?></p>
 
@@ -22,8 +23,14 @@
 
               <div class="service-desc" x-html="item.description"></div>
 
+              <ul class="service-keywords keywords" x-show="item.keywords && item.keywords.length">
+                <template x-for="(keyword, keywordIdx)   in item.keywords" :key="'service-item-' + idx + '-kw' + keywordIdx">
+                  <li class="keyword" x-text="keyword.name"></li>
+                </template>
+              </ul>
+
               <ul class="service-tags tags" x-show="item.tags && item.tags.length">
-                <template x-for="(tag, tagIdx)   in item.tags" :key="'service-item-' + idx + '-' + tagIdx">
+                <template x-for="(tag, tagIdx)   in item.tags" :key="'service-item-' + idx + '-tag' + tagIdx">
                   <li class="tag" x-text="tag.name"></li>
                 </template>
               </ul>
@@ -40,6 +47,18 @@
           </article>
         </template>
       </div>
+
+      <!-- 注釈ブロック -->
+      <?= service_notices ?>
+      <!--
+        出力例:
+        <div class="notice-area">
+          <p class="notice">テキスト1</p>
+          <p class="notice">テキスト2</p>
+        </div>
+        ※ notice が1件もない場合は何も出力されません
+      -->
+
     </div>
   </div>
 </section>

@@ -234,18 +234,23 @@ const Build = {
     while (files.hasNext()) {
       const s = files.next();
       const name = s.getName();
-      const blob = s.getBlob().setName(name);
-      if (existingFiles[name]) {
-        try {
-          // 既存はバイナリ劣化を避けるため丸ごと入れ替え
-          existingFiles[name].setTrashed(true);
-        } catch (e) {
-          // 権限や複数親の都合で捨てられない場合は重複を許容
-          if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`既存削除失敗: ${name} - ${e.message}`, 'copyFolderContents_');
+      try {
+        const blob = s.getBlob().setName(name);
+        if (existingFiles[name]) {
+          try {
+            // 既存はバイナリ劣化を避けるため丸ごと入れ替え
+            existingFiles[name].setTrashed(true);
+          } catch (e) {
+            // 権限や複数親の都合で捨てられない場合は重複を許容
+            if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`既存削除失敗: ${name} - ${e.message}`, 'copyFolderContents_');
+          }
         }
+        dst.createFile(blob);
+        copied++;
+      } catch (e) {
+        // ショートカットや権限不足などで getBlob/createFile が失敗した場合はスキップ
+        if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`ファイルコピー失敗: ${name} - ${e.message}`, 'copyFolderContents_');
       }
-      dst.createFile(blob);
-      copied++;
     }
 
     // サブフォルダの再帰コピー

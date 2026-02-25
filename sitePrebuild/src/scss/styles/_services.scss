@@ -1,4 +1,5 @@
 @use '../common/mixins' as *;
+@use '../common/variables' as *;
 
 #service {
   width: 100%;
@@ -9,18 +10,17 @@
     border-radius: var(--base-radius-m, 16px);
   }
   .container {
-    max-width: 1000px;
+    max-width: 1440px;
     margin-inline: auto;
     padding: 60px 20px;
+    @include tab {
+      padding: 120px 120px;
+    }
   }
 
   h2 {
     text-align: center;
-    padding-bottom: 3.2vw;
     position: relative;
-    @include tab {
-      padding-bottom: 16px;
-    }
 
     .subtitle {
       display: block;
@@ -30,20 +30,20 @@
 
   .intro {
     text-align: center;
-    padding: 4vw;
-    margin-bottom: 4.8vw;
+    margin-top: 48px;
     @include tab {
-      padding: 32px;
-      margin-bottom: 24px;
+      margin-top: 56px;
     }
   }
 
   .services-list {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 20vw;
+    gap: 64px;
+    margin-top: 48px;
     @include tab {
-      gap: 24px;
+      margin-top: 96px;
+      gap: 80px;
     }
   }
 
@@ -52,8 +52,11 @@
     flex-direction: column;
     gap: 32px;
     @include tab {
-      gap: 32px;
       flex-direction: row;
+      gap: 48px;
+      &:nth-child(even) {
+        flex-direction: row-reverse;
+      }
     }
 
     figure {
@@ -86,16 +89,44 @@
         }
       }
       .service-desc {
-        margin-top: 2vw;
+        margin-top: 32px;
         @include tab {
           margin-top: 16px;
         }
       }
+
+      .service-keywords {
+        margin-top: 32px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+
+        .keyword {
+          display: block;
+          padding-left: 1.4em;
+          position: relative;
+          &::before {
+            display: inline-block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            font-family: $fontawesome;
+            font-weight: 400;
+            content: '\f1ad';
+            margin-right: 4px;
+          }
+        }
+      }
+
       .service-tags {
+        margin-top: 32px;
+        flex-wrap: wrap;
         @include tab {
           margin-top: 16px;
         }
         .tag {
+          display: inline-block;
+          white-space: nowrap;
         }
       }
       .service-more {
@@ -108,9 +139,26 @@
           padding-top: 16px;
         }
       }
-      .notice-area {
-        .notice {
-        }
+    }
+  }
+  .notice-area {
+    margin-top: 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    @include tab {
+      margin-top: 96px;
+    }
+    .notice {
+      position: relative;
+      padding-left: 1.2em;
+      &::before {
+        display: inline-block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        content: '※';
+        margin-right: 4px;
       }
     }
   }
