@@ -1,4 +1,4 @@
-addEventListener('alpine:init', () => {
+document.addEventListener('alpine:init', () => {
   Alpine.data('messageComponent', () => ({
     items: [],
     swiper: null,

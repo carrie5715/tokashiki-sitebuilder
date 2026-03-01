@@ -17,7 +17,13 @@ var WorksInfo = (function () {
     } else {
       const ss = SpreadsheetApp.getActive();
       const sh = ss.getSheetByName(SHEET_NAME);
-      if (!sh) throw new Error('「works」シートが見つかりません。');
+      // works は works1, works2 ... のみで運用されるケースもあるため
+      // ベースシート「works」が無い場合はエラーにせず空扱いとする
+      if (!sh) {
+        works = {};
+        lastRows = [];
+        return [];
+      }
       values = sh.getDataRange().getValues();
     }
     if (!values || values.length === 0) return [];

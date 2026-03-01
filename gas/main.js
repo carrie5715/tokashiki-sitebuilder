@@ -298,6 +298,27 @@ function buildAll() {
   if (processed) { globalThis.__processedSnapshot = processed; }
   const DEPENDS = { header: ['nav','contact'] };
   const recordOrder = ['meta','mv','message','service','faq','company','works','flow','contact','header','footer'];
+
+  // ===== グローバル状態のhydrate（recordの差分スキップとは独立） =====
+  // snapshot (__snapshotOverrides) が適用されている前提で、各 Info.read() を呼んで
+  // meta / mv / message / service / faq / company / works / flow / contact / header / footer
+  // それぞれのグローバル変数を確実に初期化しておく。
+  // これにより、record() が差分スキップされた場合でも getTemplateReplacements() が
+  // 空データのまま動くことを防ぐ。
+  recordOrder.forEach(function(name) {
+    try {
+      const infoName = name.charAt(0).toUpperCase() + name.slice(1) + 'Info';
+      const infoObj = globalThis[infoName];
+      if (infoObj && typeof infoObj.read === 'function') {
+        infoObj.read();
+      }
+    } catch (e) {
+      if (typeof Utils !== 'undefined' && Utils.logToSheet) {
+        Utils.logToSheet('❌ hydrate(read)失敗: ' + name + ' - ' + e.message, 'buildAll');
+      }
+    }
+  });
+
   const results = {};
   recordOrder.forEach(name => {
     const infoName = name.charAt(0).toUpperCase() + name.slice(1) + 'Info';
@@ -320,6 +341,7 @@ function buildAll() {
         doRecord = false; // 差分なし＆依存差分なし → スキップ
       }
     }
+    
     // const stCmp = new Date().getTime();
     if (hasRecord && doRecord) {
       try {

@@ -360,19 +360,20 @@ const Build = {
   buildScriptsTag(flags) {
     const list = [
       'store.js',
+      'modules/youtube.module.js',
       'main.js',
       'stores/nav-utils.js',
       'header.js',
       'footer.js',
       'contact.js',
+      'mv.js',
+      'message.js',
+      'service.js',
+      'faq.js',
+      'company.js',
+      'works.js',
+      'flow.js',
     ];
-    if (flags && flags.mvOk) list.push('mv.js');
-    if (flags && flags.messageOk) list.push('message.js');
-    if (flags && flags.serviceOk) list.push('service.js');
-    if (flags && flags.faqOk) list.push('faq.js');
-    if (flags && flags.companyOk) list.push('company.js');
-    if (flags && flags.worksOk) list.push('works.js');
-    if (flags && flags.flowOk) list.push('flow.js');
 
     const tags = [];
     list.forEach((name) => {

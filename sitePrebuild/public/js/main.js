@@ -1,7 +1,7 @@
 console.log('main.js loaded');
 
 document.addEventListener('DOMContentLoaded', () => {
-  // マーキー表示の初期化
+	// マーキー表示の初期化
 	const elements = document.querySelectorAll('.bg-title[data-marquee-data]');
 	elements.forEach((el) => {
 		const text = (el.getAttribute('data-marquee-data') || '').trim();
@@ -29,5 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		el.dataset.marqueeInitialized = '1';
 	});
+
+	// YouTube プレイヤー初期化チェック
+	if (window.YoutubeController && typeof window.YoutubeController.init === 'function') {
+		window.YoutubeController.init();
+	}
 });
 

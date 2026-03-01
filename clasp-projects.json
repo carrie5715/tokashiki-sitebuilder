@@ -1,5 +1,15 @@
 [
   {
+    "key": "debug20260301dev",
+    "name": "デバッグ20260301dev",
+    "scriptId": "1sITy5tzhTmsDY8SugHKAJ0lfOMx3qsvhS3Hq14YxYQQzXZPoidaHwEB_"
+  },
+  {
+    "key": "debug20260301",
+    "name": "デバッグ20260301",
+    "scriptId": "16skD5opybLuRf1pVB6HqCFXDAa1dMhCJ2121LVnkY-iAgThxifJ5SlSG"
+  },
+  {
     "key": "test",
     "name": "テストプロジェクト",
     "scriptId": "1MrJrFSv-6ePEgnZfxE4QNx6PAyQbPSXTiXqx69cQFV4B-hYfbg1CjYae"

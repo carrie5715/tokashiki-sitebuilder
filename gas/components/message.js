@@ -183,6 +183,32 @@ var MessageInfo = (function () {
         core_messages = `<div class="core-messages">\n${parts.join('\n')}\n</div>`;
       }
 
+      // YouTube ブロック: youtube_id, youtube_id_1, youtube_id_2 ... を対象にする
+      const youtubeIds = [];
+      try {
+        if (message) {
+          Object.keys(message).forEach(function(key) {
+            if (!key) return;
+            const lower = String(key).toLowerCase();
+            if (lower === 'youtube_id' || /^youtube_id_\d+$/.test(lower)) {
+              const raw = message[key];
+              if (raw != null) {
+                const v = String(raw).trim();
+                if (v) youtubeIds.push(v);
+              }
+            }
+          });
+        }
+      } catch (_) {}
+
+      let youtube_block = '';
+      if (youtubeIds.length > 0) {
+        const itemsHtml = youtubeIds.map(function(id) {
+          return `<div class="youtube-item" data-youtube-id="${id}"></div>`;
+        }).join('\n');
+        youtube_block = `<div class="youtube-block">\n${itemsHtml}\n</div>`;
+      }
+
       return {
         bg_title: Utils.br(message['bg_title']),
         // 互換用: 既存の置換キーも残す
@@ -194,6 +220,7 @@ var MessageInfo = (function () {
         core_head: head,
         core_text: text,
         core_messages,
+        youtube_block,
       };
   }
 
