@@ -58,13 +58,14 @@ var MessageInfo = (function () {
   function buildSlides_() {
     const slides = [];
     for (let i = 1; i <= 5; i++) {
-      const img = message[`slide_${i}_image`];
+      const rawImg = message[`slide_${i}_image`];
+      const img = (rawImg != null ? String(rawImg).trim() : '');
       const alt = message[`slide_${i}_alt`];
       const cap = message[`slide_${i}_caption`];
       const typ = message[`slide_${i}_type`];
       if (!img) continue;
       slides.push({
-        image: String(img),
+        image: img,
         alt: String(alt || ''),
         type: (typ == null || String(typ).trim() === '') ? 0 : Number(typ),
         caption: String(cap || ''),

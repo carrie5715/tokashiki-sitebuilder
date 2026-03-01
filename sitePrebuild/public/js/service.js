@@ -10,10 +10,15 @@ addEventListener('alpine:init', () => {
         const data = await res.json();
 
         const layoutClassMap = { 0: 'type-a', 1: 'type-b', 2: 'type-c' };
-        this.items = (Array.isArray(data) ? data : []).map(item => ({
-          ...item,
-          typeClass: layoutClassMap[item.layout] ?? 'type-a'
-        }));
+        this.items = (Array.isArray(data) ? data : []).map(item => {
+          const tagStyle = (item.tag_style || '').toString().toLowerCase();
+          const tagStyleClass = (tagStyle === 'list') ? 'list-style' : '';
+          return {
+            ...item,
+            typeClass: layoutClassMap[item.layout] ?? 'type-a',
+            tagStyleClass,
+          };
+        });
       } catch (e) {
         console.error('service load failed:', e);
         this.error = 'サービス情報の読み込みに失敗しました。';

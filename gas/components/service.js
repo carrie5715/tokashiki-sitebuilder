@@ -105,24 +105,11 @@ var ServiceInfo = (function () {
     return dict;
   }
 
-  // カンマ区切りキーワードから共通のIDマップを生成（出現順で service_kw_1.. を採番）
-  function buildKeywordDict_(items) {
-    const dict = {}; // name -> id
-    let idx = 1;
-    items.forEach(it => {
-      const names = (it.keywordsRaw || []).filter(Boolean);
-      names.forEach(n => {
-        const name = String(n).trim();
-        if (!name) return;
-        if (!dict[name]) {
-          dict[name] = `service_kw_${idx++}`;
-        }
-      });
-    });
-    return dict;
-  }
-
   function parseItems_() {
+    // セクション共通設定
+    const rawTagStyle = (service['tag_style'] != null ? String(service['tag_style']).trim().toLowerCase() : '');
+    const tagStyle = (rawTagStyle === 'list') ? 'list' : 'tag';
+
     // service_1_*, service_2_* ... を集約
     const items = [];
     const maxN = 50; // 念のため上限
@@ -133,7 +120,6 @@ var ServiceInfo = (function () {
       const image = service[`service_${i}_image`];
       const image_alt = service[`service_${i}_image_alt`];
       const tagsStr = service[`service_${i}_tags`];
-      const keywordsStr = service[`service_${i}_keywords`];
       const button_label = service[`service_${i}_button_label`];
       const button_link = service[`service_${i}_button_link`];
 
@@ -142,15 +128,13 @@ var ServiceInfo = (function () {
       if (!hasAny) continue;
 
       const tagsRaw = (typeof tagsStr === 'string' ? tagsStr.split(',') : []).map(s => String(s).trim()).filter(Boolean);
-      const keywordsRaw = (typeof keywordsStr === 'string' ? keywordsStr.split(',') : []).map(s => String(s).trim()).filter(Boolean);
       items.push({
-        title, subtitle, description, image, image_alt, tagsRaw, keywordsRaw, button_label, button_link
+        title, subtitle, description, image, image_alt, tagsRaw, button_label, button_link
       });
     }
 
-    // タグ・キーワード辞書
+    // タグ辞書
     const tagDict = buildTagDict_(items);
-    const keywordDict = buildKeywordDict_(items);
 
     // 最終配列構築
     const out = items.map(it => {
@@ -159,7 +143,6 @@ var ServiceInfo = (function () {
       const imgUrl = it.image ? String(it.image).trim() : '';
       const alt = (it.image_alt && String(it.image_alt).trim()) ? String(it.image_alt).trim() : String(it.title || '');
       const tags = (it.tagsRaw || []).filter(Boolean).map(name => ({ id: tagDict[name], name }));
-      const keywords = (it.keywordsRaw || []).filter(Boolean).map(name => ({ id: keywordDict[name], name }));
       // layout は未指定時は 0 固定
       const layout = 0;
       return {
@@ -169,8 +152,8 @@ var ServiceInfo = (function () {
         more_link: { url, is_external: isExt },
         image: { url: imgUrl, alt },
         layout,
+        tag_style: tagStyle,
         tags,
-        keywords,
       };
     });
 

@@ -14,7 +14,7 @@
     margin-inline: auto;
     padding: 60px 20px;
     @include tab {
-      padding: 120px 120px;
+      padding: 120px 40px;
     }
   }
 
@@ -54,6 +54,7 @@
     @include tab {
       flex-direction: row;
       gap: 48px;
+      align-items: center;
       &:nth-child(even) {
         flex-direction: row-reverse;
       }
@@ -95,29 +96,6 @@
         }
       }
 
-      .service-keywords {
-        margin-top: 32px;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-
-        .keyword {
-          display: block;
-          padding-left: 1.4em;
-          position: relative;
-          &::before {
-            display: inline-block;
-            position: absolute;
-            top: 0;
-            left: 0;
-            font-family: $fontawesome;
-            font-weight: 400;
-            content: '\f1ad';
-            margin-right: 4px;
-          }
-        }
-      }
-
       .service-tags {
         margin-top: 32px;
         flex-wrap: wrap;
@@ -127,6 +105,30 @@
         .tag {
           display: inline-block;
           white-space: nowrap;
+          color: var(--pcol-service-tag-text-color, var(--pcol-base-color-3));
+          background: var(--pcol-service-tag-bg-color, var(--pcol-base-color-2));
+        }
+        &.list-style {
+          margin-top: 32px;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          .tag {
+            display: block;
+            padding: 0 0 0 1.4em;
+            position: relative;
+            color: var(--pcol-service-list-text-color, var(--pcol-base-color-2));
+            background: none;
+            &::before {
+              display: inline-block;
+              position: absolute;
+              top: 2px;
+              left: 0;
+              font-family: $fontawesome;
+              font-weight: 400;
+              content: '\f1ad';
+            }
+          }
         }
       }
       .service-more {
@@ -145,7 +147,7 @@
     margin-top: 48px;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 8px;
     @include tab {
       margin-top: 96px;
     }

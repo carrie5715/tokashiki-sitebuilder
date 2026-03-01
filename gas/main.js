@@ -23,18 +23,18 @@ function onOpen() {
 
 function sheetReadAll() {
   const stTime = new Date().getTime();
-  Utils.logToSheet('>>>>> シート読み取り開始 >>>>>', 'sheetReadAll');
+    Utils.logToSheet('🟢 >>>>> Step① シート読み取り開始 >>>>>', 'sheetReadAll');
   // 出力用フォルダID取得（info/snapshot）
   let ids;
   try {
     ids = Build.checkDirectories();
   } catch (e) {
-    Utils.logToSheet('フォルダ確認失敗: ' + e.message, 'sheetReadAll');
+    Utils.logToSheet('❌ フォルダ確認失敗: ' + e.message, 'sheetReadAll');
     throw e;
   }
   const snapshotFolderId = ids && ids.info && ids.info.snapshotId;
   if (!snapshotFolderId) {
-    Utils.logToSheet('snapshot保存先(info/snapshot)取得失敗', 'sheetReadAll');
+    Utils.logToSheet('❌ snapshot保存先(info/snapshot)取得失敗', 'sheetReadAll');
     throw new Error('snapshotフォルダなし');
   }
 
@@ -57,7 +57,7 @@ function sheetReadAll() {
         colCount: values.length ? values[0].length : 0
       };
     } catch (e) {
-      Utils.logToSheet(`シート取得失敗: ${name} - ${e.message}`, 'sheetReadAll');
+      Utils.logToSheet(`❌ シート取得失敗: ${name} - ${e.message}`, 'sheetReadAll');
     }
   });
 
@@ -95,7 +95,7 @@ function sheetReadAll() {
             processed[name].data = { slides: slides, slidesCount: slides.length };
             processed[name].json = JSON.stringify(slides);
           } catch (e2) {
-            Utils.logToSheet('processed message slides生成失敗: ' + e2.message, 'sheetReadAll');
+            Utils.logToSheet('❌ processed message slides生成失敗: ' + e2.message, 'sheetReadAll');
           }
         }
         if (name === 'service' && infoObj && typeof infoObj.parseItems_ === 'function') {
@@ -105,7 +105,7 @@ function sheetReadAll() {
             processed[name].data = { items: items, itemsCount: items.length };
             processed[name].json = JSON.stringify(items);
           } catch (e3) {
-            Utils.logToSheet('processed service items生成失敗: ' + e3.message, 'sheetReadAll');
+            Utils.logToSheet('❌ processed service items生成失敗: ' + e3.message, 'sheetReadAll');
           }
         }
         if (name === 'faq' && infoObj && typeof infoObj.parseFaqItems_ === 'function') {
@@ -115,7 +115,7 @@ function sheetReadAll() {
             processed[name].data = { items: items, itemsCount: items.length };
             processed[name].json = JSON.stringify(items);
           } catch (e4) {
-            Utils.logToSheet('processed faq items生成失敗: ' + e4.message, 'sheetReadAll');
+            Utils.logToSheet('❌ processed faq items生成失敗: ' + e4.message, 'sheetReadAll');
           }
         }
         if (name === 'works' && infoObj && typeof infoObj.parseWorksItems_ === 'function') {
@@ -125,7 +125,7 @@ function sheetReadAll() {
             processed[name].data = { items: items, itemsCount: items.length };
             processed[name].json = JSON.stringify(items);
           } catch (e5) {
-            Utils.logToSheet('processed works items生成失敗: ' + e5.message, 'sheetReadAll');
+            Utils.logToSheet('❌ processed works items生成失敗: ' + e5.message, 'sheetReadAll');
           }
         }
         if (name === 'flow' && infoObj && typeof infoObj.parseFlowItems_ === 'function') {
@@ -135,7 +135,7 @@ function sheetReadAll() {
             processed[name].data = { items: items, itemsCount: items.length };
             processed[name].json = JSON.stringify(items);
           } catch (e6) {
-            Utils.logToSheet('processed flow items生成失敗: ' + e6.message, 'sheetReadAll');
+            Utils.logToSheet('❌ processed flow items生成失敗: ' + e6.message, 'sheetReadAll');
           }
         }
       } else {
@@ -143,7 +143,7 @@ function sheetReadAll() {
         ok = (components[name].rowCount > 0);
       }
     } catch(e) {
-      Utils.logToSheet('processed read失敗: '+name+' - '+e.message, 'sheetReadAll');
+      Utils.logToSheet('❌ processed read失敗: '+name+' - '+e.message, 'sheetReadAll');
     }
     processed[name] = {
       hash: computeHash(name, components[name].rows),
@@ -182,13 +182,13 @@ function sheetReadAll() {
     folder.createFile(blob);
     Utils.logToSheet(`snapshot保存: info/snapshot/${fileName}`, 'sheetReadAll');
   } catch (e) {
-    Utils.logToSheet('snapshot保存失敗: ' + e.message, 'sheetReadAll');
+    Utils.logToSheet('❌ snapshot保存失敗: ' + e.message, 'sheetReadAll');
     throw e;
   }
 
   const edTime = new Date().getTime();
   const elapSec = ((edTime - stTime) / 1000).toFixed(2);
-  Utils.logToSheet(`##### シート読み取り全て完了 処理時間: ${elapSec} 秒 #####`, 'sheetReadAll');
+    Utils.logToSheet(`🌟 xxxxx シート読み取り全て完了 処理時間: ${elapSec} 秒 xxxxx`, 'sheetReadAll');
 }
 
 // 出力フォルダ確認と CSS / extend-css / 画像コピーをまとめた共通処理
@@ -198,10 +198,40 @@ function prepareOutputResources_(sourceLabel) {
   SpreadsheetApp.getActive().toast('出力準備OK（フォルダ確認済み）', label, 3);
   Utils.logToSheet('出力準備OK（フォルダ確認・作成完了）', label);
 
-  try { Build.copyAllCssFromTemplate(); } catch (e) { Utils.logToSheet(`テンプレCSSコピー失敗: ${e.message}`, label); }
-  try { Build.copyExtendCssFromTemplate(); } catch (e) { Utils.logToSheet(`extend-css コピー失敗: ${e.message}`, label); }
-  try { Build.copyAssetsToOutputImg(); } catch (e) { Utils.logToSheet(`assets→output/img コピー失敗: ${e.message}`, label); }
-  try { if (Build.copyAssetsToOutputCustomStyles) { Build.copyAssetsToOutputCustomStyles(); } } catch (e) { Utils.logToSheet(`assets→output/custom-styles コピー失敗: ${e.message}`, label); }
+  let hadError = false;
+  try { Build.copyAllCssFromTemplate(); } catch (e) { hadError = true; Utils.logToSheet(`❌ テンプレCSSコピー失敗: ${e.message}`, label); }
+  try { Build.copyExtendCssFromTemplate(); } catch (e) { hadError = true; Utils.logToSheet(`❌ extend-css コピー失敗: ${e.message}`, label); }
+  try { Build.copyAssetsToOutputImg(); } catch (e) { hadError = true; Utils.logToSheet(`❌ assets→output/img コピー失敗: ${e.message}`, label); }
+  try { if (Build.copyAssetsAppImgToOutputAppImg) { Build.copyAssetsAppImgToOutputAppImg(); } } catch (e) { hadError = true; Utils.logToSheet(`❌ assets→output/app-img コピー失敗: ${e.message}`, label); }
+  try { if (Build.copyAssetsToOutputCustomStyles) { Build.copyAssetsToOutputCustomStyles(); } } catch (e) { hadError = true; Utils.logToSheet(`❌ assets→output/custom-styles コピー失敗: ${e.message}`, label); }
+
+  // コピーが全て成功した場合のみ「準備完了」フラグを立てる
+  try {
+    if (typeof PropertiesService !== 'undefined') {
+      const props = PropertiesService.getScriptProperties();
+      if (!hadError) {
+        props.setProperty('OUTPUT_PREPARED_AT', new Date().toISOString());
+        if (typeof Utils !== 'undefined' && Utils.logToSheet) {
+          Utils.logToSheet('OUTPUT_PREPARED_AT フラグ設定: 出力準備完了', label);
+        }
+      } else {
+        // エラーがあった場合はフラグをクリア
+        props.deleteProperty('OUTPUT_PREPARED_AT');
+        if (typeof Utils !== 'undefined' && Utils.logToSheet) {
+          Utils.logToSheet('❌ OUTPUT_PREPARED_AT フラグクリア: 出力準備中にエラーあり', label);
+        }
+      }
+    }
+  } catch (e) {
+    if (typeof Utils !== 'undefined' && Utils.logToSheet) {
+      Utils.logToSheet('❌ OUTPUT_PREPARED_AT フラグ更新失敗: ' + e.message, label);
+    }
+  }
+
+  // どこかでコピーエラーが発生していれば、呼び出し側に失敗として伝える
+  if (hadError) {
+    throw new Error('出力準備中に一部コピーエラーが発生しました。ログを確認してください。');
+  }
 
   return ids;
 }
@@ -209,12 +239,31 @@ function prepareOutputResources_(sourceLabel) {
 
 function buildAll() {
   const stTime = new Date().getTime();
-  Utils.logToSheet('>>>>> 処理開始 >>>>>', 'buildAll');
+  Utils.logToSheet('🟢 >>>>> Step④ ファイル出力開始 >>>>>', 'buildAll');
 
   try { if (typeof Utils !== 'undefined' && Utils.ensureUtilitySheets) { Utils.ensureUtilitySheets(); } } catch (e) {}
 
-  // 出力フォルダ確認 + CSS/画像コピー
-  const ids = prepareOutputResources_('buildAll');
+  // 出力フォルダ確認（コピー処理は Step③ に委譲）
+  const ids = Build.checkDirectories();
+
+  // Step③ が正常完了しているかの軽量チェック（フラグ確認のみ）
+  try {
+    const props = PropertiesService.getScriptProperties();
+    const preparedAt = props.getProperty('OUTPUT_PREPARED_AT');
+    if (!preparedAt) {
+      if (typeof Utils !== 'undefined' && Utils.logToSheet) {
+        Utils.logToSheet('❌ ファイル出力準備(Step③)が完了していないため処理を中止します。', 'buildAll');
+      }
+      SpreadsheetApp.getActive().toast('先に「Step③ ファイル出力準備」を実行してください。', 'buildAll', 6);
+      return;
+    }
+  } catch (e) {
+    if (typeof Utils !== 'undefined' && Utils.logToSheet) {
+      Utils.logToSheet('❌ 出力準備フラグ確認中にエラー: ' + e.message, 'buildAll');
+    }
+    SpreadsheetApp.getActive().toast('出力準備フラグ確認中にエラーが発生しました。ログを確認してください。', 'buildAll', 6);
+    return;
+  }
 
   const common = CommonInfo.readAndRecordBasicSettings();
 
@@ -238,7 +287,7 @@ function buildAll() {
 
   // スナップショット必須化: 無ければ中止
   if (!snapshot) {
-    Utils.logToSheet('snapshot未検出のため処理中止。先に「シート読み取り」を実行してください。', 'buildAll');
+    Utils.logToSheet('❌ snapshot未検出のため処理中止。先に「シート読み取り」を実行してください。', 'buildAll');
     SpreadsheetApp.getActive().toast('snapshotが存在しません。sheetReadAll を先に実行してください。', 'buildAll', 6);
     return;
   }
@@ -282,20 +331,32 @@ function buildAll() {
         // const edCmp = new Date().getTime();
         // Utils.logToSheet(`record完了: ${name} (${((edCmp-stCmp)/1000).toFixed(2)}s)`, 'buildAll');
       } catch(e) {
-        Utils.logToSheet(`record失敗: ${name} - ${e.message}`, 'buildAll');
+        Utils.logToSheet(`❌ record失敗: ${name} - ${e.message}`, 'buildAll');
         results[name] = { ok:false };
       }
     } else if (processed && processed[name]) {
       // スキップ: ok フラグのみ利用
       results[name] = { ok: processed[name].ok, skipped: true };
-      Utils.logToSheet(`recordスキップ: ${name}`, 'buildAll');
+      // 何を根拠にスキップしたかをログに残す（原因の見える化）
+      const selfHash = processed[name].hash;
+      const prevHash = props.getProperty('COMP_HASH_'+name) || '(none)';
+      let depsInfo = '';
+      if (DEPENDS[name]) {
+        const depSummary = DEPENDS[name].map(dep => {
+          const depHash = processed[dep] ? processed[dep].hash : 'missing';
+          const prevDepHash = props.getProperty('COMP_HASH_'+dep) || '(none)';
+          return `${dep}: ${prevDepHash} -> ${depHash}`;
+        }).join(', ');
+        depsInfo = ` / deps[${depSummary}]`;
+      }
+      Utils.logToSheet(`  -- record skip: ${name} (hash ${prevHash} -> ${selfHash}${depsInfo})`, 'buildAll');
     } else if (hasRecord) {
       // processed無し → 互換モードで実行
       try {
         results[name] = infoObj.record();
         Utils.logToSheet(`互換record: ${name}`, 'buildAll');
       } catch(e) {
-        Utils.logToSheet(`互換record失敗: ${name} - ${e.message}`, 'buildAll');
+        Utils.logToSheet(`❌ 互換record失敗: ${name} - ${e.message}`, 'buildAll');
         results[name] = { ok:false };
       }
     }
@@ -325,7 +386,7 @@ function buildAll() {
       Build.prepareWorksSections(order);
     }
   } catch (e) {
-    Utils.logToSheet(`works系セクション準備中にエラー: ${e.message}`, 'buildAll');
+    Utils.logToSheet(`❌ works系セクション準備中にエラー: ${e.message}`, 'buildAll');
     SpreadsheetApp.getActive().toast('works セクションの準備中にエラーが発生しました。ログを確認してください。', 'buildAll', 6);
     throw e;
   }
@@ -351,14 +412,14 @@ function buildAll() {
   Utils.logToSheet(`HTML出力完了: output/index.html`, 'buildAll');
 
   if (typeof CommonInfo !== 'undefined' && CommonInfo.writeColorsCss) {
-    try { CommonInfo.writeColorsCss(ids.output.cssId); } catch (e) { Utils.logToSheet(`colors.css 出力失敗: ${e.message}`, 'buildAll'); }
+    try { CommonInfo.writeColorsCss(ids.output.cssId); } catch (e) { Utils.logToSheet(`❌ colors.css 出力失敗: ${e.message}`, 'buildAll'); }
   }
   // variables.css 出力は StyleVariables へ委譲（CommonInfo側でも委譲済みのため、どちらでも可）
   // variables.css の出力は新メニュー「スタイル変数出力」で実行する運用へ変更
 
   const edTime = new Date().getTime();
   const elapSec = ((edTime - stTime) / 1000).toFixed(2);
-  Utils.logToSheet(`##### 書き出し処理全て完了 処理時間: ${elapSec} 秒 #####`, 'buildAll');
+  Utils.logToSheet(`🌟 xxxxx 書き出し処理全て完了 処理時間: ${elapSec} 秒 xxxxx`, 'buildAll');
 }
 
 function zipOutput() {
@@ -371,7 +432,7 @@ function zipOutput() {
     SpreadsheetApp.getActive().toast(`ZIP作成: ${zipFile.getName()}（マイドライブ直下）`, 'zipOutput', 5);
   } catch (e) {
     SpreadsheetApp.getActive().toast('ZIP作成に失敗しました。ログを確認してください。', 'zipOutput', 5);
-    Utils.logToSheet(`ZIP作成エラー: ${e.message}`, 'zipOutput');
+    Utils.logToSheet(`❌ ZIP作成エラー: ${e.message}`, 'zipOutput');
     throw e;
   }
 }
@@ -389,7 +450,7 @@ function zipOutputWithLink() {
     Utils.logToSheet(`ZIP共有リンク: ${url}`, 'zipOutputWithLink');
   } catch (e) {
     SpreadsheetApp.getActive().toast('共有リンク作成に失敗しました。ログを確認してください。', 'zipOutputWithLink', 5);
-    Utils.logToSheet(`ZIP共有リンクエラー: ${e.message}`, 'zipOutputWithLink');
+    Utils.logToSheet(`❌ ZIP共有リンクエラー: ${e.message}`, 'zipOutputWithLink');
     throw e;
   }
 }
@@ -420,15 +481,18 @@ function clearTemplateRootId() {
 function prepareOutputResourcesMenu() {
   try {
     const stTime = new Date().getTime();
+    if (typeof Utils !== 'undefined' && Utils.logToSheet) {
+      Utils.logToSheet('🟢 >>>>> Step③ ファイル出力準備開始 >>>>>', 'prepareOutputResources');
+    }
     prepareOutputResources_('prepareOutputResources');
     const edTime = new Date().getTime();
     const elapSec = ((edTime - stTime) / 1000).toFixed(2);
     if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-      Utils.logToSheet(`##### ファイル出力準備完了 処理時間: ${elapSec} 秒 #####`, 'prepareOutputResources');
+      Utils.logToSheet(`🌟 xxxxx ファイル出力準備完了 処理時間: ${elapSec} 秒 xxxxx`, 'prepareOutputResources');
     }
   } catch (e) {
     if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-      Utils.logToSheet('ファイル出力準備エラー: ' + e.message, 'prepareOutputResources');
+      Utils.logToSheet('❌ ファイル出力準備エラー: ' + e.message, 'prepareOutputResources');
     }
     SpreadsheetApp.getActive().toast('ファイル出力準備に失敗しました。ログを確認してください。', 'prepareOutputResources', 4);
     throw e;
@@ -439,6 +503,9 @@ function prepareOutputResourcesMenu() {
 function exportStyleVariablesMenu() {
   try {
     const stTime = new Date().getTime();
+    if (typeof Utils !== 'undefined' && Utils.logToSheet) {
+      Utils.logToSheet('🟢 >>>>> Step② スタイル変数出力開始 >>>>>', 'exportStyleVariablesMenu');
+    }
     const ids = Build.checkDirectories();
     const cssFolderId = ids && ids.output && ids.output.cssId;
     if (!cssFolderId) throw new Error('CSS 出力フォルダIDが不明です');
@@ -462,10 +529,10 @@ function exportStyleVariablesMenu() {
     const edTime = new Date().getTime();
     const elapSec = ((edTime - stTime) / 1000).toFixed(2);
     if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-      Utils.logToSheet(`##### スタイル変数出力処理全て完了 処理時間: ${elapSec} 秒 #####`, 'exportStyleVariablesMenu');
+      Utils.logToSheet(`🌟 xxxxx スタイル変数出力処理全て完了 処理時間: ${elapSec} 秒 xxxxx`, 'exportStyleVariablesMenu');
     }
   } catch (e) {
-    Utils.logToSheet('スタイル変数出力エラー: ' + e.message, 'exportStyleVariablesMenu');
+	Utils.logToSheet('❌ スタイル変数出力エラー: ' + e.message, 'exportStyleVariablesMenu');
     SpreadsheetApp.getActive().toast('スタイル変数出力に失敗しました', 'exportStyleVariablesMenu', 4);
     throw e;
   }

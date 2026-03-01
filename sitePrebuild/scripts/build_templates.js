@@ -8,7 +8,7 @@ const path = require('path');
   const targets = [
     { label: 'css',        src: path.join(ROOT, 'public', 'css'),        dest: path.join(TB_ROOT, 'css') },
     { label: 'extend-css', src: path.join(ROOT, 'public', 'extend-css'), dest: path.join(TB_ROOT, 'extend-css') },
-    { label: 'img',        src: path.join(ROOT, 'public', 'img'),        dest: path.join(TB_ROOT, 'img') },
+    { label: 'app-img',    src: path.join(ROOT, 'public', 'app-img'),    dest: path.join(TB_ROOT, 'app-img') },
     { label: 'js',         src: path.join(ROOT, 'public', 'js'),         dest: path.join(TB_ROOT, 'js') },
     { label: 'comp',       src: path.join(ROOT, 'src', 'components'),    dest: path.join(TB_ROOT, 'components') },
     { label: 'lay',        src: path.join(ROOT, 'src', 'layout'),        dest: path.join(TB_ROOT, 'layout') },

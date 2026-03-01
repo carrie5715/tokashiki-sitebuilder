@@ -23,13 +23,7 @@
 
               <div class="service-desc" x-html="item.description"></div>
 
-              <ul class="service-keywords keywords" x-show="item.keywords && item.keywords.length">
-                <template x-for="(keyword, keywordIdx)   in item.keywords" :key="'service-item-' + idx + '-kw' + keywordIdx">
-                  <li class="keyword" x-text="keyword.name"></li>
-                </template>
-              </ul>
-
-              <ul class="service-tags tags" x-show="item.tags && item.tags.length">
+              <ul :class="['service-tags', 'tags', item.tagStyleClass]" x-show="item.tags && item.tags.length">
                 <template x-for="(tag, tagIdx)   in item.tags" :key="'service-item-' + idx + '-tag' + tagIdx">
                   <li class="tag" x-text="tag.name"></li>
                 </template>

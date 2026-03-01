@@ -4,15 +4,20 @@ const Build = {
    * ※ 親=スプレッドシートの入っているフォルダ
    */
   checkDirectories() {
+    const stTime = new Date().getTime();
     const parent = Utils.getParentFolder_();
     if (!parent) {
       SpreadsheetApp.getActive().toast('親フォルダが見つかりません。スプレッドシートをフォルダに入れてください。', 'エラー', 6);
       throw new Error('親フォルダなし');
     }
+    // 直前の OUTPUT ルートID（存在すれば）を取得しておき、変更検知に使う
+    const props = PropertiesService.getScriptProperties();
+    const prevOutputId = props.getProperty(PROP_KEYS.OUTPUT_ID) || null;
 
-  const assets           = Utils.getOrCreateSubFolder_(parent, DIR_ASSETS);
-  const assetsImg        = Utils.getOrCreateSubFolder_(assets, ASSETS_IMG);
-  const assetsCustomCss  = Utils.getOrCreateSubFolder_(assets, ASSETS_CUSTOM_STYLES);
+	const assets           = Utils.getOrCreateSubFolder_(parent, DIR_ASSETS);
+	const assetsImg        = Utils.getOrCreateSubFolder_(assets, ASSETS_IMG);
+	const assetsAppImg     = Utils.getOrCreateSubFolder_(assets, ASSETS_APP_IMG);
+	const assetsCustomCss  = Utils.getOrCreateSubFolder_(assets, ASSETS_CUSTOM_STYLES);
 
     const output           = Utils.getOrCreateSubFolder_(parent, DIR_OUTPUT);
     const outCss           = Utils.getOrCreateSubFolder_(output, OUT_CSS);
@@ -20,15 +25,33 @@ const Build = {
     const outCustomStyles  = Utils.getOrCreateSubFolder_(output, OUT_CUSTOM_STYLES);
     const outJs            = Utils.getOrCreateSubFolder_(output, OUT_JS);
     const outImg           = Utils.getOrCreateSubFolder_(output, OUT_IMG);
+    const outAppImg        = Utils.getOrCreateSubFolder_(output, OUT_APP_IMG);
     // ルート直下 info フォルダとその配下
     const infoRoot      = Utils.getOrCreateSubFolder_(parent, DIR_INFO);
     const infoSnapshot  = Utils.getOrCreateSubFolder_(infoRoot, INFO_SNAPSHOT);
     const infoLogs      = Utils.getOrCreateSubFolder_(infoRoot, INFO_LOGS);
 
-    PropertiesService.getScriptProperties().setProperties({
+    // OUTPUT ルートIDが変わった場合は、差分ハッシュをクリアして次回フル record させる
+    const newOutputId = output.getId();
+    if (!prevOutputId || prevOutputId !== newOutputId) {
+      const allProps = props.getProperties();
+      const keys = Object.keys(allProps || {});
+      keys.forEach(function(key) {
+        if (key && key.indexOf('COMP_HASH_') === 0) {
+          props.deleteProperty(key);
+        }
+      });
+      if (typeof Utils !== 'undefined' && typeof Utils.logToSheet === 'function') {
+        Utils.logToSheet('OUTPUT_ID 変更検知: COMP_HASH_* を全クリア（次回 record 全実行）', 'Build.checkDirectories');
+      }
+    }
+
+    // 既存プロパティ（OUTPUT_PREPARED_AT など）は保持したまま、必要なIDだけ更新する
+    props.setProperties({
       [PROP_KEYS.PARENT_ID]: parent.getId(),
       [PROP_KEYS.ASSETS_ID]: assets.getId(),
       [PROP_KEYS.ASSETS_IMG_ID]: assetsImg.getId(),
+      [PROP_KEYS.ASSETS_APP_IMG_ID]: assetsAppImg.getId(),
       [PROP_KEYS.ASSETS_CUSTOM_STYLES_ID]: assetsCustomCss.getId(),
       [PROP_KEYS.OUTPUT_ID]: output.getId(),
       [PROP_KEYS.OUTPUT_CSS_ID]: outCss.getId(),
@@ -36,16 +59,18 @@ const Build = {
       [PROP_KEYS.OUTPUT_CUSTOM_STYLES_ID]: outCustomStyles.getId(),
       [PROP_KEYS.OUTPUT_JS_ID]: outJs.getId(),
       [PROP_KEYS.OUTPUT_IMG_ID]: outImg.getId(),
+      [PROP_KEYS.OUTPUT_APP_IMG_ID]: outAppImg.getId(),
       [PROP_KEYS.INFO_ID]: infoRoot.getId(),
       [PROP_KEYS.INFO_SNAPSHOT_ID]: infoSnapshot.getId(),
       [PROP_KEYS.INFO_LOGS_ID]: infoLogs.getId(),
-    }, true);
+    });
 
-    return {
+    const result = {
       parentId: parent.getId(),
       assets: {
         rootId: assets.getId(),
         imgId: assetsImg.getId(),
+        appImgId: assetsAppImg.getId(),
         customStylesId: assetsCustomCss.getId(),
       },
       output: {
@@ -55,9 +80,23 @@ const Build = {
         customStylesId: outCustomStyles.getId(),
         jsId: outJs.getId(),
         imgId: outImg.getId(),
+        appImgId: outAppImg.getId(),
       },
       info: { rootId: infoRoot.getId(), snapshotId: infoSnapshot.getId(), logsId: infoLogs.getId() },
     };
+
+    try {
+      const edTime = new Date().getTime();
+      const elapSec = ((edTime - stTime) / 1000).toFixed(2);
+      if (typeof Utils !== 'undefined' && typeof Utils.logToSheet === 'function') {
+        const msg = `ディレクトリ確認完了: assets/output/info を確認 (処理時間: ${elapSec} 秒)`;
+        Utils.logToSheet(msg, 'Build.checkDirectories');
+      }
+    } catch (_) {
+      // ログ出力失敗は致命的ではないので握りつぶす
+    }
+
+    return result;
   },
 
   /**
@@ -192,6 +231,24 @@ const Build = {
 
     const count = this.copyFolderContents_(src, dst);
     // if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`assets/img → output/img: ${count}ファイル`, 'copyAssetsToOutputImg');
+    return count;
+  },
+
+  /**
+   * assets/app-img 配下の全ファイル・フォルダを output/app-img に再帰コピー（同名は上書き）
+   * @returns {number} コピー（新規作成+上書き）したファイル数
+   */
+  copyAssetsAppImgToOutputAppImg() {
+    const assetsAppImgId = PropertiesService.getScriptProperties().getProperty(PROP_KEYS.ASSETS_APP_IMG_ID);
+    const outAppImgId    = PropertiesService.getScriptProperties().getProperty(PROP_KEYS.OUTPUT_APP_IMG_ID);
+    if (!assetsAppImgId) throw new Error('ASSETS_APP_IMG_ID が未設定です。Build.checkDirectories() を先に呼んでください。');
+    if (!outAppImgId)    throw new Error('OUTPUT_APP_IMG_ID が未設定です。Build.checkDirectories() を先に呼んでください。');
+
+    const src = DriveApp.getFolderById(assetsAppImgId);
+    const dst = DriveApp.getFolderById(outAppImgId);
+
+    const count = this.copyFolderContents_(src, dst);
+    // if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`assets/app-img → output/app-img: ${count}ファイル`, 'copyAssetsAppImgToOutputAppImg');
     return count;
   },
 

@@ -7,6 +7,7 @@ const DIR_INFO   = 'info';      // /info/
 
 // assets配下
 const ASSETS_IMG           = 'img';
+const ASSETS_APP_IMG       = 'app-img';
 const ASSETS_CUSTOM_STYLES = 'custom-styles';
 
 // output配下
@@ -17,6 +18,7 @@ const OUT_CSS_PAGES  = 'pages';       // /output/css/pages/
 const OUT_CSS_COMPS  = 'components';  // /output/css/components/
 const OUT_JS         = 'js';
 const OUT_IMG        = 'img';
+const OUT_APP_IMG    = 'app-img';
 const OUT_PAGES_HTML = 'pages';       // /output/pages/（HTML用）
 // ルート直下 info 系
 const INFO_SNAPSHOT  = 'snapshot';  // /info/snapshot/
@@ -29,6 +31,7 @@ const PROP_KEYS = {
   PARENT_ID:        'PARENT_ID',
   ASSETS_ID:        'ASSETS_ID',
   ASSETS_IMG_ID:    'ASSETS_IMG_ID',
+  ASSETS_APP_IMG_ID:'ASSETS_APP_IMG_ID',
   ASSETS_CUSTOM_STYLES_ID: 'ASSETS_CUSTOM_STYLES_ID',
   OUTPUT_ID:        'OUTPUT_ID',
   OUTPUT_CSS_ID:    'OUTPUT_CSS_ID',
@@ -39,6 +42,7 @@ const PROP_KEYS = {
   OUTPUT_CSS_COMPS_ID: 'OUTPUT_CSS_COMPS_ID',
   OUTPUT_JS_ID:     'OUTPUT_JS_ID',
   OUTPUT_IMG_ID:    'OUTPUT_IMG_ID',
+  OUTPUT_APP_IMG_ID:'OUTPUT_APP_IMG_ID',
   OUTPUT_PAGES_ID:  'OUTPUT_PAGES_ID',
   INFO_ID:          'INFO_ID',
   INFO_SNAPSHOT_ID: 'INFO_SNAPSHOT_ID',

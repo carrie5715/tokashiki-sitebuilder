@@ -30,7 +30,7 @@ var StyleVariables = (function () {
 	function writeVariablesCss(folderId, overrideVars) {
 		try {
 			if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-				Utils.logToSheet('>>>>> スタイル変数出力開始 >>>>>', 'StyleVariables');
+				Utils.logToSheet(`----- 個別スタイル変数出力開始 -----`, 'StyleVariables');
 			}
 			let cssFolderId = folderId;
 			if (!cssFolderId) {
