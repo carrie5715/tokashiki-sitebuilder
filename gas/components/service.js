@@ -151,13 +151,15 @@ var ServiceInfo = (function () {
       const imgUrl = it.image ? String(it.image).trim() : '';
       const alt = (it.image_alt && String(it.image_alt).trim()) ? String(it.image_alt).trim() : String(it.title || '');
       const tags = (it.tagsRaw || []).filter(Boolean).map(name => ({ id: tagDict[name], name }));
+      const rawLabel = (it.button_label != null ? String(it.button_label).trim() : '');
+      const label = rawLabel ? rawLabel : null; // 空文字は null 扱いにしてテンプレ側の 'MORE' フォールバックを使う
       // layout は未指定時は 0 固定
       const layout = 0;
       return {
         title: String(it.title || ''),
         subtitle: String(it.subtitle || ''),
         description: String(it.description || ''),
-        more_link: { url, is_external: isExt },
+        more_link: { url, is_external: isExt, label },
         image: { url: imgUrl, alt },
         layout,
         tag_style: tagStyle,
