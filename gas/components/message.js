@@ -183,22 +183,25 @@ var MessageInfo = (function () {
         core_messages = `<div class="core-messages">\n${parts.join('\n')}\n</div>`;
       }
 
-      // YouTube ブロック: youtube_id, youtube_id_1, youtube_id_2 ... を対象にする
+      // YouTube ブロック: シート上で key が "youtube_id" の行を対象にする
+      // - 空白の値はスキップ
+      // - YouTube ID に許可されない文字（英数・_・- 以外）が含まれる場合もスキップ
       const youtubeIds = [];
       try {
-        if (message) {
-          Object.keys(message).forEach(function(key) {
-            if (!key) return;
-            const lower = String(key).toLowerCase();
-            if (lower === 'youtube_id' || /^youtube_id_\d+$/.test(lower)) {
-              const raw = message[key];
-              if (raw != null) {
-                const v = String(raw).trim();
-                if (v) youtubeIds.push(v);
-              }
-            }
-          });
-        }
+        (lastRows || []).forEach(function(row) {
+          if (!row || !row.key) return;
+          const keyLower = String(row.key).trim().toLowerCase();
+          if (keyLower !== 'youtube_id') return;
+
+          const raw = row.value;
+          const id = raw != null ? String(raw).trim() : '';
+          if (!id) return; // 空白は出力しない
+
+          // 英数字・アンダースコア・ハイフンのみ許可
+          if (!/^[A-Za-z0-9_-]+$/.test(id)) return;
+
+          youtubeIds.push(id);
+        });
       } catch (_) {}
 
       let youtube_block = '';

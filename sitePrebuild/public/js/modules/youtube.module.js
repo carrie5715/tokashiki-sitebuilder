@@ -41,12 +41,16 @@ const YoutubeController = (() => {
 			if (!videoId) return;
 
 			el.dataset.youtubeInitialized = '1';
-			const key = el.id && el.id.trim() ? el.id : `yt-player-${Object.keys(players).length + 1}`;
-			if (!el.id) el.id = key;
+			// プレイヤー用の内側コンテナを作成し、その中に iframe を埋め込む
+			const key = `yt-player-${Object.keys(players).length + 1}`;
+			const container = document.createElement('div');
+			container.className = 'youtube-iframe-container';
+			container.id = key;
+			el.appendChild(container);
 
 			const createPlayer = () => {
 				if (!(window.YT && window.YT.Player)) return;
-				const player = new window.YT.Player(el, {
+				const player = new window.YT.Player(container, {
 					videoId: videoId,
 					playerVars: {
 						rel: 0,
