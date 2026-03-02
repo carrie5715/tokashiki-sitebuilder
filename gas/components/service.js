@@ -61,6 +61,8 @@ var ServiceInfo = (function () {
       const tagBgCol    = service['tag_bg_color'];
       const tagTextCol  = service['tag_text_color'];
       const listTextCol = service['list_text_color'];
+      const btnBgCol    = service['btn_bg_color'];
+      const btnTextCol  = service['btn_text_color'];
       if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
         if (bg1Col != null && String(bg1Col).trim() !== '') {
           CommonInfo.addColorVar('--pcol-service-bg-color-1', String(bg1Col));
@@ -76,6 +78,12 @@ var ServiceInfo = (function () {
         }
         if (listTextCol != null && String(listTextCol).trim() !== '') {
           CommonInfo.addColorVar('--pcol-service-list-text-color', String(listTextCol));
+        }
+        if (btnBgCol != null && String(btnBgCol).trim() !== '') {
+          CommonInfo.addColorVar('--pcol-service-btn-bg-color', String(btnBgCol));
+        }
+        if (btnTextCol != null && String(btnTextCol).trim() !== '') {
+          CommonInfo.addColorVar('--pcol-service-btn-text-color', String(btnTextCol));
         }
       }
     } catch (e) {
@@ -243,6 +251,8 @@ var ServiceInfo = (function () {
             const tagBgCol    = service['tag_bg_color'];
             const tagTextCol  = service['tag_text_color'];
             const listTextCol = service['list_text_color'];
+            const btnBgCol    = service['btn_bg_color'];
+            const btnTextCol  = service['btn_text_color'];
             if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
               if (bg1Col != null && String(bg1Col).trim() !== '') {
                 CommonInfo.addColorVar('--pcol-service-bg-color-1', String(bg1Col));
@@ -258,6 +268,12 @@ var ServiceInfo = (function () {
               }
               if (listTextCol != null && String(listTextCol).trim() !== '') {
                 CommonInfo.addColorVar('--pcol-service-list-text-color', String(listTextCol));
+              }
+              if (btnBgCol != null && String(btnBgCol).trim() !== '') {
+                CommonInfo.addColorVar('--pcol-service-btn-bg-color', String(btnBgCol));
+              }
+              if (btnTextCol != null && String(btnTextCol).trim() !== '') {
+                CommonInfo.addColorVar('--pcol-service-btn-text-color', String(btnTextCol));
               }
             }
           } catch (e2) {

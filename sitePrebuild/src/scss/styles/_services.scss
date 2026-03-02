@@ -140,6 +140,26 @@
           justify-content: flex-end;
           padding-top: 16px;
         }
+        .btn-more {
+          color: var(--pcol-service-btn-text-color, var(--pcol-base-white, var(--col-white)));
+          background-color: var(
+            --pcol-service-btn-bg-color,
+            var(--pcol-base-color-2, var(--col-blue))
+          );
+          position: relative;
+          &::after {
+            content: '';
+            display: block;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 16px;
+            width: 20px;
+            height: 20px;
+            margin: auto;
+            background: url('app-img/ic_right_arrow.svg') no-repeat center center / 100% auto;
+          }
+        }
       }
     }
   }

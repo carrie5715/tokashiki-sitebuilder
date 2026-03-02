@@ -217,6 +217,29 @@ const Build = {
     return count;
   },
   /**
+   * TEMPLATE_ROOT/app-img 配下を output/app-img に再帰コピー（同名は上書き）
+   * デモ用・アプリ用の画像一式をテンプレート側から出力側へ反映するための処理
+   * @returns {number} コピー（新規作成+上書き）したファイル数
+   */
+  copyAppImgFromTemplate() {
+    const rootId = Utils.getTemplateRootId_();
+    if (!rootId) throw new Error('テンプレートルートID未設定です。先に設定してください。');
+    const root = DriveApp.getFolderById(rootId);
+    const appImgFolderIt = root.getFoldersByName('app-img');
+    if (!appImgFolderIt.hasNext()) {
+      if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('TEMPLATE_ROOT/app-img が見つかりません', 'copyAppImgFromTemplate');
+      return 0;
+    }
+    const srcAppImgFolder = appImgFolderIt.next();
+
+    const outAppImgId = PropertiesService.getScriptProperties().getProperty(PROP_KEYS.OUTPUT_APP_IMG_ID);
+    if (!outAppImgId) throw new Error('OUTPUT_APP_IMG_ID 未設定。Build.checkDirectories() を先に呼んでください。');
+    const dstFolder = DriveApp.getFolderById(outAppImgId);
+
+    const count = this.copyFolderContents_(srcAppImgFolder, dstFolder);
+    return count;
+  },
+  /**
    * assets/img 配下の全ファイル・フォルダを output/img に再帰コピー（同名は上書き）
    * @returns {number} コピー（新規作成+上書き）したファイル数
    */

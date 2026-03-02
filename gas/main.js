@@ -202,6 +202,9 @@ function prepareOutputResources_(sourceLabel) {
   try { Build.copyAllCssFromTemplate(); } catch (e) { hadError = true; Utils.logToSheet(`❌ テンプレCSSコピー失敗: ${e.message}`, label); }
   try { Build.copyExtendCssFromTemplate(); } catch (e) { hadError = true; Utils.logToSheet(`❌ extend-css コピー失敗: ${e.message}`, label); }
   try { Build.copyAssetsToOutputImg(); } catch (e) { hadError = true; Utils.logToSheet(`❌ assets→output/img コピー失敗: ${e.message}`, label); }
+  // TEMPLATE_ROOT/app-img → output/app-img（テンプレ側のアプリ用画像）
+  try { if (Build.copyAppImgFromTemplate) { Build.copyAppImgFromTemplate(); } } catch (e) { hadError = true; Utils.logToSheet(`❌ template-app-img→output/app-img コピー失敗: ${e.message}`, label); }
+  // assets/app-img → output/app-img（ユーザー独自の追い画像）
   try { if (Build.copyAssetsAppImgToOutputAppImg) { Build.copyAssetsAppImgToOutputAppImg(); } } catch (e) { hadError = true; Utils.logToSheet(`❌ assets→output/app-img コピー失敗: ${e.message}`, label); }
   try { if (Build.copyAssetsToOutputCustomStyles) { Build.copyAssetsToOutputCustomStyles(); } } catch (e) { hadError = true; Utils.logToSheet(`❌ assets→output/custom-styles コピー失敗: ${e.message}`, label); }
 
