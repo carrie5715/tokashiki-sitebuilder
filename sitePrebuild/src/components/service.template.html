@@ -29,7 +29,7 @@
                 </template>
               </ul>
 
-              <p class="service-more">
+              <p class="service-more" x-show="item.more_link && item.more_link.url">
                 <a class="btn-more button"
                   :href="item.more_link.url"
                   :target="item.more_link.is_external ? '_blank' : null"
