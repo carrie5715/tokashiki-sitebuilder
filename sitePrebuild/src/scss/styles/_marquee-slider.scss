@@ -1,0 +1,48 @@
+// 汎用マルキースライダー用スタイル
+// .slider-base       ... 外枠（data-slide-speed を持つ / 初期は非表示・高さは保持）
+//   .slider-wrapper  ... スライドのグループ（トラック）
+//     .slide-item    ... 各スライド（中身は用途に応じて自由）
+
+.slider-base {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+
+  .slider-wrapper {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    will-change: transform;
+    animation-name: marquee-slide;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-duration: var(--marquee-duration, 60s);
+    animation-play-state: paused;
+  }
+
+  .slide-item {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &.is-marquee-ready {
+    opacity: 1;
+
+    .slider-wrapper {
+      animation-play-state: running;
+    }
+  }
+}
+
+@keyframes marquee-slide {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}

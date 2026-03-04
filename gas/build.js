@@ -384,6 +384,7 @@ const Build = {
     const list = [
       'store.js',
       'modules/youtube.module.js',
+      'modules/marqueeSlider.module.js',
       'main.js',
       'stores/nav-utils.js',
       'header.js',

@@ -16,7 +16,6 @@
   }
 
   .container {
-    max-width: 1000px;
     margin-inline: auto;
     text-align: center;
     position: relative;
@@ -66,41 +65,36 @@
       margin-top: 48px;
     }
   }
-  .message-swiper {
+  .message-slider {
     position: relative;
     padding-bottom: 24px;
-    .swiper-wrapper {
-      // Swiper が flex を当てるので、縦方向は一番高いスライドに合わせて stretch
-      transition-timing-function: linear;
-      align-items: center;
+    .slider-base {
+      position: relative;
+      .slider-wrapper {
+        align-items: center;
+        gap: 24px;
+      }
     }
-    .swiper-slide {
+
+    .slide-item {
       // 幅は可変のまま、高さは wrapper に合わせて中身を縦中央揃え
       width: auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    figure {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      margin: 0;
-      img {
-        border-radius: var(--base-radius-m, 16px);
-        width: auto;
-        height: auto;
-        max-height: 100%;
+      figure {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        margin: 0;
+        img {
+          border-radius: var(--base-radius-m, 16px);
+          width: auto;
+          height: auto;
+          max-height: 100%;
+        }
+        figcaption {
+          margin-top: 16px;
+        }
       }
-      figcaption {
-        margin-top: 16px;
-      }
-    }
-    .swiper-pagination,
-    .swiper-button-prev,
-    .swiper-button-next {
-      display: none;
     }
   }
   .youtube-block {
