@@ -13,7 +13,6 @@ const path = require('path');
 
   let cssCopied = 0;
   let cssSkipped = 0;
-  let jsCopied = 0;
 
   try {
     // 1) CSS 指定ファイルを上書きコピー（colors.css は対象外）
@@ -32,26 +31,17 @@ const path = require('path');
       }
     }
 
-    // 2) public/js 下のJSを上書きコピー
+    // 2) public/js 以下をディレクトリごと再帰コピー（modules 配下なども含める）
     await fs.ensureDir(DEST_JS_DIR);
     if (await fs.pathExists(SRC_JS_DIR)) {
-      const files = await fs.readdir(SRC_JS_DIR);
-      for (const f of files) {
-        const src = path.join(SRC_JS_DIR, f);
-        const dest = path.join(DEST_JS_DIR, f);
-        const stat = await fs.stat(src);
-        if (stat.isFile()) {
-          await fs.copy(src, dest, { overwrite: true });
-          jsCopied++;
-          console.log(`[copy:js] ${src} -> ${dest}`);
-        }
-      }
+      await fs.copy(SRC_JS_DIR, DEST_JS_DIR, { overwrite: true });
+      console.log(`[copy:js-tree] ${SRC_JS_DIR} -> ${DEST_JS_DIR}`);
     } else {
       console.log(`[skip:js] ソースが見つかりません: ${SRC_JS_DIR}`);
     }
 
     const ts = new Date().toISOString();
-    console.log(`✅ update completed at ${ts} (css:${cssCopied} copied, ${cssSkipped} skipped; js:${jsCopied} copied)`);
+    console.log(`✅ update completed at ${ts} (css:${cssCopied} copied, ${cssSkipped} skipped; js:updated)`);
   } catch (err) {
     console.error('❌ update failed:', err?.message || err);
     process.exitCode = 1;
