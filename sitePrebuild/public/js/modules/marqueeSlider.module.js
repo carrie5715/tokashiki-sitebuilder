@@ -38,6 +38,29 @@ console.log('marqueeSlider.module.js loaded');
     return clone;
   }
 
+  function getGapPx(wrapperEl) {
+    try {
+      if (!wrapperEl) return 24;
+      const style = window.getComputedStyle(wrapperEl);
+      if (!style) return 24;
+      const raw = style.columnGap || style.gap || '';
+      const v = parseFloat(raw);
+      return Number.isFinite(v) && v >= 0 ? v : 24;
+    } catch (e) {
+      return 24;
+    }
+  }
+
+  function getBaseWidth(baseEl) {
+    if (!baseEl) return 0;
+    // レイアウト確定後の実効幅を優先して取得
+    const direct = baseEl.clientWidth || baseEl.offsetWidth;
+    if (direct && direct > 0) return direct;
+
+    const rect = baseEl.getBoundingClientRect();
+    return rect && rect.width ? rect.width : 0;
+  }
+
   function ensureOriginals(instance) {
     if (instance.originals && instance.originals.length) return;
     const { wrapperEl } = instance;
@@ -47,22 +70,14 @@ console.log('marqueeSlider.module.js loaded');
 
   function buildTrack(instance) {
     const { baseEl, wrapperEl, originals } = instance;
-    if (!baseEl || !wrapperEl || !originals || originals.length === 0) return;
+    if (!baseEl || !wrapperEl || !originals || originals.length === 0) return false;
 
-    const baseRect = baseEl.getBoundingClientRect();
-    const baseWidth = baseRect.width;
-
-    // x-show などで非表示中だと width が 0 になるので、その場合は少し待って再試行
+    const baseWidth = getBaseWidth(baseEl);
+    const vpWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth || 0;
+    console.log('マルキースライダー: トラック再構築 base幅=', baseWidth, 'viewport幅=', vpWidth);
     if (!baseWidth || baseWidth <= 0) {
-      const attempts = (instance.buildAttempts || 0);
-      if (attempts < 5) {
-        instance.buildAttempts = attempts + 1;
-        setTimeout(() => buildTrack(instance), 50);
-      }
-      return;
+      return false;
     }
-
-    instance.buildAttempts = 0;
 
     // 一旦トラックをリセット
     wrapperEl.innerHTML = '';
@@ -85,7 +100,35 @@ console.log('marqueeSlider.module.js loaded');
       if (originals.length === 0) break;
     }
 
-    if (groupNodes.length === 0) return;
+    // 初回に決まった必要ループ数を下限として維持し、
+    // 微小リサイズで 2 -> 1 のように縮んで周期が跳ぶのを防ぐ
+    if (!Number.isFinite(instance.minLoopCount) || instance.minLoopCount <= 0) {
+      instance.minLoopCount = loopCount;
+    }
+    const minLoops = Math.max(1, instance.minLoopCount || 1);
+    while (loopCount < minLoops && loopCount < maxLoops) {
+      loopCount += 1;
+      originals.forEach((tpl) => {
+        const node = tpl.cloneNode(true);
+        wrapperEl.appendChild(node);
+        groupNodes.push(node);
+      });
+      groupWidth = wrapperEl.scrollWidth;
+    }
+
+    if (groupNodes.length === 0 || !groupWidth) return false;
+
+    // groupNodes全体の幅 = 1サイクルのシーム位置（loopCount分まとめた正しい距離）
+    instance.trackDistance = groupWidth;
+
+    // 初回に確定した距離を下限として保持し、
+    // resize 後に distance が縮んで早戻りするのを防ぐ
+    if (!Number.isFinite(instance.initialTrackDistance) || instance.initialTrackDistance <= 0) {
+      instance.initialTrackDistance = groupWidth;
+    }
+    if (instance.trackDistance < instance.initialTrackDistance) {
+      instance.trackDistance = instance.initialTrackDistance;
+    }
 
     // シームレスループのために、構成したグループ全体をもう一度複製
     const groupLength = groupNodes.length;
@@ -102,15 +145,77 @@ console.log('marqueeSlider.module.js loaded');
         baseEl.style.height = trackHeight + 'px';
       }
     }
+    return true;
   }
 
   function applyDuration(instance) {
-    const { baseEl } = instance;
-    if (!baseEl) return;
+    const { baseEl, wrapperEl } = instance;
+    if (!baseEl) return false;
+
+    // data-slide-speed は「px/秒」として扱う
+    // 例: 40 → 1秒間に40px進む速度
     const attr = baseEl.getAttribute('data-slide-speed');
-    const sec = parseFloat(attr);
-    const duration = Number.isFinite(sec) && sec > 0 ? sec : 60;
-    baseEl.style.setProperty('--marquee-duration', `${duration}s`);
+    const pxPerSec = (() => {
+      const v = parseFloat(attr);
+      return Number.isFinite(v) && v > 0 ? v : 40;
+    })();
+
+    // 1サイクルで移動する距離（px）
+    let distance = instance.trackDistance;
+    if (!distance && wrapperEl) {
+      // wrapper 全体の半分（2列構成前提）を距離とみなすフォールバック
+      distance = wrapperEl.scrollWidth / 2;
+    }
+
+    // グループ間の gap ぶんも1サイクルの移動距離に含める
+    if (wrapperEl && distance) {
+      const gapPx = getGapPx(wrapperEl);
+      if (Number.isFinite(gapPx) && gapPx > 0) {
+        distance += gapPx;
+      }
+    }
+
+    if (!distance || !pxPerSec) {
+      return false;
+    }
+
+    // 1サイクル分の移動距離を CSS 変数としてピクセル指定
+    const distancePx = -distance;
+    baseEl.style.setProperty('--marquee-distance', `${distancePx}px`);
+
+    const durationSec = distance / pxPerSec;
+    baseEl.style.setProperty('--marquee-duration', `${durationSec}s`);
+
+    console.log(
+      'マルキースライダー: duration再計算 距離(px)=',
+      distance,
+      '速度(px/秒)=',
+      pxPerSec,
+      'duration(秒)=',
+      durationSec
+    );
+    return true;
+  }
+
+  function scheduleInit(instance, attempt) {
+    const maxAttempts = 50; // 約5秒 (100ms間隔)
+    const { baseEl } = instance;
+    const count = attempt || 0;
+
+    if (count > maxAttempts) {
+      console.warn('MarqueeSlider: failed to initialize within timeout');
+      baseEl.classList.add('is-marquee-ready');
+      return;
+    }
+
+    const okTrack = buildTrack(instance);
+    const okDuration = okTrack && applyDuration(instance);
+    if (okDuration) {
+      baseEl.classList.add('is-marquee-ready');
+      return;
+    }
+
+    setTimeout(() => scheduleInit(instance, count + 1), 100);
   }
 
   function init(baseEl) {
@@ -122,6 +227,8 @@ console.log('marqueeSlider.module.js loaded');
       baseEl,
       wrapperEl,
       originals: null,
+      minLoopCount: null,
+      initialTrackDistance: null,
     };
 
     ensureOriginals(instance);
@@ -130,11 +237,8 @@ console.log('marqueeSlider.module.js loaded');
     instances.push(instance);
     baseEl.dataset.marqueeInitialized = '1';
 
-    buildTrack(instance);
-    applyDuration(instance);
-
-    // 初期化完了でフェードイン＆アニメーション開始
-    baseEl.classList.add('is-marquee-ready');
+    // 高さ・距離・duration が正しく計算できるまでリトライし、完了したら表示・アニメ開始
+    scheduleInit(instance, 0);
   }
 
   function initAll(root) {
@@ -144,11 +248,35 @@ console.log('marqueeSlider.module.js loaded');
     bases.forEach((el) => init(el));
   }
 
+  function rebuildOnResize(instance) {
+    const { baseEl, wrapperEl } = instance;
+    if (!baseEl || !wrapperEl) return;
+
+    // アニメーションをいったん止めて位置を0にリセット
+    baseEl.classList.remove('is-marquee-ready');
+    wrapperEl.style.animation = 'none';
+    void wrapperEl.offsetHeight; // reflow を強制してリセットを確定
+    wrapperEl.style.animation = '';
+
+    const okTrack = buildTrack(instance);
+    if (!okTrack) return;
+    const okDuration = applyDuration(instance);
+    if (!okDuration) return;
+
+    // レイアウト確定後にアニメーション再開
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        baseEl.classList.add('is-marquee-ready');
+      });
+    });
+  }
+
   const onResize = debounce(() => {
+    const vpWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth || 0;
+    console.log('マルキースライダー: リサイズ検知 viewport幅=', vpWidth);
     instances.forEach((instance) => {
       if (!instance.baseEl || !instance.baseEl.isConnected) return;
-      buildTrack(instance);
-      applyDuration(instance);
+      rebuildOnResize(instance);
     });
   }, 200);
 
