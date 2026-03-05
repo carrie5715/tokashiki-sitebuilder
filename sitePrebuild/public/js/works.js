@@ -26,16 +26,24 @@ addEventListener('alpine:init', () => {
 
       this.swiper = new Swiper(this.$refs.container, {
         loop: true,
+        /*
         spaceBetween: 24,
         slidesPerView: 1.4, // モバイルで少し見切れ
         centeredSlides: true,
-        pagination: { el: this.$refs.pager, clickable: true },
-        navigation: { nextEl: this.$refs.next, prevEl: this.$refs.prev },
         breakpoints: {
           640:  { slidesPerView: 2, spaceBetween: 24 },
           // PC では端までカードを詰めるため中央寄せを解除
           960:  { slidesPerView: 3, spaceBetween: 28, centeredSlides: false },
           1200: { slidesPerView: 4, spaceBetween: 32, centeredSlides: false }
+        },
+        */
+        pagination: { el: this.$refs.pager, clickable: true },
+        navigation: { nextEl: this.$refs.next, prevEl: this.$refs.prev },
+        slidesPerView: 'auto',   // カード幅を CSS で制御するため auto に変更
+        centeredSlides: false,
+        spaceBetween: 16,         // SP: Figma gap-[16px]
+        breakpoints: {
+          769: { spaceBetween: 40 }  // PC: Figma gap-[40px]
         },
         observer: true,
         observeParents: true
