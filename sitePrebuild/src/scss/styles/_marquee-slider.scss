@@ -11,7 +11,8 @@
   transition: opacity 0.4s ease;
 
   .slider-wrapper {
-    display: flex;
+    display: inline-flex;
+    width: max-content;
     flex-wrap: nowrap;
     align-items: center;
     will-change: transform;

@@ -237,8 +237,37 @@ console.log('marqueeSlider.module.js loaded');
     instances.push(instance);
     baseEl.dataset.marqueeInitialized = '1';
 
+    // 画像の遅延読み込みで実寸が変わるとループ距離がズレるため再計測する
+    bindImageLoadRebuild(instance);
+
     // 高さ・距離・duration が正しく計算できるまでリトライし、完了したら表示・アニメ開始
     scheduleInit(instance, 0);
+  }
+
+  function bindImageLoadRebuild(instance) {
+    if (!instance || instance.imageLoadBound) return;
+    const { wrapperEl } = instance;
+    if (!wrapperEl) return;
+
+    const images = Array.from(wrapperEl.querySelectorAll('img'));
+    if (!images.length) {
+      instance.imageLoadBound = true;
+      return;
+    }
+
+    const requestRebuild = debounce(() => {
+      if (!instance.baseEl || !instance.baseEl.isConnected) return;
+      rebuildOnResize(instance);
+    }, 80);
+
+    images.forEach((img) => {
+      if (!img || img.complete) return;
+      const onDone = () => requestRebuild();
+      img.addEventListener('load', onDone, { once: true });
+      img.addEventListener('error', onDone, { once: true });
+    });
+
+    instance.imageLoadBound = true;
   }
 
   function initAll(root) {
@@ -281,6 +310,14 @@ console.log('marqueeSlider.module.js loaded');
   }, 200);
 
   window.addEventListener('resize', onResize);
+
+  // 初回ロード完了時にも再計測し、画像読み込み後の幅変化を吸収する
+  window.addEventListener('load', () => {
+    instances.forEach((instance) => {
+      if (!instance.baseEl || !instance.baseEl.isConnected) return;
+      rebuildOnResize(instance);
+    });
+  });
 
   const MarqueeSlider = {
     initAll,
