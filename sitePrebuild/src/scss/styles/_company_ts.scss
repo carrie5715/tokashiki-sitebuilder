@@ -35,7 +35,7 @@
         letter-spacing: var(--company-h2-pc-ls, $sp-ls);
       }
 
-      span {
+      .subtitle {
         $sp-fs: var(--company-h2-sub-sp-fs);
         $sp-fw: var(--company-h2-sub-sp-fw);
         $sp-lh: var(--company-h2-sub-sp-lh);

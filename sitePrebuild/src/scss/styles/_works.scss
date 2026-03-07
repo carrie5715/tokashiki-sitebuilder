@@ -27,7 +27,9 @@
     text-align: center;
     padding-bottom: 3.2vw;
     position: relative;
-    span {
+    .subtitle {
+      display: block;
+      padding-bottom: 8px;
     }
   }
 

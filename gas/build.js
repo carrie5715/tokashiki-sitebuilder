@@ -647,9 +647,12 @@ const Build = {
     } else {
       const rawTag = Utils.getSheetValue('company', 'googlemap_tag') || '';
       const wrapped = (rawTag && String(rawTag).trim()) ? `<div class="googlemap-wrap">${String(rawTag).trim()}</div>` : '';
+      const sectionTitleEn = Utils.getSheetValue('company', 'section_title_en') || '';
       replacements = {
         section_title: Utils.getSheetValue('company', 'section_title') || '',
-        section_title_en: Utils.getSheetValue('company', 'section_title_en') || '',
+        section_title_en: sectionTitleEn,
+        section_title_en_tag: sectionTitleEn ? `<span class="subtitle">${sectionTitleEn}</span>` : '',
+        bg_title: Utils.getSheetValue('company', 'bg_title') || '',
         googlemap_tag: wrapped,
       };
     }

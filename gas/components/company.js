@@ -139,10 +139,12 @@ var CompanyInfo = (function () {
       const bg = company['bg_color'];
       const tx = company['text_color'];
       const hd = company['heading_color'];
+      const itemBg = company['item_bg_color'];
       if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
         if (bg) CommonInfo.addColorVar('--pcol-company-bg-color', String(bg));
         if (tx) CommonInfo.addColorVar('--pcol-company-text-color', String(tx));
         if (hd) CommonInfo.addColorVar('--pcol-company-heading-color', String(hd));
+        if (itemBg) CommonInfo.addColorVar('--pcol-company-item-bg-color', String(itemBg));
       }
     } catch (e) {}
     const items = parseCompanyItems_();
@@ -152,9 +154,12 @@ var CompanyInfo = (function () {
   }
 
   function getTemplateReplacements() {
+    const sectionTitleEn = String(company['section_title_en'] || '');
     return {
       section_title: String(company['section_title'] || ''),
-      section_title_en: String(company['section_title_en'] || ''),
+      section_title_en: sectionTitleEn,
+      section_title_en_tag: sectionTitleEn ? `<span class="subtitle">${sectionTitleEn}</span>` : '',
+      bg_title: String(company['bg_title'] || ''),
       googlemap_tag: getGoogleMapTag_(),
     };
   }

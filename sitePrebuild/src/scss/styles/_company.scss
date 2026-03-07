@@ -1,17 +1,18 @@
 @use '../common/mixins' as *;
 
 #company {
-  $light-color: var(--pcol-company-text-color, var(--col-white));
+  $text-color: var(--pcol-company-text-color, var(--col-white));
   $base-color: var(--pcol-company-bg-color, var(--col-blue));
-  $dark-color: var(--pcol-company-heading-color, var(--pcol-base-color-3));
+  $heading-color: var(--pcol-company-heading-color, var(--pcol-base-color-3));
+  $item-bg-color: var(--pcol-company-item-bg-color, var(--col-white));
 
   width: 100%;
   background: $base-color;
-  color: $light-color;
+  color: $text-color;
   position: relative;
   .bg-title {
     display: block;
-    color: var(--pcol-message-heading-color, var(--pcol-base-color-3));
+    color: $heading-color;
     white-space: nowrap;
     line-height: 1;
     margin-top: -0.1em;
@@ -31,27 +32,10 @@
       padding-bottom: 3.2vw;
       position: relative;
       margin-top: -0.5em;
-      &::after {
-        content: '';
+      .subtitle {
         display: block;
-        width: 8vw;
-        height: 1vw;
-        background-color: $light-color;
-        border-radius: 9999px;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        margin: auto;
-        position: absolute;
-        @include tab {
-          width: 32px;
-          height: 4px;
-        }
+        padding-bottom: 8px;
       }
-      span {
-      }
-    }
-    .section-lead {
     }
     .company-wrap {
       margin-top: 8vw;
@@ -71,7 +55,7 @@
           justify-content: flex-start;
           padding: 3vw 4vw;
           min-height: 3em;
-          background: $dark-color;
+          background: $item-bg-color;
           border-radius: 4vw;
           @include tab {
             padding: 12px 16px;
@@ -84,8 +68,8 @@
           .separator {
             width: 2px;
             height: 100%;
-            display: block;
-            background: $base-color;
+            display: none;
+            background: var(--pcol-base-white, #fff);
           }
           .value {
             flex: 1 1 auto;
