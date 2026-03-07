@@ -27,6 +27,7 @@ addEventListener('alpine:init', () => {
       this.swiper = new Swiper(this.$refs.container, {
         loop: true,
         /*
+        // このコメントアウトのこす
         spaceBetween: 24,
         slidesPerView: 1.4, // モバイルで少し見切れ
         centeredSlides: true,
@@ -60,7 +61,7 @@ addEventListener('alpine:init', () => {
               targetEl.classList.remove('reverse');
             }
           });
-        }, { threshold: 1.0 });
+        }, { threshold: 0.3 });
         obs.observe(targetEl);
       } catch (e) {
         console.warn('reverseクラストグル用Observer初期化失敗:', e);
