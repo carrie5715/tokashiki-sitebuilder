@@ -71,6 +71,7 @@ var WorksInfo = (function () {
     const maxN = 200; // worksは多めに想定
     for (let i = 1; i <= maxN; i++) {
       const title = map[`card_${i}_title`];
+      const subtitle = map[`card_${i}_subtitle`];
       const tagsStr = map[`card_${i}_tags`];
       const desc = map[`card_${i}_description`];
       const link = map[`card_${i}_link`];
@@ -86,7 +87,7 @@ var WorksInfo = (function () {
       }
 
       // 何も無ければスキップ
-      const hasAny = [title, tagsStr, desc, link, image1].some(v => v != null && String(v).trim() !== '');
+      const hasAny = [title, subtitle, tagsStr, desc, link, image1].some(v => v != null && String(v).trim() !== '');
       if (!hasAny) continue;
 
       const tagsRaw = (typeof tagsStr === 'string' ? tagsStr.split(',') : []).map(s => String(s).trim()).filter(Boolean);
@@ -104,7 +105,7 @@ var WorksInfo = (function () {
 
       items.push({
         idx: i,
-        title, tagsRaw, description: desc, link, is_external, images: imgs, layout
+        title, subtitle, tagsRaw, description: desc, link, is_external, images: imgs, layout
       });
     }
 
@@ -116,6 +117,7 @@ var WorksInfo = (function () {
       return {
         id: `work-${it.idx}`,
         title: String(it.title || ''),
+        subtitle: String(it.subtitle || ''),
         tags,
         description: String(it.description || ''),
         images: (it.images || []).map(im => ({ url: String(im.url||''), alt: String(im.alt||'') })),

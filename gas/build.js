@@ -671,9 +671,12 @@ const Build = {
       throw e;
     }
 
+    const sectionTitleEn = Utils.getSheetValue(sheetName, 'section_title_en') || '';
     const replacements = {
       section_id: sheetName,
       section_title: Utils.getSheetValue(sheetName, 'section_title') || '',
+      section_title_en: sectionTitleEn,
+      section_title_en_tag: sectionTitleEn ? `<span class="subtitle">${sectionTitleEn}</span>` : '',
       section_intro: Utils.getSheetValue(sheetName, 'section_intro') || '',
     };
     return this.applyTagReplacements(template, replacements);
