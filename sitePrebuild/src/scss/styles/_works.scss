@@ -123,6 +123,31 @@
       }
     }
   }
+
+  .notice-area {
+    margin-top: 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    @include tab {
+      margin-top: 96px;
+    }
+
+    .notice {
+      position: relative;
+      padding-left: 1.2em;
+
+      &::before {
+        display: inline-block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        content: '※';
+        margin-right: 4px;
+      }
+    }
+  }
+
   &.reverse {
     color: $acc-text-color;
     background: $acc-bg-color;

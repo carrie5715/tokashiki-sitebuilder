@@ -660,16 +660,73 @@ const Build = {
   getWorksContents(sectionId) {
     const sheetName = sectionId || 'works';
     const template = this.getTemplateFile('components', 'works');
+    let sh = null;
 
     // シート存在チェック（buildAll側でも事前検証するが、念のため）
     try {
       const ss = SpreadsheetApp.getActive();
-      const sh = ss.getSheetByName(sheetName);
+      sh = ss.getSheetByName(sheetName);
       if (!sh) throw new Error(`「${sheetName}」シートが見つかりません。`);
     } catch (e) {
       if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`worksテンプレ生成時にシート未検出: ${sheetName} - ${e.message}`, 'getWorksContents');
       throw e;
     }
+
+    const worksNotices = (() => {
+      try {
+        if (!sh) return '';
+        const values = sh.getDataRange().getValues();
+        if (!values || values.length === 0) return '';
+
+        const a1 = (values[0][0] != null ? String(values[0][0]).trim().toLowerCase() : '');
+        const b1 = (values[0][1] != null ? String(values[0][1]).trim().toLowerCase() : '');
+        const hasHeader = (a1 === 'key' && (b1 === 'value' || b1 === 'val' || b1 === '値'));
+
+        const startRow = hasHeader ? 1 : 0;
+        let autoNoticeIndex = 0;
+        const entries = [];
+
+        for (let r = startRow; r < values.length; r++) {
+          const rawKey = values[r][0] ? String(values[r][0]).trim() : '';
+          const val = values[r][1] != null ? values[r][1] : '';
+          if (!rawKey) continue;
+
+          let order = null;
+          if (rawKey === 'notice') {
+            autoNoticeIndex += 1;
+            order = autoNoticeIndex;
+          } else {
+            const m = rawKey.match(/^notice_(\d+)$/);
+            if (m) {
+              order = parseInt(m[1], 10);
+            }
+          }
+          if (!Number.isFinite(order)) continue;
+          if (val == null || String(val).trim() === '') continue;
+
+          entries.push({ order, row: r, value: val });
+        }
+
+        if (!entries.length) return '';
+
+        entries.sort((a, b) => {
+          if (a.order !== b.order) return a.order - b.order;
+          return a.row - b.row;
+        });
+
+        const parts = entries.map(e => {
+          const raw = String(e.value);
+          const text = (typeof Utils !== 'undefined' && Utils.br)
+            ? Utils.br(raw)
+            : raw;
+          return `<p class="notice">${text}</p>`;
+        });
+
+        return `<div class="notice-area">\n${parts.join('\n')}\n<\/div>`;
+      } catch (_) {
+        return '';
+      }
+    })();
 
     const sectionTitleEn = Utils.getSheetValue(sheetName, 'section_title_en') || '';
     const replacements = {
@@ -678,6 +735,7 @@ const Build = {
       section_title_en: sectionTitleEn,
       section_title_en_tag: sectionTitleEn ? `<span class="subtitle">${sectionTitleEn}</span>` : '',
       section_intro: Utils.getSheetValue(sheetName, 'section_intro') || '',
+      works_notices: worksNotices,
     };
     return this.applyTagReplacements(template, replacements);
   },
