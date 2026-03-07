@@ -1,6 +1,10 @@
 <!-- SectionTitle: 制作事例 -->
 <section id="<?= section_id ?>" class="works-common" data-component-name="works" x-data="worksComponent('<?= section_id ?>')">
   <div class="container">
+
+    <?= section_title_en ?>
+    <!-- <p class="section-title-en">section_title_en値</p> -->
+
     <h2><?= section_title ?></h2>
     <p class="intro"><?= section_intro ?></p>
 
@@ -17,6 +21,7 @@
                 </figure>
                 <div class="work-body">
                   <h3 class="work-title" x-text="item.title"></h3>
+                  <p class="work-subtitle" x-show="item.subtitle" x-text="item.subtitle"></p>
 
                   <ul class="work-tags tags" x-show="item.tags && item.tags.length">
                     <template x-for="(tag, tagIdx) in item.tags" :key="'works-item-' + idx + '-' + tagIdx">
