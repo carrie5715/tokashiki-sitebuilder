@@ -14,7 +14,7 @@ addEventListener('alpine:init', () => {
         this.items = Array.isArray(data) ? data : [];
       } catch (e) {
         console.error('works load failed:', e);
-        this.error = '制作事例の読み込みに失敗しました。';
+        this.error = 'worksの読み込みに失敗しました。';
       } finally {
         this.loading = false;
       }
