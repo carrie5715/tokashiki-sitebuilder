@@ -7,6 +7,7 @@ console.log('marqueeSlider.module.js loaded');
 //     .slide-item    ... 各スライド（中身は用途に応じて自由）
 
 (function () {
+  const debug = false;
   const instances = [];
 
   function debounce(fn, delay) {
@@ -74,7 +75,7 @@ console.log('marqueeSlider.module.js loaded');
 
     const baseWidth = getBaseWidth(baseEl);
     const vpWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth || 0;
-    console.log('マルキースライダー: トラック再構築 base幅=', baseWidth, 'viewport幅=', vpWidth);
+    if (debug) console.log('マルキースライダー: トラック再構築 base幅=', baseWidth, 'viewport幅=', vpWidth);
     if (!baseWidth || baseWidth <= 0) {
       return false;
     }
@@ -186,14 +187,16 @@ console.log('marqueeSlider.module.js loaded');
     const durationSec = distance / pxPerSec;
     baseEl.style.setProperty('--marquee-duration', `${durationSec}s`);
 
-    console.log(
-      'マルキースライダー: duration再計算 距離(px)=',
-      distance,
-      '速度(px/秒)=',
-      pxPerSec,
-      'duration(秒)=',
-      durationSec
-    );
+    if (debug) {
+      console.log(
+        'マルキースライダー: duration再計算 距離(px)=',
+        distance,
+        '速度(px/秒)=',
+        pxPerSec,
+        'duration(秒)=',
+        durationSec
+      );
+    }
     return true;
   }
 
@@ -211,6 +214,9 @@ console.log('marqueeSlider.module.js loaded');
     const okTrack = buildTrack(instance);
     const okDuration = okTrack && applyDuration(instance);
     if (okDuration) {
+      if (instance.deferReadyUntilAssets) {
+        return;
+      }
       baseEl.classList.add('is-marquee-ready');
       return;
     }
@@ -229,6 +235,7 @@ console.log('marqueeSlider.module.js loaded');
       originals: null,
       minLoopCount: null,
       initialTrackDistance: null,
+      deferReadyUntilAssets: false,
     };
 
     ensureOriginals(instance);
@@ -238,7 +245,8 @@ console.log('marqueeSlider.module.js loaded');
     baseEl.dataset.marqueeInitialized = '1';
 
     // 画像の遅延読み込みで実寸が変わるとループ距離がズレるため再計測する
-    bindImageLoadRebuild(instance);
+    const hasPendingImages = bindImageLoadRebuild(instance);
+    instance.deferReadyUntilAssets = hasPendingImages;
 
     // 高さ・距離・duration が正しく計算できるまでリトライし、完了したら表示・アニメ開始
     scheduleInit(instance, 0);
@@ -247,27 +255,40 @@ console.log('marqueeSlider.module.js loaded');
   function bindImageLoadRebuild(instance) {
     if (!instance || instance.imageLoadBound) return;
     const { wrapperEl } = instance;
-    if (!wrapperEl) return;
+    if (!wrapperEl) return false;
 
     const images = Array.from(wrapperEl.querySelectorAll('img'));
     if (!images.length) {
       instance.imageLoadBound = true;
-      return;
+      return false;
     }
 
-    const requestRebuild = debounce(() => {
+    let pendingCount = 0;
+    const finalizeAfterAssets = debounce(() => {
       if (!instance.baseEl || !instance.baseEl.isConnected) return;
-      rebuildOnResize(instance);
+      const okTrack = buildTrack(instance);
+      const okDuration = okTrack && applyDuration(instance);
+      if (!okDuration) return;
+      instance.deferReadyUntilAssets = false;
+      instance.baseEl.classList.add('is-marquee-ready');
     }, 80);
 
     images.forEach((img) => {
-      if (!img || img.complete) return;
-      const onDone = () => requestRebuild();
+      if (!img) return;
+      if (img.complete) return;
+      pendingCount += 1;
+      const onDone = () => {
+        pendingCount -= 1;
+        if (pendingCount <= 0) {
+          finalizeAfterAssets();
+        }
+      };
       img.addEventListener('load', onDone, { once: true });
       img.addEventListener('error', onDone, { once: true });
     });
 
     instance.imageLoadBound = true;
+    return pendingCount > 0;
   }
 
   function initAll(root) {
@@ -302,7 +323,7 @@ console.log('marqueeSlider.module.js loaded');
 
   const onResize = debounce(() => {
     const vpWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth || 0;
-    console.log('マルキースライダー: リサイズ検知 viewport幅=', vpWidth);
+    if (debug) console.log('マルキースライダー: リサイズ検知 viewport幅=', vpWidth);
     instances.forEach((instance) => {
       if (!instance.baseEl || !instance.baseEl.isConnected) return;
       rebuildOnResize(instance);
@@ -310,14 +331,6 @@ console.log('marqueeSlider.module.js loaded');
   }, 200);
 
   window.addEventListener('resize', onResize);
-
-  // 初回ロード完了時にも再計測し、画像読み込み後の幅変化を吸収する
-  window.addEventListener('load', () => {
-    instances.forEach((instance) => {
-      if (!instance.baseEl || !instance.baseEl.isConnected) return;
-      rebuildOnResize(instance);
-    });
-  });
 
   const MarqueeSlider = {
     initAll,
