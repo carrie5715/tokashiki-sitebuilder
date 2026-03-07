@@ -8,6 +8,28 @@ var FlowInfo = (function () {
 
   let lastRows = [];
 
+  function applyFlowColorVars_() {
+    try {
+      if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
+        const map = {
+          bg_color: '--pcol-flow-bg-color',
+          text_color: '--pcol-flow-text-color',
+          accent_color: '--pcol-flow-accent-color',
+          card_num_color: '--pcol-flow-card-num-color',
+          card_head_color: '--pcol-flow-card-head-color',
+          card_head_sub_color: '--pcol-flow-card-head-sub-color',
+          card_text_color: '--pcol-flow-card-text-color',
+        };
+        Object.keys(map).forEach(k => {
+          const v = flow[k];
+          if (v != null && String(v).trim() !== '') {
+            CommonInfo.addColorVar(map[k], String(v));
+          }
+        });
+      }
+    } catch (_) {}
+  }
+
   function read() {
     const overrideRows = (typeof globalThis !== 'undefined' && globalThis.__snapshotOverrides && globalThis.__snapshotOverrides[SHEET_NAME]);
     let values;
@@ -35,6 +57,7 @@ var FlowInfo = (function () {
       flow[key] = val;
       rows.push({ category: 'flow', key, value: val, note });
     }
+    applyFlowColorVars_();
     lastRows = rows.slice();
     return rows;
   }
@@ -110,25 +133,7 @@ var FlowInfo = (function () {
         if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('flow snapshot再構築失敗: ' + e.message, 'FlowInfo.record');
       }
     }
-    try {
-      if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
-        const map = {
-          bg_color: '--pcol-flow-bg-color',
-          text_color: '--pcol-flow-text-color',
-          accent_color: '--pcol-flow-accent-color',
-          card_num_color: '--pcol-flow-card-num-color',
-          card_head_color: '--pcol-flow-card-head-color',
-          card_head_sub_color: '--pcol-flow-card-head-sub-color',
-          card_text_color: '--pcol-flow-card-text-color',
-        };
-        Object.keys(map).forEach(k => {
-          const v = flow[k];
-          if (v != null && String(v).trim() !== '') {
-            CommonInfo.addColorVar(map[k], String(v));
-          }
-        });
-      }
-    } catch (_) {}
+    applyFlowColorVars_();
 
     let items;
     if (typeof globalThis !== 'undefined' && globalThis.__processedSnapshot && globalThis.__processedSnapshot.flow && globalThis.__processedSnapshot.flow.data && globalThis.__processedSnapshot.flow.data.items) {

@@ -8,6 +8,21 @@ var FooterInfo = (function() {
 
   let lastRows = [];
 
+  function applyFooterColorVars_() {
+    try {
+      if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
+        const bg = footer['bg_color'];
+        const tx = footer['text_color'];
+        if (bg != null && String(bg).trim() !== '') CommonInfo.addColorVar('--pcol-footer-bg-color', String(bg));
+        if (tx != null && String(tx).trim() !== '') CommonInfo.addColorVar('--pcol-footer-text-color', String(tx));
+      }
+    } catch (e) {
+      if (typeof Utils !== 'undefined' && Utils.logToSheet) {
+        Utils.logToSheet(`footer 色変数登録失敗: ${e.message}`, 'FooterInfo');
+      }
+    }
+  }
+
   // 純粋な読み込み処理
   function read() {
     const overrideRows = (typeof globalThis !== 'undefined' && globalThis.__snapshotOverrides && globalThis.__snapshotOverrides[SHEET_NAME]);
@@ -36,6 +51,7 @@ var FooterInfo = (function() {
       footer[key] = val;
       rows.push({ category: 'footer', key, value: val, note });
     }
+    applyFooterColorVars_();
     lastRows = rows.slice();
     return rows;
   }
@@ -69,18 +85,7 @@ var FooterInfo = (function() {
         }
       }
     }
-    try {
-      if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
-        const bg = footer['bg_color'];
-        const tx = footer['text_color'];
-        if (bg != null && String(bg).trim() !== '') CommonInfo.addColorVar('--pcol-footer-bg-color', String(bg));
-        if (tx != null && String(tx).trim() !== '') CommonInfo.addColorVar('--pcol-footer-text-color', String(tx));
-      }
-    } catch (e) {
-      if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-        Utils.logToSheet(`footer 色変数登録失敗: ${e.message}`, 'FooterInfo');
-      }
-    }
+    applyFooterColorVars_();
     const ok = lastRows.length > 0;
     return { footer: JSON.parse(JSON.stringify(footer)), rows: lastRows.slice(), ok };
   }

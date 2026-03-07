@@ -9,6 +9,31 @@ var ContactInfo = (function () {
 
   let lastRows = [];
 
+  function applyContactColorVars_() {
+    try {
+      if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
+        const colorKeys = [
+          'background',
+          'card_bg_color',
+          'card_text_color',
+          'card_item_bg_color',
+          'card_item_text_color',
+        ];
+        colorKeys.forEach(k => {
+          const v = contact[k];
+          if (v != null && String(v).trim() !== '') {
+            const cssName = '--pcol-contact-' + k.replace(/_/g, '-');
+            CommonInfo.addColorVar(cssName, String(v));
+          }
+        });
+      }
+    } catch (e) {
+      if (typeof Utils !== 'undefined' && Utils.logToSheet) {
+        Utils.logToSheet(`contact 色変数登録失敗: ${e.message}`, 'ContactInfo');
+      }
+    }
+  }
+
   // 純粋な読み込み処理
   function read() {
     const overrideRows = (typeof globalThis !== 'undefined' && globalThis.__snapshotOverrides && globalThis.__snapshotOverrides[SHEET_NAME]);
@@ -37,6 +62,7 @@ var ContactInfo = (function () {
       contact[key] = val;
       rows.push({ category: 'contact', key, value: val, note });
     }
+    applyContactColorVars_();
     lastRows = rows.slice();
     return rows;
   }
@@ -137,28 +163,7 @@ var ContactInfo = (function () {
         if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('contact snapshot再構築失敗: ' + e.message, 'ContactInfo.record');
       }
     }
-    try {
-      if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
-        const colorKeys = [
-          'background',
-          'card_bg_color',
-          'card_text_color',
-          'card_item_bg_color',
-          'card_item_text_color',
-        ];
-        colorKeys.forEach(k => {
-          const v = contact[k];
-          if (v != null && String(v).trim() !== '') {
-            const cssName = '--pcol-contact-' + k.replace(/_/g, '-');
-            CommonInfo.addColorVar(cssName, String(v));
-          }
-        });
-      }
-    } catch (e) {
-      if (typeof Utils !== 'undefined' && Utils.logToSheet) {
-        Utils.logToSheet(`contact 色変数登録失敗: ${e.message}`, 'ContactInfo');
-      }
-    }
+    applyContactColorVars_();
     const items = parseContactItems_();
     const ok = (items && items.length > 0) || (lastRows && lastRows.length > 0);
     return { contact: JSON.parse(JSON.stringify(contact)), rows: lastRows.slice(), items, ok };

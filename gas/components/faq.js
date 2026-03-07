@@ -8,6 +8,27 @@ var FaqInfo = (function () {
 
   let lastRows = [];
 
+  function applyFaqColorVars_() {
+    try {
+      if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
+        const map = {
+          bg_color: '--pcol-faq-bg-color',
+          text_color: '--pcol-faq-text-color',
+          item_bg_color: '--pcol-faq-item-bg-color',
+          q_label_color: '--pcol-faq-q-label-color',
+          q_text_color: '--pcol-faq-q-text-color',
+          a_text_color: '--pcol-faq-a-text-color',
+        };
+        Object.keys(map).forEach(k => {
+          const v = faq[k];
+          if (v != null && String(v).trim() !== '') {
+            CommonInfo.addColorVar(map[k], String(v));
+          }
+        });
+      }
+    } catch (_) {}
+  }
+
   function read() {
     const overrideRows = (typeof globalThis !== 'undefined' && globalThis.__snapshotOverrides && globalThis.__snapshotOverrides[SHEET_NAME]);
     let values;
@@ -35,6 +56,7 @@ var FaqInfo = (function () {
       faq[key] = val;
       rows.push({ category: 'faq', key, value: val, note });
     }
+    applyFaqColorVars_();
     lastRows = rows.slice();
     return rows;
   }
@@ -102,22 +124,7 @@ var FaqInfo = (function () {
         if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('faq snapshot再構築失敗: ' + e.message, 'FaqInfo.record');
       }
     }
-    try {
-      if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
-        const map = {
-          bg_color: '--pcol-faq-bg-color',
-          text_color: '--pcol-faq-text-color',
-          heading_color: '--pcol-faq-heading-color',
-          accent_color: '--pcol-faq-accent-color',
-        };
-        Object.keys(map).forEach(k => {
-          const v = faq[k];
-          if (v != null && String(v).trim() !== '') {
-            CommonInfo.addColorVar(map[k], String(v));
-          }
-        });
-      }
-    } catch (_) {}
+    applyFaqColorVars_();
     // 前倒しパース済み items 利用（存在すれば parseFaqItems_ スキップ）
     let items;
     if (typeof globalThis !== 'undefined' && globalThis.__processedSnapshot && globalThis.__processedSnapshot.faq && globalThis.__processedSnapshot.faq.data && globalThis.__processedSnapshot.faq.data.items) {

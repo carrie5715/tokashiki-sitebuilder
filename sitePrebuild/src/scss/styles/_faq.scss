@@ -2,7 +2,8 @@
 
 #faq {
   width: 100%;
-  background: #f7f8fa; // 淡いグレー
+  background: var(--pcol-faq-bg-color, #f7f8fa); // 淡いグレー
+  color: var(--pcol-faq-text-color, var(--pcol-base-black, var(--col-black)));
 
   .container {
     max-width: 1000px;
@@ -26,18 +27,21 @@
   }
   .faq-item {
     padding: 16px;
-    background: var(--pcol-base-white, var(--col-white));
+    background: var(--pcol-faq-item-bg-color, var(--pcol-base-white, var(--col-white)));
     border-radius: var(--base-radius-m, 0);
     .q {
+      color: var(--pcol-faq-q-text-color);
       &::before {
         content: 'Q.';
         display: inline-block;
         font-weight: 700;
         margin-right: 8px;
+        color: var(--pcol-faq-q-label-color);
       }
     }
     .a-block {
       .a {
+        color: var(--pcol-faq-a-text-color);
       }
     }
   }

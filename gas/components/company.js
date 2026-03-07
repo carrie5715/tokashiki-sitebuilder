@@ -8,6 +8,21 @@ var CompanyInfo = (function () {
 
   let lastRows = [];
 
+  function applyCompanyColorVars_() {
+    try {
+      const bg = company['bg_color'];
+      const tx = company['text_color'];
+      const hd = company['heading_color'];
+      const itemBg = company['item_bg_color'];
+      if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
+        if (bg) CommonInfo.addColorVar('--pcol-company-bg-color', String(bg));
+        if (tx) CommonInfo.addColorVar('--pcol-company-text-color', String(tx));
+        if (hd) CommonInfo.addColorVar('--pcol-company-heading-color', String(hd));
+        if (itemBg) CommonInfo.addColorVar('--pcol-company-item-bg-color', String(itemBg));
+      }
+    } catch (_) {}
+  }
+
   // 純粋な読み込み処理
   function read() {
     const overrideRows = (typeof globalThis !== 'undefined' && globalThis.__snapshotOverrides && globalThis.__snapshotOverrides[SHEET_NAME]);
@@ -38,6 +53,7 @@ var CompanyInfo = (function () {
       company[key] = val;
       rows.push({ category: 'company', key, value: val, note });
     }
+    applyCompanyColorVars_();
     lastRows = rows.slice();
     return rows;
   }
@@ -135,18 +151,7 @@ var CompanyInfo = (function () {
         if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('company snapshot再構築失敗: ' + e.message, 'CompanyInfo.record');
       }
     }
-    try {
-      const bg = company['bg_color'];
-      const tx = company['text_color'];
-      const hd = company['heading_color'];
-      const itemBg = company['item_bg_color'];
-      if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
-        if (bg) CommonInfo.addColorVar('--pcol-company-bg-color', String(bg));
-        if (tx) CommonInfo.addColorVar('--pcol-company-text-color', String(tx));
-        if (hd) CommonInfo.addColorVar('--pcol-company-heading-color', String(hd));
-        if (itemBg) CommonInfo.addColorVar('--pcol-company-item-bg-color', String(itemBg));
-      }
-    } catch (e) {}
+    applyCompanyColorVars_();
     const items = parseCompanyItems_();
     writeCompanyJson_(items);
     const ok = (items && items.length > 0) || (lastRows && lastRows.length > 0);

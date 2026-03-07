@@ -8,6 +8,30 @@ var WorksInfo = (function () {
 
   let lastRows = [];
 
+  function applyWorksColorVars_() {
+    try {
+      const colorKeys = [
+        'base_bg_color',
+        'base_text_color',
+        'base_tag_bg',
+        'base_tag_text',
+        'acc_bg_color',
+        'acc_text_color',
+        'acc_tag_bg',
+        'acc_tag_text'
+      ];
+      if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
+        colorKeys.forEach(k => {
+          const v = works[k];
+          if (v != null && String(v).trim() !== '') {
+            const cssName = '--pcol-works-' + k.replace(/_/g, '-');
+            CommonInfo.addColorVar(cssName, String(v));
+          }
+        });
+      }
+    } catch (_) {}
+  }
+
   // 純粋な読み込み処理
   function read() {
     const overrideRows = (typeof globalThis !== 'undefined' && globalThis.__snapshotOverrides && globalThis.__snapshotOverrides[SHEET_NAME]);
@@ -44,6 +68,7 @@ var WorksInfo = (function () {
       works[key] = val;
       rows.push({ category: 'works', key, value: val, note });
     }
+    applyWorksColorVars_();
     lastRows = rows.slice();
     return rows;
   }
@@ -226,27 +251,7 @@ var WorksInfo = (function () {
         if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('works snapshot再構築失敗: ' + e.message, 'WorksInfo.record');
       }
     }
-    try {
-      const colorKeys = [
-        'base_bg_color',
-        'base_text_color',
-        'base_tag_bg',
-        'base_tag_text',
-        'acc_bg_color',
-        'acc_text_color',
-        'acc_tag_bg',
-        'acc_tag_text'
-      ];
-      if (typeof CommonInfo !== 'undefined' && CommonInfo.addColorVar) {
-        colorKeys.forEach(k => {
-          const v = works[k];
-          if (v != null && String(v).trim() !== '') {
-            const cssName = '--pcol-works-' + k.replace(/_/g, '-');
-            CommonInfo.addColorVar(cssName, String(v));
-          }
-        });
-      }
-    } catch (e) {}
+    applyWorksColorVars_();
     // 前倒しパース済み items 利用（存在すれば parseWorksItems_ スキップ）
     let items;
     if (typeof globalThis !== 'undefined' && globalThis.__processedSnapshot && globalThis.__processedSnapshot.works && globalThis.__processedSnapshot.works.data && globalThis.__processedSnapshot.works.data.items) {
