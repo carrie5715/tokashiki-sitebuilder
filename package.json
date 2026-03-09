@@ -1,0 +1,12 @@
+{
+  "name": "site-builder",
+  "private": true,
+  "scripts": {
+    "gas:change": "node switch-clasp.js",
+    "gas:push": "cd gas && clasp push",
+    "gas:push-f": "cd gas && clasp push -f",
+    "gas:pull": "cd gas && clasp pull",
+    "gas:status": "cd gas && clasp status",
+    "gas:open": "cd gas && clasp open"
+  }
+}
