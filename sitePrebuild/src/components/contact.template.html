@@ -14,27 +14,28 @@
 
 
       <div class="contact-wrap">
-        <div class="items-list">
-          <?= tel_box ?>
+          <?= upper_tel_box ?>
           <!--
-          <div class="item tel-box">
+          <div class="tel-box">
             <p class="tel-number"><a href="tel:TEL値">
               <i class="fa-solid fa-phone"></i>
               <span>TEL値</span>
             </a></p>
-            <p class="tel-message">TELメッセージ値</p>  <- tel_mess が空ならこの行ごと出さない
+            <p class="tel-message">sub_value値</p>  <- sub_value が空ならこの行ごと出さない
           </div>
           --> 
 
-          <?= form_item ?>
-          <!-- 
-          <div class="item type-form">
-            <a href="form_url">
-              <span class="item-body">
-                <span class="sub">form_sub</span>
-                <span class="main">form_mess</span>
-              </span>
-            </a>
+
+
+        <div class="items-list">
+          <?= tel_box ?>
+          <!--
+          <div class="tel-box">
+            <p class="tel-number"><a href="tel:TEL値">
+              <i class="fa-solid fa-phone"></i>
+              <span>TEL値</span>
+            </a></p>
+            <p class="tel-message">sub_value値</p>  <- sub_value が空ならこの行ごと出さない
           </div>
           --> 
 
@@ -42,7 +43,7 @@
           <!--
           <div class="item type-tel">
             <a href="xxxxxxx">
-              <span class="item-body">電話でお問い合わせ</span>
+              <span class="item-body"><span class="mess">電話でお問い合わせ</span><span class="sub">受付時間：平日10:00〜18:00</span></span>
             </a>  
           </div>  
           -->

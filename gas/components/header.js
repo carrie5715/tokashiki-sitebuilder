@@ -50,7 +50,7 @@ var HeaderInfo = (function () {
   }
 
   // contact シートからヘッダー用コンタクトリンク群を取得
-  function readHeaderContactItems_() {
+  function buildHeaderContactItemsFromValues_(values) {
     const items = [];
     const truthy = (v) => {
       if (v == null) return false;
@@ -59,42 +59,59 @@ var HeaderInfo = (function () {
       const s = String(v).trim().toLowerCase();
       return s === 'true' || s === '1' || s === 'yes' || s === 'y' || s === 'on';
     };
+    if (!values || values.length === 0) return items;
+
+    const a1 = (values[0][0] != null ? String(values[0][0]).trim().toLowerCase() : '');
+    const b1 = (values[0][1] != null ? String(values[0][1]).trim().toLowerCase() : '');
+    const hasHeader = ((a1 === 'key' || a1 === 'field_name') && (b1 === 'value' || b1 === 'val' || b1 === 'input_value' || b1 === '値'));
+    const startRow = hasHeader ? 1 : 0;
+
+    for (let r = startRow; r < values.length; r++) {
+      const fieldName = values[r][0] != null ? String(values[r][0]).trim() : '';
+      if (fieldName !== 'item') continue;
+
+      const inputValue = values[r][1] != null ? String(values[r][1]).trim() : '';
+      const inputType = values[r][3] != null ? String(values[r][3]).trim() : '';
+      if (!inputValue || !inputType) continue;
+
+      const idx = inputType.indexOf(':');
+      if (idx < 0) continue;
+
+      const ident = inputType.slice(0, idx).trim().toLowerCase();
+      let label = inputType.slice(idx + 1).trim();
+      if (!ident) continue;
+
+      const isTelType = (ident === 'tel' || ident === 'tel-lg' || ident === 'tel-upp');
+      if (!label) {
+        if (!isTelType) continue;
+        label = inputValue;
+      }
+
+      // 専用の大型電話導線は contact セクション専用として扱う
+      if (ident === 'tel-lg' || ident === 'tel-upp') continue;
+
+      let href = inputValue;
+      if (isTelType) href = `tel:${inputValue}`;
+      else if (ident === 'mail') href = `mailto:${inputValue}`;
+
+      const external = truthy(values[r][5]) || ['line', 'form', 'link'].includes(ident);
+      items.push({ order: items.length + 1, ident, url: href, label, external });
+    }
+
+    return items;
+  }
+
+  function readHeaderContactItems_() {
     try {
       const ss = SpreadsheetApp.getActive();
       const sh = ss.getSheetByName('contact');
-      if (!sh) return items;
+      if (!sh) return [];
       const values = sh.getDataRange().getValues();
-      if (!values || values.length === 0) return items;
-      const a1 = (values[0][0] != null ? String(values[0][0]).trim().toLowerCase() : '');
-      const b1 = (values[0][1] != null ? String(values[0][1]).trim().toLowerCase() : '');
-      const hasHeader = (a1 === 'key' && (b1 === 'value' || b1 === 'val' || b1 === '値'));
-      const startRow = hasHeader ? 1 : 0;
-      for (let r = startRow; r < values.length; r++) {
-        const key = values[r][0] != null ? String(values[r][0]).trim() : '';
-        if (!/^item\d+$/i.test(key)) continue;
-        const rawVal = values[r][1] != null ? String(values[r][1]).trim() : '';
-        const meta = values[r][2] != null ? String(values[r][2]).trim() : '';
-        if (!rawVal && !meta) continue;
-        let ident = '';
-        let label = '';
-        if (meta && meta.includes(':')) {
-          const idx = meta.indexOf(':');
-          ident = meta.slice(0, idx).trim().toLowerCase();
-          label = meta.slice(idx + 1).trim();
-        } else {
-          ident = (meta || '').trim().toLowerCase();
-          label = '';
-        }
-        let href = rawVal;
-        if (ident === 'tel') href = `tel:${rawVal}`;
-        else if (ident === 'mail') href = `mailto:${rawVal}`;
-        const external = truthy(values[r][3]) || ['line','form','link'].includes(ident);
-        items.push({ order: items.length + 1, ident, url: href, label: (label || rawVal), external });
-      }
+      return buildHeaderContactItemsFromValues_(values);
     } catch (e) {
       if (typeof Utils?.logToSheet === 'function') Utils.logToSheet(`header contact取得失敗: ${e.message}`, 'HeaderInfo');
     }
-    return items;
+    return [];
   }
 
   // nav シートの色設定から colors.css 用のカスタムプロパティを設定
@@ -246,34 +263,7 @@ var HeaderInfo = (function () {
       try {
         const values = globalThis.__snapshotOverrides['contact'];
         if (values && values.length) {
-          const a1 = (values[0][0] != null ? String(values[0][0]).trim().toLowerCase() : '');
-          const b1 = (values[0][1] != null ? String(values[0][1]).trim().toLowerCase() : '');
-          const hasHeader = (a1 === 'key' && (b1 === 'value' || b1 === 'val' || b1 === '値'));
-          const startRow = hasHeader ? 1 : 0;
-          const items = [];
-          for (let r = startRow; r < values.length; r++) {
-            const key = values[r][0] != null ? String(values[r][0]).trim() : '';
-            if (!/^item\d+$/i.test(key)) continue;
-            const rawVal = values[r][1] != null ? String(values[r][1]).trim() : '';
-            const meta = values[r][2] != null ? String(values[r][2]).trim() : '';
-            if (!rawVal && !meta) continue;
-            let ident = '';
-            let label = '';
-            if (meta && meta.includes(':')) {
-              const idx = meta.indexOf(':');
-              ident = meta.slice(0, idx).trim().toLowerCase();
-              label = meta.slice(idx + 1).trim();
-            } else {
-              ident = (meta || '').trim().toLowerCase();
-              label = '';
-            }
-            let href = rawVal;
-            if (ident === 'tel') href = `tel:${rawVal}`;
-            else if (ident === 'mail') href = `mailto:${rawVal}`;
-            const external = ['line','form','link'].includes(ident);
-            items.push({ order: items.length + 1, ident, url: href, label: (label || rawVal), external });
-          }
-          header.contactItems = items;
+          header.contactItems = buildHeaderContactItemsFromValues_(values);
         }
       } catch (e) {
         if (typeof Utils?.logToSheet === 'function') Utils.logToSheet('header snapshot(contact)再構築失敗: '+ e.message, 'HeaderInfo.record');

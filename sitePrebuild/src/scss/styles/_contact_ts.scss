@@ -107,29 +107,6 @@
               letter-spacing: var(--contact-cta-pc-ls, $sp-ls);
             }
           }
-
-          &.type-form {
-            .item-body {
-              .sub {
-                $sp-fs: var(--contact-cta-note-sp-fs);
-                $sp-fw: var(--contact-cta-note-sp-fw);
-                $sp-lh: var(--contact-cta-note-sp-lh);
-                $sp-ls: var(--contact-cta-note-sp-ls);
-                font-size: $sp-fs;
-                font-weight: $sp-fw;
-                line-height: $sp-lh;
-                letter-spacing: $sp-ls;
-                @include tab {
-                  font-size: var(--contact-cta-note-pc-fs, $sp-fs);
-                  font-weight: var(--contact-cta-note-pc-fw, $sp-fw);
-                  line-height: var(--contact-cta-note-pc-lh, $sp-lh);
-                  letter-spacing: var(--contact-cta-note-pc-ls, $sp-ls);
-                }
-              }
-              .main {
-              }
-            }
-          }
         }
       }
     }

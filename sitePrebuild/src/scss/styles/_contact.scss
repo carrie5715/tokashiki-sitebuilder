@@ -58,30 +58,33 @@
           cursor: pointer;
           display: flex;
           justify-content: center;
-          align-items: center;
+          align-items: flex-end;
 
           a {
-            flex-grow: 1;
-            display: flex;
-            min-height: 5rem;
-            border-radius: 9999px;
-            position: relative;
             background: var(
               --pcol-contact-card-item-bg-color,
               var(--pcol-base-color-2, var(--col-blue))
             );
+            box-shadow: 0px 0px 20px 0px #00000026;
+            border-radius: 9999px;
+            flex-grow: 1;
+            display: flex;
+            min-height: 5rem;
+            position: relative;
             color: var(
               --pcol-contact-card-item-text-color,
               var(--pcol-base-white, var(--col-white))
             );
             justify-content: center;
             align-items: center;
-            box-shadow: 0px 0px 20px 0px #00000026;
 
             @include tab {
               height: 64px;
               min-height: unset;
-              padding: 16px;
+            }
+            span {
+              display: inline-block;
+              line-height: 1 !important;
             }
 
             &::before {
@@ -106,6 +109,8 @@
             .sub {
               display: block;
               line-height: 1;
+              margin-top: 4px;
+              font-size: 0.5em;
             }
             &::after {
               font-family: $fontawesome;
@@ -128,14 +133,6 @@
             }
           }
 
-          &.type-form {
-            .item-body {
-              .sub {
-              }
-              .main {
-              }
-            }
-          }
           &.type-mail {
             a::before {
               font-family: $fontawesome;
